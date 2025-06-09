@@ -1,0 +1,218 @@
+[gd_scene load_steps=25 format=3 uid="uid://da8lyh50nri6m"]
+
+[ext_resource type="Script" path="res://scripts/Card.gd" id="1_1cqby"]
+[ext_resource type="Shader" path="res://assets/shaders/playable.gdshader" id="1_6a0q4"]
+[ext_resource type="Shader" path="res://assets/shaders/ss.gdshader" id="1_12wvl"]
+[ext_resource type="Texture2D" uid="uid://vcmgexvswsjo" path="res://assets/paper-146904_1920.png" id="3_2g06r"]
+[ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="3_fl2mh"]
+[ext_resource type="Texture2D" uid="uid://djyo5oao4seqe" path="res://assets/waterSprite.jpg" id="4_p03s5"]
+[ext_resource type="Script" path="res://scripts/shadow.gd" id="4_txeqe"]
+[ext_resource type="Shader" path="res://assets/shaders/gray.gdshader" id="5_7keh7"]
+[ext_resource type="Texture2D" uid="uid://bbx7g0mf4n0q3" path="res://assets/Organizata..PNG" id="5_tdvel"]
+[ext_resource type="Shader" path="res://assets/shaders/cardBackbround.gdshader" id="6_3qgkq"]
+[ext_resource type="Shader" path="res://assets/shaders/rounded.gdshader" id="6_r5pbg"]
+[ext_resource type="Shader" path="res://assets/shaders/flip.gdshader" id="9_8j367"]
+[ext_resource type="Script" path="res://scripts/flip_animator.gd" id="12_leg65"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cd0ai"]
+shader = ExtResource("6_r5pbg")
+shader_parameter/corner_scale = 0.1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r0oll"]
+shader = ExtResource("3_fl2mh")
+shader_parameter/shadow_color = Color(0, 0, 0, 0.3)
+shader_parameter/shadow_scale = 0.025
+shader_parameter/shadow_min_length = 2.0
+shader_parameter/shadow_max_length = 10.0
+shader_parameter/screen_center = Vector2(960, 540)
+shader_parameter/corner_scale = 0.2
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ae88b"]
+shader = ExtResource("5_7keh7")
+shader_parameter/grayscale_amount = 0.0
+shader_parameter/alpha_override = 1.0
+shader_parameter/corner_scale = 0.15
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_frwft"]
+shader = ExtResource("6_r5pbg")
+shader_parameter/corner_scale = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tm1c7"]
+shader = ExtResource("6_3qgkq")
+shader_parameter/mana_color1 = Vector4(1, 1, 1, 1)
+shader_parameter/mana_color2 = Vector4(1, 1, 1, 1)
+shader_parameter/mana_color3 = Vector4(1, 1, 1, 1)
+shader_parameter/weight1 = 1.0
+shader_parameter/weight2 = 0.0
+shader_parameter/weight3 = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_frppa"]
+
+[sub_resource type="Gradient" id="Gradient_w538k"]
+colors = PackedColorArray(0.232317, 0.258213, 0.259555, 1, 0.54099, 0.54099, 0.54099, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ocynb"]
+gradient = SubResource("Gradient_w538k")
+width = 200
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t4wfc"]
+shader = ExtResource("9_8j367")
+shader_parameter/scale_x = null
+shader_parameter/edge_threshold = 0.001
+shader_parameter/edge_color = Color(0.2, 0.2, 0.2, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gig2a"]
+shader = ExtResource("1_6a0q4")
+shader_parameter/is_glowing = false
+shader_parameter/offset = null
+shader_parameter/speed = 0.101
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mwuqd"]
+shader = ExtResource("1_12wvl")
+shader_parameter/ss = false
+shader_parameter/overlay_color = Color(1, 0, 0, 0.4)
+shader_parameter/pulse_speed = 2.0
+shader_parameter/pulse_strength = 0.3
+
+[node name="control" type="Control" groups=["card"]]
+material = SubResource("ShaderMaterial_cd0ai")
+custom_minimum_size = Vector2(200, 250)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 200.0
+offset_bottom = 250.0
+script = ExtResource("1_1cqby")
+
+[node name="shadow" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_r0oll")
+layout_mode = 0
+offset_left = -94.0
+offset_top = -116.0
+offset_right = 111.0
+offset_bottom = 134.0
+color = Color(0.388235, 0.388235, 0.388235, 0.301961)
+script = ExtResource("4_txeqe")
+
+[node name="Area2D" type="Area2D" parent="."]
+z_index = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D/CollisionShape2D"]
+visible = false
+polygon = PackedVector2Array(199, 1, 200, 256, 0, 256, 0, 0)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+material = SubResource("ShaderMaterial_ae88b")
+layout_mode = 0
+offset_left = -100.0
+offset_top = -125.0
+offset_right = 100.0
+offset_bottom = 125.0
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(200, 250)
+render_target_update_mode = 4
+
+[node name="Panel" type="Panel" parent="SubViewportContainer/SubViewport"]
+visible = false
+show_behind_parent = true
+material = SubResource("ShaderMaterial_frwft")
+custom_minimum_size = Vector2(200, 25)
+offset_right = 200.0
+offset_bottom = 25.0
+
+[node name="front" type="Node2D" parent="SubViewportContainer/SubViewport/Panel"]
+
+[node name="backgourd" type="Sprite2D" parent="SubViewportContainer/SubViewport/Panel/front"]
+material = SubResource("ShaderMaterial_tm1c7")
+texture = ExtResource("3_2g06r")
+centered = false
+
+[node name="art" type="Sprite2D" parent="SubViewportContainer/SubViewport/Panel/front"]
+position = Vector2(100, 125)
+texture = ExtResource("4_p03s5")
+centered = false
+region_rect = Rect2(0, 0, 474, 620)
+
+[node name="Name" type="Label" parent="SubViewportContainer/SubViewport/Panel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = 210.0
+offset_bottom = 41.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.168627)
+theme_override_font_sizes/font_size = 10
+text = "Infernal dragon Gishmilgadon"
+horizontal_alignment = 1
+
+[node name="Cost" type="Label" parent="SubViewportContainer/SubViewport/Panel"]
+layout_mode = 0
+offset_left = 143.0
+offset_top = 201.0
+offset_right = 192.0
+offset_bottom = 231.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+
+[node name="Power" type="Label" parent="SubViewportContainer/SubViewport/Panel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 193.0
+offset_right = 63.0
+offset_bottom = 225.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+
+[node name="Dragged" type="TextureRect" parent="SubViewportContainer/SubViewport"]
+modulate = Color(1, 1, 1, 0)
+z_index = 1
+material = SubResource("ShaderMaterial_frppa")
+offset_right = 200.0
+offset_bottom = 250.0
+size_flags_stretch_ratio = 0.0
+texture = SubResource("GradientTexture1D_ocynb")
+
+[node name="Back" type="Node2D" parent="SubViewportContainer"]
+
+[node name="Sprite2D" type="Sprite2D" parent="SubViewportContainer/Back"]
+material = SubResource("ShaderMaterial_t4wfc")
+position = Vector2(100, 128)
+texture = ExtResource("5_tdvel")
+
+[node name="Playable" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_gig2a")
+layout_mode = 0
+offset_left = -100.0
+offset_top = -125.0
+offset_right = 100.0
+offset_bottom = 129.0
+mouse_filter = 1
+color = Color(1, 1, 0.607843, 1)
+
+[node name="Summoning_sickness" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_mwuqd")
+layout_mode = 0
+offset_left = -100.0
+offset_top = -128.0
+offset_right = 100.0
+offset_bottom = 126.0
+mouse_filter = 1
+color = Color(0.787599, 0.0141668, 0.365911, 1)
+
+[node name="ManaCostContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = -94.0
+offset_top = -101.0
+offset_right = 106.0
+offset_bottom = -71.0
+
+[node name="Flip_animator" type="Node" parent="."]
+script = ExtResource("12_leg65")
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]

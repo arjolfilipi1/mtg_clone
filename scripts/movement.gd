@@ -1,0 +1,133 @@
+extends Node2D
+@onready var card:Control = $".."
+var highlighted = false
+var mana_tween
+var highlightTween: Tween
+
+func on_click(event):
+	if event is InputEventMouseButton: 
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if card.player_controled and TurnManager.is_selecting_mana and  not card.controller.mana_selected and card.card_location == "hand":  # New global flag
+				move_to_mana_zone()
+		if card.player_controled and TurnManager.current_phase == "main1"  and card.card_location == "hand":
+			if event.pressed:
+				TurnManager.dragging = card
+				card.dragging = true
+				card.offset = get_global_mouse_position() - card.global_position
+				card.set_drag_visuals(card.dragging)
+				raise()  # Bring to front  # New global flag
+			else:
+				print("released card")
+				check_and_return_to_hand()
+	elif event is InputEventMouseMotion and card.dragging and card.card_location =="hand":
+		card.global_position = get_global_mouse_position() - card.offset
+		rotation = 0
+	pass # Replace with function body.
+func check_and_return_to_hand():
+	card.controller.board.reset_higlight()
+	TurnManager.reset_highlited()
+	card.dragging = false
+	position = Vector2(0,0)
+	TurnManager.dragging = null
+	card.set_drag_visuals(card.dragging)
+	card.check_drop_area()
+	card.controller.player_hand.reset()
+func animate_scale(target_scale: Vector2) -> void:
+	if highlightTween:
+		highlightTween.kill() # stop existing tweens
+	highlightTween = create_tween()
+	var track := highlightTween.tween_property(card, "scale", target_scale, 0.8)
+	if track != null:
+		track.set_trans(Tween.TRANS_ELASTIC)
+		track.set_ease(Tween.EASE_OUT)
+func play_card_to_board(area:Node,rot = 0):
+	TurnManager.dragging = null
+	TurnManager.reset_highlited()
+	card.controller.creatures.append(card)
+	card.controller.board.reset_higlight()
+	card.face_up = true
+	card.get_parent().remove_child(card)
+	print(card.controller.player_name)
+	area.get_parent().add_child(card)
+	#normal_scale = Vector2(0.5,0.5)
+	var tween := get_tree().create_tween()
+	tween.parallel().tween_property(card, "position", area.pos, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(card, "scale", card.normal_scale, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(card, "rotation_degrees", rot, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	card.card_location = "field"
+	#await tween.finished
+	area.card_list.append(card)
+	card.controller.pay_for_card(card)
+	card.controller.player_hand.reset()
+	TurnManager.priority = false if TurnManager.priority else true
+	card.summoned_on_turn = TurnManager.turn
+	pass
+
+func move_to_mana_zone():
+	highlighted = false
+	card.face_up = true
+	var mana_index = 0 
+	var mana_offset = Vector2.ZERO
+	card.controller.mana_selected = true
+	if card.player_controled:
+		TurnManager.player_mana_card_nr += 1
+		mana_index = TurnManager.player_mana_card_nr
+		#mana_offset = Vector2(30, 35)
+	else:
+		TurnManager.enemy_mana_card_nr += 1
+		mana_index = TurnManager.enemy_mana_card_nr
+		#mana_offset = Vector2(-50,-65)
+	mana_offset = Vector2.ZERO
+	
+	var start_pos = card.global_position
+	var target_pos = card.controller.player_mana_zone.global_position + Vector2(randf() * 10, 0) + mana_offset  # random offset so cards don't stack perfectly
+	card.card_location = "mana"
+	card.get_parent().remove_child(card)
+	card.controller.player_mana_zone.add_child(card)
+	#z_index = mana_index
+	card.z_index = mana_index
+		#normal_scale = Vector2(0.6,0.6)
+	card.global_position = start_pos
+	mana_tween = get_tree().create_tween()
+	
+	mana_tween.parallel().tween_property(card, "global_position", target_pos, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	if card.player_controled:
+		mana_tween.parallel().tween_property(card, "rotation_degrees", 0.0, 0.5).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	else:
+		mana_tween.parallel().tween_property(card, "rotation_degrees", 180, 0.3).set_delay(0.5)
+	
+	mana_tween.tween_callback(Callable(self, "_after_mana_move"))
+
+	
+func _after_mana_move():
+	lower()
+	#if highlightTween:
+		#highlightTween.kill()
+	if card.player_controled:
+		card.rotation = 0
+	else:
+		card.rotation_degrees = 180
+	card.scale = Vector2(0.6,0.6)
+	card.controller.player_hand.reset()
+	
+	#await get_tree().create_timer(0.3).timeout  # Small delay
+	TurnManager.finish_mana_selection()
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+func lower():
+	if card.z_index >= 1000:
+		card.z_index -= 1000
+func raise():
+	card.z_index += 1000
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(_delta: float) -> void:
+	match card.card_location:
+		"hand": 
+			card.normal_scale = Vector2(1.0,1.0)
+		"mana": card.normal_scale = Vector2(0.6,0.6)
+		"field": 
+			card.normal_scale = Vector2(.5,.5)
+			card.hover_scale = Vector2(.65,.65)
+	pass

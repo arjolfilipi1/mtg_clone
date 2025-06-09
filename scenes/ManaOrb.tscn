@@ -1,0 +1,26 @@
+[gd_scene load_steps=7 format=3 uid="uid://cgmdfik2ygglp"]
+
+[ext_resource type="Script" path="res://scripts/mana_orb.gd" id="1_ganmu"]
+[ext_resource type="Shader" path="res://assets/shaders/ManaOrb.gdshader" id="1_opnrq"]
+[ext_resource type="Texture2D" uid="uid://do62ud7pj5et0" path="res://assets/mana.png" id="1_t8wq8"]
+[ext_resource type="Shader" path="res://assets/shaders/storm.gdshader" id="1_ueae6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a6s85"]
+shader = ExtResource("1_ueae6")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tdw37"]
+shader = ExtResource("1_opnrq")
+shader_parameter/glow_color = Vector4(1, 1, 1, 1)
+shader_parameter/glow_strength = 1.5
+shader_parameter/pulse_speed = 2.0
+shader_parameter/pulse_amplitude = 0.5
+shader_parameter/noise_scale = 8.0
+shader_parameter/flicker_intensity = 0.3
+
+[node name="ManaOrb" type="Node2D"]
+material = SubResource("ShaderMaterial_a6s85")
+script = ExtResource("1_ganmu")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_tdw37")
+texture = ExtResource("1_t8wq8")

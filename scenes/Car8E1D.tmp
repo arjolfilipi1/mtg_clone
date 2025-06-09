@@ -1,0 +1,120 @@
+[gd_scene load_steps=12 format=3 uid="uid://da8lyh50nri6m"]
+
+[ext_resource type="Script" path="res://scripts/Card.gd" id="1_1cqby"]
+[ext_resource type="Shader" path="res://assets/shaders/playable.gdshader" id="1_6a0q4"]
+[ext_resource type="Script" path="res://scenes/cardGui.gd" id="2_l77yl"]
+[ext_resource type="Texture2D" uid="uid://vcmgexvswsjo" path="res://assets/paper-146904_1920.png" id="3_2g06r"]
+[ext_resource type="Texture2D" uid="uid://djyo5oao4seqe" path="res://assets/waterSprite.jpg" id="4_p03s5"]
+[ext_resource type="Texture2D" uid="uid://bbx7g0mf4n0q3" path="res://assets/Organizata..PNG" id="5_tdvel"]
+[ext_resource type="Shader" path="res://assets/shaders/dragged.gdshader" id="6_1fuhe"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_frppa"]
+shader = ExtResource("6_1fuhe")
+shader_parameter/is_dragging = false
+
+[sub_resource type="Gradient" id="Gradient_w538k"]
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ocynb"]
+gradient = SubResource("Gradient_w538k")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gig2a"]
+shader = ExtResource("1_6a0q4")
+shader_parameter/is_glowing = false
+shader_parameter/offset = null
+shader_parameter/speed = 0.101
+
+[node name="control" type="Control"]
+custom_minimum_size = Vector2(200, 250)
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_1cqby")
+
+[node name="Area2D" type="Area2D" parent="."]
+z_index = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D/CollisionShape2D"]
+visible = false
+polygon = PackedVector2Array(199, 1, 200, 256, 0, 256, 0, 0)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(200, 250)
+render_target_update_mode = 4
+
+[node name="Panel" type="Panel" parent="SubViewportContainer/SubViewport"]
+show_behind_parent = true
+custom_minimum_size = Vector2(200, 25)
+offset_right = 200.0
+offset_bottom = 25.0
+script = ExtResource("2_l77yl")
+
+[node name="front" type="Node2D" parent="SubViewportContainer/SubViewport/Panel"]
+
+[node name="backgourd" type="Sprite2D" parent="SubViewportContainer/SubViewport/Panel/front"]
+scale = Vector2(0.103125, 0.132292)
+texture = ExtResource("3_2g06r")
+centered = false
+
+[node name="art" type="Sprite2D" parent="SubViewportContainer/SubViewport/Panel/front"]
+position = Vector2(100, 110)
+scale = Vector2(1, 0.617391)
+texture = ExtResource("4_p03s5")
+region_rect = Rect2(0, 0, 474, 620)
+
+[node name="Name" type="Label" parent="SubViewportContainer/SubViewport/Panel"]
+layout_mode = 0
+offset_left = 10.0
+offset_right = 190.0
+offset_bottom = 36.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+
+[node name="Cost" type="Label" parent="SubViewportContainer/SubViewport/Panel"]
+layout_mode = 0
+offset_left = 143.0
+offset_top = 201.0
+offset_right = 192.0
+offset_bottom = 231.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+
+[node name="Power" type="Label" parent="SubViewportContainer/SubViewport/Panel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 193.0
+offset_right = 63.0
+offset_bottom = 225.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+
+[node name="Back" type="Node2D" parent="SubViewportContainer/SubViewport"]
+visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="SubViewportContainer/SubViewport/Back"]
+position = Vector2(100, 128)
+texture = ExtResource("5_tdvel")
+
+[node name="Dragged" type="TextureRect" parent="SubViewportContainer"]
+material = SubResource("ShaderMaterial_frppa")
+layout_mode = 2
+size_flags_stretch_ratio = 0.0
+texture = SubResource("GradientTexture1D_ocynb")
+
+[node name="OverlayEffect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_gig2a")
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 254.0
+mouse_filter = 1
+color = Color(1, 1, 0, 1)
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
