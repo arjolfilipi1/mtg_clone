@@ -1,8 +1,13 @@
 extends Node
 @onready var card:Control = $".."
-
+@onready var attack_button = $"../ButtonsContainer/attack"
+@onready var buttons = $"../ButtonsContainer"
+var test:bool = false
+var cd:float = 10.0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	#attack_button.visible = false
+	#buttons.visible = false
 	pass # Replace with function body.
 
 func set_background_color():
@@ -14,8 +19,7 @@ func set_background_color():
 	"green": Color(0.1, 0.8, 0.1),
 	"blue": Color(0.1, 0.6, 1),
 	"red": Color(1, 0.2, 0.2),
-	"earth": Color(0.6, 0.4, 0.2)
-}
+	"earth": Color(0.6, 0.4, 0.2)}
 	var card_sprite: Sprite2D = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
 
 # Duplicate the material (shallow copy still shares the shader, which is fine)
@@ -32,7 +36,7 @@ func set_background_color():
 	if  multi_color > 1:
 		bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[1]])
 		bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
-	if  multi_color == 3 :
+	if  multi_color > 2 :
 		bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[2]])
 		bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
 	pass
@@ -56,7 +60,7 @@ func add_mana_symbols():
 		
 		# Parse cost string and create symbols
 		var symbols = []
-		var total_symbols_width = 0.0
+		var _total_symbols_width = 0.0
 		var symbol_size = Vector2(24, 24)  # Adjust based on your symbol size
 		
 		# First pass: create all symbols and calculate total width
@@ -67,10 +71,10 @@ func add_mana_symbols():
 					symbol.texture = load("res://assets/symbol/%s.png" % i)
 					symbol.scale = Vector2(0.75, 0.75)  # Adjust scale if needed
 					symbols.append(symbol)
-					total_symbols_width += symbol_size.x
+					_total_symbols_width += symbol_size.x
 		
 		# Calculate starting position for centering
-		var container_width = card.m_container.size.x
+		var _container_width = card.m_container.size.x
 		#var start_x = (container_width - total_symbols_width) / 2
 		var start_x = 15
 		# Second pass: position and add symbols
@@ -102,4 +106,19 @@ func scale_sprite_preserving_center(sprite: Sprite2D, frame_size: Vector2 = Vect
 	#sprite.offset = -tex_size / 2  # Center the texture visually
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
+
+	if card.movement.highlighted:
+		buttons.visible = true
+		buttons.mouse_filter = Control.MOUSE_FILTER_PASS
+		cd = 1
+		if card.can_attack():
+			attack_button.visible = true
+			test = true
+		else:
+			attack_button.visible = false
+	else:
+		cd -= _delta
+		if cd <= 0:
+			buttons.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			buttons.visible = false
 	pass

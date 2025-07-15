@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=32 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/playable.gdshader" id="1_6a0q4"]
@@ -18,6 +18,7 @@
 [ext_resource type="Script" path="res://scripts/movement.gd" id="16_fj7vn"]
 [ext_resource type="Script" path="res://scripts/vizual.gd" id="17_rvavj"]
 [ext_resource type="Texture2D" uid="uid://bmsrnk2ic51i2" path="res://assets/attackb.png" id="18_3t4xt"]
+[ext_resource type="Script" path="res://scripts/attack_button.gd" id="19_0p84n"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cd0ai"]
 shader = ExtResource("6_r5pbg")
@@ -375,28 +376,41 @@ script = ExtResource("17_rvavj")
 
 [node name="ButtonsContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_top = -48.0
-offset_right = 500.0
-offset_bottom = 52.0
+offset_top = -47.0
+offset_right = 501.0
+offset_bottom = 70.0
 scale = Vector2(0.4, 0.4)
+mouse_filter = 2
 
-[node name="Button" type="TextureButton" parent="ButtonsContainer"]
+[node name="attack" type="TextureButton" parent="ButtonsContainer"]
+z_index = 2
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture_normal = ExtResource("18_3t4xt")
+script = ExtResource("19_0p84n")
 
-[node name="ColorRect" type="ColorRect" parent="ButtonsContainer/Button"]
+[node name="ColorRect" type="ColorRect" parent="ButtonsContainer/attack"]
 z_index = -1
 material = SubResource("ShaderMaterial_23tgi")
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = -10.0
 offset_top = -10.0
-offset_right = 110.0
-offset_bottom = 110.0
+offset_right = 10.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.686275, 0.686275, 0.686275, 0.811765)
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="mouse_entered" from="ButtonsContainer/attack" to="ButtonsContainer/attack" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="ButtonsContainer/attack" to="ButtonsContainer/attack" method="_on_mouse_exited"]
+[connection signal="mouse_entered" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_mouse_exited"]
+[connection signal="visibility_changed" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_visibility_changed"]

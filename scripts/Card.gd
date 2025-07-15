@@ -13,7 +13,7 @@ var dragging = false
 var position_before_drag
 var rotation_before_drag
 var offset: Vector2 = Vector2.ZERO
-var can_attack := true
+
 var tapped := false
 var has_summoning_sickness := false
 var summoned_on_turn 
@@ -33,7 +33,10 @@ var card_name : String
 @onready var movement: Node =  $movement
 
 
-	
+func  can_attack() :
+	if card_location == "field" and has_summoning_sickness == false:
+		return true
+	return false
 
 
 
@@ -59,8 +62,11 @@ func setup(data,players_card,_controller):
 	# Update visuals (mana cost, power, etc.)
 
 
-
-
+func hilight_on():
+	self._on_mouse_entered()
+	
+func hilight_off():
+	self._on_mouse_exited()
 
 func _ready():
 	await get_tree().process_frame
@@ -87,11 +93,11 @@ func _on_mouse_entered():
 
 func _on_mouse_exited():
 	movement.highlighted = false
-	if highlightTween and highlightTween.is_running():
-		highlightTween.kill()
+	
 	self.z_index = card_index
-	highlightTween = create_tween()
-	highlightTween.tween_property(self, "scale", normal_scale, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	movement.animate_scale(normal_scale)
+	#highlightTween = create_tween()
+	#highlightTween.tween_property(self, "scale", normal_scale, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 func get_power():
 	return card_data.get("power", 0)
