@@ -10,8 +10,7 @@ var player_mana_count = {
 	"green": 0,
 	"earth": 0,
 	"white": 0,
-	"black": 0
-}
+	"black": 0}
 var enemy_mana_count = {
 	"generic": 0,
 	"red": 1,
@@ -19,8 +18,7 @@ var enemy_mana_count = {
 	"green": 0,
 	"earth": 0,
 	"white": 0,
-	"black": 0
-}
+	"black": 0}
 var is_selecting_mana = false
 var dragging: Node
 var current_phase = null

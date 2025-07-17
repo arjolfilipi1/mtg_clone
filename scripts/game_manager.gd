@@ -12,6 +12,7 @@ extends Node
 @onready var prio = $"../Priority"
 @onready var debug = $"../debug"
 @onready var turn = $"../turn"
+@onready var high = $"../high"
 var player1 : Player
 var player2 : Player
 var card_database = []
@@ -114,6 +115,7 @@ func _process(_delta: float) -> void:
 		$"../EndTurnButton".disabled = true
 	prio.text = current_player.player_name
 	turn.text = TurnManager.current_phase
+	high.text = TurnManager.highlighted.card_name+ str(TurnManager.highlighted.scale) if TurnManager.highlighted else "No focus"
 
 func _on_end_turn_button_pressed() -> void:
 	TurnManager.end_turn()

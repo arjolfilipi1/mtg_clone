@@ -1,32 +1,29 @@
 extends TextureButton
 @onready var card:Control = $"../.."
+@onready var container = $".."
 @onready var image:ColorRect = $ColorRect
 func _ready():
-	
-
-	
-	# Initialize input state
+	var unique_material := material.duplicate()
+	material = unique_material
 	_on_visibility_changed()
 
 func _on_visibility_changed():
 	# Only process input when visible
-	mouse_filter = MOUSE_FILTER_IGNORE if not visible else MOUSE_FILTER_STOP
+	self.get_parent().mouse_filter = MOUSE_FILTER_IGNORE if not visible else MOUSE_FILTER_PASS
 	
-	# Reset hover state when visibility changes
-	if not visible and _is_hovered():
-		_on_mouse_exited()
 
 func _is_hovered() -> bool:
 	return get_global_rect().has_point(get_global_mouse_position())
 
 func _on_mouse_entered():
-	print(self.name," in")
+	TurnManager.highlighted = card
 	if visible:
-		print(self.name," on")
-		card.hilight_on()
+		material.set_shader_parameter("hover_ratio", 0.3)
+		#card.hilight_on()
 
 func _on_mouse_exited():
-	print(self.name," off")
+	
 	if visible:
+		material.set_shader_parameter("hover_ratio", 0.0)
 		pass
 		#card.hilight_off()

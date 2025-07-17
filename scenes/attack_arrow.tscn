@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://7hswejhpkxu4"]
+
+[ext_resource type="Script" path="res://scripts/attack_arrow.gd" id="1_06uxr"]
+
+[sub_resource type="Curve2D" id="Curve2D_s75vw"]
+
+[node name="AttackArrowPath" type="Path2D"]
+curve = SubResource("Curve2D_s75vw")
+script = ExtResource("1_06uxr")
+
+[node name="ArrowHead" type="PathFollow2D" parent="."]
+
+[node name="ArrowHeadSprite" type="Sprite2D" parent="ArrowHead"]
+
+[node name="ArrowTrail" type="Line2D" parent="."]

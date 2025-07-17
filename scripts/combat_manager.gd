@@ -6,8 +6,12 @@ var attackers: Array = []
 var defender: Player
 var attacker_player: Player
 
+var attack_arrow := preload("res://scenes/attack_arrow.tscn").instantiate()
 #signal attack_declared(attacker, defender: Player)
-
+func _ready():
+	add_child(attack_arrow)
+	#attack_arrow.hide()
+	
 func start_combat_phase(attacking_player: Player, defending_player: Player):
 	attacker_player = attacking_player
 	defender = defending_player

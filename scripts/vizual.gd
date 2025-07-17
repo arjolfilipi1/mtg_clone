@@ -2,12 +2,9 @@ extends Node
 @onready var card:Control = $".."
 @onready var attack_button = $"../ButtonsContainer/attack"
 @onready var buttons = $"../ButtonsContainer"
-var test:bool = false
-var cd:float = 10.0
+var cd:float = 0.0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	#attack_button.visible = false
-	#buttons.visible = false
 	pass # Replace with function body.
 
 func set_background_color():
@@ -109,16 +106,16 @@ func _process(_delta: float) -> void:
 
 	if card.movement.highlighted:
 		buttons.visible = true
-		buttons.mouse_filter = Control.MOUSE_FILTER_PASS
+		#buttons.mouse_filter = Control.MOUSE_FILTER_PASS
 		cd = 1
 		if card.can_attack():
 			attack_button.visible = true
-			test = true
 		else:
 			attack_button.visible = false
 	else:
 		cd -= _delta
 		if cd <= 0:
-			buttons.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			buttons.visible = false
+			pass
+			#buttons.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			#buttons.visible = false
 	pass

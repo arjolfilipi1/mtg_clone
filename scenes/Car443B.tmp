@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=34 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/playable.gdshader" id="1_6a0q4"]
@@ -19,7 +19,6 @@
 [ext_resource type="Script" path="res://scripts/vizual.gd" id="17_rvavj"]
 [ext_resource type="Texture2D" uid="uid://bmsrnk2ic51i2" path="res://assets/attackb.png" id="18_3t4xt"]
 [ext_resource type="Shader" path="res://assets/shaders/button.gdshader" id="18_8tvem"]
-[ext_resource type="Script" path="res://scripts/buttons_container.gd" id="18_j83j1"]
 [ext_resource type="Script" path="res://scripts/attack_button.gd" id="19_0p84n"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cd0ai"]
@@ -80,17 +79,17 @@ shader_parameter/pulse_strength = 0.3
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_85fdt"]
 shader = ExtResource("18_8tvem")
-shader_parameter/base_color = Color(0.8, 1, 0.1, 1)
-shader_parameter/glow_color = Color(0.9, 0, 0.05, 1)
-shader_parameter/glow_intensity = 0.8
+shader_parameter/base_color = Color(0.8, 0.5, 0.2, 1)
+shader_parameter/glow_color = Color(0.9, 0.9, 0.2, 1)
+shader_parameter/glow_intensity = 1.0
 shader_parameter/hover_glow_boost = 1.5
-shader_parameter/pulse_speed = 3.0
-shader_parameter/pulse_amount = 0.1
-shader_parameter/hover_ratio = 0.494
+shader_parameter/pulse_speed = 1.0
+shader_parameter/pulse_amount = 0.2
+shader_parameter/hover_ratio = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_23tgi"]
 shader = ExtResource("6_r5pbg")
-shader_parameter/corner_scale = 0.505
+shader_parameter/corner_scale = 0.606
 
 [node name="control" type="Control" groups=["card"]]
 material = SubResource("ShaderMaterial_cd0ai")
@@ -381,7 +380,6 @@ color = Color(0.787599, 0.0141668, 0.365911, 1)
 script = ExtResource("12_leg65")
 
 [node name="movement" type="Node2D" parent="."]
-visible = false
 script = ExtResource("16_fj7vn")
 
 [node name="vizual" type="Node" parent="."]
@@ -389,12 +387,11 @@ script = ExtResource("17_rvavj")
 
 [node name="ButtonsContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_left = -4.0
-offset_top = -78.0
-offset_right = 497.0
-offset_bottom = 94.0
+offset_top = -47.0
+offset_right = 501.0
+offset_bottom = 70.0
 scale = Vector2(0.4, 0.4)
-script = ExtResource("18_j83j1")
+mouse_filter = 2
 
 [node name="attack" type="TextureButton" parent="ButtonsContainer"]
 z_index = 2
@@ -413,10 +410,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -40.0
-offset_top = -35.9999
-offset_right = 48.0
-offset_bottom = 52.0001
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.686275, 0.686275, 0.686275, 0.811765)

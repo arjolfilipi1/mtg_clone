@@ -85,7 +85,7 @@ func _ready():
 
 func _on_mouse_entered():
 	card_index = self.z_index
-	if face_up:
+	if face_up and card_location != "mana":
 		movement.highlighted = true
 		TurnManager.highlighted = self
 		self.z_index = card_index + 10
@@ -95,7 +95,7 @@ func _on_mouse_exited():
 	movement.highlighted = false
 	
 	self.z_index = card_index
-	movement.animate_scale(normal_scale)
+	#movement.animate_scale(normal_scale)
 	#highlightTween = create_tween()
 	#highlightTween.tween_property(self, "scale", normal_scale, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
@@ -180,18 +180,21 @@ func can_be_payed() -> bool:
 	else:
 		return false
 func _process(_delta: float) -> void:
+	if TurnManager.highlighted != self:
+		movement.animate_scale(normal_scale)
 	if $Summoning_sickness.material is ShaderMaterial:
 			$Summoning_sickness.material.set_shader_parameter("ss", summoned_on_turn == TurnManager.turn)
 	if  summoned_on_turn == TurnManager.turn:
-		has_summoning_sickness = true
+		pass
+		#has_summoning_sickness = true
 	else:
 		has_summoning_sickness = false
 	
-	if (movement.highlighted and  card_location == "hand" ) or (movement.highlighted and  card_location == "field") :
-		self.z_index = card_index + 10
-	else:
-		self.z_index = card_index
-		movement.animate_scale(normal_scale)
+	#if (movement.highlighted and  card_location == "hand" ) or (movement.highlighted and  card_location == "field") :
+		#self.z_index = card_index + 10
+	#else:
+		#self.z_index = card_index
+		
 	if dragging:
 		global_position = get_global_mouse_position() - offset
 	if face_up:
