@@ -19,7 +19,7 @@ func _on_mouse_entered():
 	TurnManager.highlighted = card
 	if visible:
 		material.set_shader_parameter("hover_ratio", 0.3)
-		#card.hilight_on()
+		card.hilight_on()
 
 func _on_mouse_exited():
 	

@@ -389,10 +389,10 @@ script = ExtResource("17_rvavj")
 
 [node name="ButtonsContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_left = -4.0
-offset_top = -78.0
-offset_right = 497.0
-offset_bottom = 94.0
+offset_left = -6.0
+offset_top = -87.0
+offset_right = 500.0
+offset_bottom = 150.0
 scale = Vector2(0.4, 0.4)
 script = ExtResource("18_j83j1")
 
@@ -413,10 +413,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -40.0
-offset_top = -35.9999
-offset_right = 48.0
-offset_bottom = 52.0001
+offset_left = -42.0
+offset_top = -38.0
+offset_right = 43.0
+offset_bottom = 50.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.686275, 0.686275, 0.686275, 0.811765)
@@ -424,6 +424,7 @@ color = Color(0.686275, 0.686275, 0.686275, 0.811765)
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="mouse_entered" from="ButtonsContainer" to="ButtonsContainer" method="_on_mouse_entered"]
 [connection signal="mouse_entered" from="ButtonsContainer/attack" to="ButtonsContainer/attack" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="ButtonsContainer/attack" to="ButtonsContainer/attack" method="_on_mouse_exited"]
 [connection signal="mouse_entered" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_mouse_entered"]
