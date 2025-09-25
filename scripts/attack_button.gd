@@ -2,6 +2,8 @@ extends TextureButton
 @onready var card:Control = $"../.."
 @onready var container = $".."
 @onready var image:ColorRect = $ColorRect
+var highlight: float
+
 func _ready():
 	var unique_material := material.duplicate()
 	material = unique_material
@@ -16,9 +18,11 @@ func _is_hovered() -> bool:
 	return get_global_rect().has_point(get_global_mouse_position())
 
 func _on_mouse_entered():
-	TurnManager.highlighted = card
-	if visible:
+	if visible and card.controller.is_human:
+		TurnManager.highlighted = card
+		card.parts_highlighted = true
 		material.set_shader_parameter("hover_ratio", 0.3)
+		highlight = 0.3
 		card.hilight_on()
 
 func _on_mouse_exited():
@@ -27,3 +31,7 @@ func _on_mouse_exited():
 		material.set_shader_parameter("hover_ratio", 0.0)
 		pass
 		#card.hilight_off()
+func _process(_delta: float) -> void:
+	highlight = highlight - (_delta/10)
+	material.set_shader_parameter("hover_ratio", highlight)
+	pass

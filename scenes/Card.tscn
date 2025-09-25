@@ -80,17 +80,17 @@ shader_parameter/pulse_strength = 0.3
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_85fdt"]
 shader = ExtResource("18_8tvem")
-shader_parameter/base_color = Color(0.8, 1, 0.1, 1)
+shader_parameter/base_color = Color(0.431396, 0.439399, 0.415396, 1)
 shader_parameter/glow_color = Color(0.9, 0, 0.05, 1)
 shader_parameter/glow_intensity = 0.8
 shader_parameter/hover_glow_boost = 1.5
-shader_parameter/pulse_speed = 3.0
+shader_parameter/pulse_speed = 2.382
 shader_parameter/pulse_amount = 0.1
-shader_parameter/hover_ratio = 0.494
+shader_parameter/hover_ratio = 0.427
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_23tgi"]
 shader = ExtResource("6_r5pbg")
-shader_parameter/corner_scale = 0.505
+shader_parameter/corner_scale = 0.348
 
 [node name="control" type="Control" groups=["card"]]
 material = SubResource("ShaderMaterial_cd0ai")

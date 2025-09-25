@@ -25,6 +25,7 @@ var highlightTween: Tween
 var background: Sprite2D
 var controller : Player
 #signal clicked()
+var parts_highlighted:= false
 var is_card = true
 var mana_tween
 var card_name : String
@@ -92,7 +93,8 @@ func _on_mouse_entered():
 		movement.animate_scale(hover_scale)
 
 func _on_mouse_exited():
-	movement.highlighted = false
+	if not parts_highlighted:
+		movement.highlighted = false
 	
 	self.z_index = card_index
 	#movement.animate_scale(normal_scale)
