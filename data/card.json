@@ -3,7 +3,7 @@
 		"id":00001,
 		"name": "Fire Elemental",
 		"mana_cost": {
-	"generic": 0,
+	"generic": 1,
 	"red": 1,
 	"blue": 0,
 	"green": 0,
@@ -56,7 +56,7 @@
 		"power": 10,
 		"image": "Earthgolem.jpg",
 		"toughness": 50,
-		"Mana_creation": "['earth']",
+		"Mana_creation": "['earth','earth']",
 		"range":["1.0","2.0","2.1","2.-1"]
 	},
 	{
@@ -76,7 +76,7 @@
 		"power": 20,
 		"image": "windCrow.jpg",
 		"toughness": 20,
-		"Mana_creation": "['green']",
+		"Mana_creation": "['green','green']",
 		"range":["1.0","2.0","3.0","3.-1","3.1"]
 	},
 	{
@@ -96,7 +96,7 @@
 		"power": 30,
 		"image": "skeleton.jpg",
 		"toughness": 10,
-		"Mana_creation": "['black']",
+		"Mana_creation": "['black','green']",
 		"range":["1.0","1.1","2.0","1.-1"]
 	},
 	{
@@ -116,7 +116,7 @@
 		"power": 10,
 		"image": "catwizard.jpg",
 		"toughness": 30,
-		"Mana_creation": "['white']",
+		"Mana_creation": "['white','green']",
 		"range":["1.0","2.0","3.0","3.-1","3.1"]
 	},
 	{
@@ -136,7 +136,7 @@
 		"power": 0,
 		"image": "healingPotion.jpg",
 		"toughness": 0,
-		"Mana_creation": "['white']",
+		"Mana_creation": "['white','green']",
 		"range":null
 	},
 ]

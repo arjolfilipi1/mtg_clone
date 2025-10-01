@@ -689,6 +689,7 @@ texture = ExtResource("6_7l7re")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(961, 539)
+zoom = Vector2(0.8, 0.8)
 
 [node name="EnemyMana" type="Control" parent="."]
 layout_mode = 3
@@ -727,10 +728,11 @@ centered = false
 [node name="EnemyHand" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
-offset_left = 711.0
-offset_top = 20.0
-offset_right = 1206.0
-offset_bottom = 112.0
+offset_left = 712.0
+offset_top = -31.0
+offset_right = 712.0
+offset_bottom = -31.0
+scale = Vector2(0.8, 0.8)
 script = ExtResource("3_rtxx5")
 
 [node name="PlayerHand" type="Control" parent="."]

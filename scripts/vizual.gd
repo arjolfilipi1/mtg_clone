@@ -104,7 +104,7 @@ func scale_sprite_preserving_center(sprite: Sprite2D, frame_size: Vector2 = Vect
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 
-	if card.movement.highlighted:
+	if card.movement.highlighted and card.controller.is_human:
 		buttons.visible = true
 		#buttons.mouse_filter = Control.MOUSE_FILTER_PASS
 		cd = 1

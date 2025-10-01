@@ -32,6 +32,6 @@ func _on_mouse_exited():
 		pass
 		#card.hilight_off()
 func _process(_delta: float) -> void:
-	highlight = highlight - (_delta/10)
+	highlight = highlight - (_delta/50)
 	material.set_shader_parameter("hover_ratio", highlight)
 	pass
