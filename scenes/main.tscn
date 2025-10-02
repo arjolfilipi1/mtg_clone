@@ -434,7 +434,6 @@ scale = Vector2(1, 1.088)
 texture = ExtResource("4_jnk5p")
 
 [node name="OverlayEffect" type="ColorRect" parent="PlayerBoard/sprite"]
-visible = false
 material = SubResource("ShaderMaterial_o7myf")
 anchors_preset = -1
 anchor_left = 0.056
@@ -659,7 +658,6 @@ position = Vector2(360, 233)
 texture = ExtResource("7_wtrlh")
 
 [node name="OverlayEffect" type="ColorRect" parent="EnemyBoard/sprite"]
-visible = false
 material = SubResource("ShaderMaterial_o7myf")
 anchors_preset = -1
 anchor_left = 0.056
@@ -752,15 +750,6 @@ script = ExtResource("10_jl0nv")
 position = Vector2(396, 441)
 script = ExtResource("16_6vc4y")
 
-[node name="EndTurnButton" type="Button" parent="."]
-offset_left = 670.0
-offset_top = 490.0
-offset_right = 909.0
-offset_bottom = 538.0
-theme = ExtResource("18_iqc7k")
-disabled = true
-text = "End Turn"
-
 [node name="debug" type="Label" parent="."]
 offset_left = 22.0
 offset_top = 162.0
@@ -801,6 +790,31 @@ offset_bottom = 287.0
 text = "high
 "
 
+[node name="ButtonContainer" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(100, 20)
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 544.0
+offset_top = 484.0
+offset_right = 1373.0
+offset_bottom = 524.0
+grow_vertical = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="EndTurnButton" type="Button" parent="ButtonContainer"]
+layout_mode = 2
+theme = ExtResource("18_iqc7k")
+disabled = true
+text = "    End Turn    "
+
+[node name="Cancel attack" type="Button" parent="ButtonContainer"]
+layout_mode = 2
+theme = ExtResource("18_iqc7k")
+disabled = true
+text = "Cancel Attack"
+
 [connection signal="input_event" from="PlayerBoard/4-2" to="PlayerBoard/4-2" method="_on_input_event"]
 [connection signal="input_event" from="PlayerBoard/4-3" to="PlayerBoard/4-3" method="_on_input_event"]
 [connection signal="input_event" from="PlayerBoard/4-4" to="PlayerBoard/4-4" method="_on_input_event"]
@@ -830,4 +844,4 @@ text = "high
 [connection signal="input_event" from="EnemyBoard/3-3" to="EnemyBoard/3-3" method="_on_input_event"]
 [connection signal="input_event" from="EnemyBoard/3-4" to="EnemyBoard/3-4" method="_on_input_event"]
 [connection signal="input_event" from="EnemyBoard/3-5" to="EnemyBoard/3-5" method="_on_input_event"]
-[connection signal="pressed" from="EndTurnButton" to="GameManager" method="_on_end_turn_button_pressed"]
+[connection signal="pressed" from="ButtonContainer/EndTurnButton" to="GameManager" method="_on_end_turn_button_pressed"]

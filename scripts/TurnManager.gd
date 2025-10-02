@@ -24,7 +24,7 @@ var dragging: Node
 var current_phase = null
 var player_mana_card_nr = 0
 var enemy_mana_card_nr = 0
-var turn_phases =["draw","mana_select","mana_create","main1","end"]
+var turn_phases =["draw","mana_select","mana_create","main1","attack","end"]
 var priority = true
 var player_orbs = {
 	"generic": [],

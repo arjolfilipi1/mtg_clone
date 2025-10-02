@@ -35,3 +35,15 @@ func _process(_delta: float) -> void:
 	highlight = highlight - (_delta/50)
 	material.set_shader_parameter("hover_ratio", highlight)
 	pass
+func _attack_pressed(event: InputEvent) -> void:
+	if event is InputEventMouseButton: 
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if TurnManager.current_phase == "main1":
+				TurnManager.current_phase = TurnManager.turn_phases[4]
+
+
+func _on_color_rect_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton: 
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			print("rect")
+			_attack_pressed(event)

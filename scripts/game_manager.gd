@@ -90,7 +90,11 @@ func draw_card(card: Control, from_pos: Vector2, to_pos: Vector2, duration: floa
 func _process(_delta: float) -> void:
 	if TurnManager.priority:
 		current_player = player1
+		$"../PlayerBoard/sprite/OverlayEffect".visible = true
+		$"../EnemyBoard/sprite/OverlayEffect".visible = false
 	else:
+		$"../EnemyBoard/sprite/OverlayEffect".visible = true
+		$"../PlayerBoard/sprite/OverlayEffect".visible = false
 		current_player = player2 
 	if TurnManager.current_phase == "mana_create":
 		current_player.reset_mana()
@@ -110,9 +114,9 @@ func _process(_delta: float) -> void:
 		TurnManager.debug.text += current_player.player_name+" drawing \n"
 		current_player.did_draw = true
 	if TurnManager.current_phase == "main1" and TurnManager.priority:
-		$"../EndTurnButton".disabled = false
+		$"../ButtonContainer/EndTurnButton".disabled = false
 	else:
-		$"../EndTurnButton".disabled = true
+		$"../ButtonContainer/EndTurnButton".disabled = true
 	prio.text = current_player.player_name
 	turn.text = TurnManager.current_phase
 	high.text = TurnManager.highlighted.card_name+ str(TurnManager.highlighted.scale) if TurnManager.highlighted else "No focus"
