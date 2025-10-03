@@ -16,7 +16,7 @@ extends Node
 var player1 : Player
 var player2 : Player
 var card_database = []
-var last_card_drawn:Node
+var last_card_drawn:Card
 var is_player_turn = true
 var current_player : Player
 func _ready():
@@ -65,7 +65,7 @@ func initial_draw_card(_player,player = true):
 	_player.player_hand.add_child(card)
 	_player.player_hand.initial_draw(initialPosition)
 
-func draw_card(card: Control, from_pos: Vector2, to_pos: Vector2, duration: float = 0.5) -> void:
+func draw_card(card: Card, from_pos: Vector2, to_pos: Vector2, duration: float = 0.5) -> void:
 	
 	card.position = from_pos
 	card.rotation = deg_to_rad(-20)
@@ -104,7 +104,7 @@ func _process(_delta: float) -> void:
 	if TurnManager.current_phase == "mana_select":
 		TurnManager.is_selecting_mana = true
 	if TurnManager.current_phase == "draw" and current_player.did_draw == false:
-		var card = preload("res://scenes/Card.tscn").instantiate()
+		var card := preload("res://scenes/Card.tscn").instantiate()
 		var random_card = card_database[randi() % card_database.size()]
 		card.card_location = "hand"
 		card.controller = current_player
@@ -117,10 +117,20 @@ func _process(_delta: float) -> void:
 		$"../ButtonContainer/EndTurnButton".disabled = false
 	else:
 		$"../ButtonContainer/EndTurnButton".disabled = true
+	if TurnManager.current_phase == "attack" and TurnManager.priority:
+		$"../ButtonContainer/Cancel attack".disabled = false
+	else:
+		$"../ButtonContainer/Cancel attack".disabled = true
 	prio.text = current_player.player_name
 	turn.text = TurnManager.current_phase
 	high.text = TurnManager.highlighted.card_name+ str(TurnManager.highlighted.scale) if TurnManager.highlighted else "No focus"
-
+func _on_cancel_attack_pressed() -> void:
+	TurnManager.targeting.movement.targeting_arrow.is_targeting = false
+	TurnManager.targeting.movement.targeting_arrow.complete_targeting()
+	TurnManager.targeting.board_pos.reset_higlight()
+	TurnManager.targeting = null
+	TurnManager.current_phase = "main1"
+	pass # Replace with function body.
 func _on_end_turn_button_pressed() -> void:
 	TurnManager.end_turn()
 	pass # Replace with function body.

@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=37 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/playable.gdshader" id="1_6a0q4"]
@@ -21,6 +21,7 @@
 [ext_resource type="Shader" path="res://assets/shaders/button.gdshader" id="18_8tvem"]
 [ext_resource type="Script" path="res://scripts/buttons_container.gd" id="18_j83j1"]
 [ext_resource type="Script" path="res://scripts/attack_button.gd" id="19_0p84n"]
+[ext_resource type="Shader" path="res://assets/shaders/target.gdshader" id="22_m58xb"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cd0ai"]
 shader = ExtResource("6_r5pbg")
@@ -91,6 +92,19 @@ shader_parameter/hover_ratio = 0.427
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_23tgi"]
 shader = ExtResource("6_r5pbg")
 shader_parameter/corner_scale = 0.348
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_arkvt"]
+shader = ExtResource("22_m58xb")
+shader_parameter/Line_Smoothness = 0.087
+shader_parameter/Line_Width = 0.171
+shader_parameter/Brightness = 10.0
+shader_parameter/Rotation_deg = 45.0
+shader_parameter/Distortion = 2.0
+shader_parameter/Speed = 0.7
+shader_parameter/Position = 0.0
+shader_parameter/Position_Min = 0.25
+shader_parameter/Position_Max = 0.5
+shader_parameter/Alpha = 1.0
 
 [node name="control" type="Control" groups=["card"]]
 material = SubResource("ShaderMaterial_cd0ai")
@@ -171,6 +185,7 @@ position = Vector2(100, 127)
 texture = ExtResource("3_2g06r")
 
 [node name="art" type="Sprite2D" parent="SubViewportContainer/SubViewport/Panel/front"]
+visible = false
 position = Vector2(100, 127)
 texture = ExtResource("9_xnj1b")
 region_rect = Rect2(0, 0, 474, 620)
@@ -422,6 +437,15 @@ offset_bottom = 50.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.686275, 0.686275, 0.686275, 0.811765)
+
+[node name="target" type="ColorRect" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_arkvt")
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 255.0
+mouse_filter = 2
+color = Color(1, 0.921569, 0, 0.341176)
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]

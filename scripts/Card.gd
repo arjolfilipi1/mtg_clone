@@ -1,4 +1,5 @@
 extends Control
+class_name Card
 var card_index = 10
 var mana_cost 
 var Mana_creation
@@ -13,7 +14,7 @@ var dragging = false
 var position_before_drag
 var rotation_before_drag
 var offset: Vector2 = Vector2.ZERO
-
+var board_pos:Area2D = null
 var tapped := false
 var has_summoning_sickness := false
 var summoned_on_turn 
@@ -85,6 +86,12 @@ func _ready():
 			sprite.material = unique_material
 
 func _on_mouse_entered():
+	if TurnManager.targeting:
+		print("enter")
+		if movement.targeting_arrow:
+			if not self in movement.targeting_arrow._potential_targets:
+				movement.targeting_arrow._potential_targets.append(self.card_name)
+				print("tar",movement.targeting_arrow._potential_targets)
 	card_index = self.z_index
 	if face_up and card_location != "mana":
 		movement.highlighted = true
@@ -132,8 +139,9 @@ func check_drop_area():
 	for hit in result:
 		var collider = hit.collider
 		if collider is Area2D and collider.is_in_group("player_slots"):
+			board_pos =  collider
 			print("Dropped on Area2D:", collider.name)
-			movement.play_card_to_board(collider)
+			movement.play_card_to_board(collider,collider.scew_dict[collider.name])
 			return
 	dragging = false
 	controller.player_hand.reset()

@@ -486,42 +486,42 @@ position = Vector2(142, 102)
 texture = ExtResource("24_jcqp2")
 
 [node name="1-3" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
-position = Vector2(60, 10)
+position = Vector2(363, 105)
 script = ExtResource("7_kgt4o")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/1-3"]
-position = Vector2(241, 1)
+position = Vector2(-61, -95)
 polygon = PackedVector2Array(-17, 45, -17, 160, 144, 158, 143, 45)
 
 [node name="overlay" type="Sprite2D" parent="EnemyBoard/1-3"]
 material = SubResource("ShaderMaterial_c4w6m")
-position = Vector2(304, 101)
+position = Vector2(0, 9)
 texture = ExtResource("25_f3t5r")
 
 [node name="1-4" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
-position = Vector2(60, 10)
+position = Vector2(522, 105)
 script = ExtResource("7_kgt4o")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/1-4"]
-position = Vector2(361, 1)
+position = Vector2(-102, -95)
 polygon = PackedVector2Array(33, 44, 33, 159, 172, 159, 166, 43)
 
 [node name="overlay" type="Sprite2D" parent="EnemyBoard/1-4"]
 material = SubResource("ShaderMaterial_c4w6m")
-position = Vector2(463, 102)
+position = Vector2(0, 8)
 texture = ExtResource("26_3km4t")
 
 [node name="1-5" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
-position = Vector2(60, 10)
+position = Vector2(674, 105)
 script = ExtResource("7_kgt4o")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/1-5"]
-position = Vector2(481, 1)
+position = Vector2(-134, -95)
 polygon = PackedVector2Array(58, 45, 61, 158, 211, 158, 201, 44)
 
 [node name="overlay" type="Sprite2D" parent="EnemyBoard/1-5"]
 material = SubResource("ShaderMaterial_c4w6m")
-position = Vector2(615, 101)
+position = Vector2(0, 7)
 texture = ExtResource("27_7ct2v")
 
 [node name="2-1" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
@@ -845,3 +845,4 @@ text = "Cancel Attack"
 [connection signal="input_event" from="EnemyBoard/3-4" to="EnemyBoard/3-4" method="_on_input_event"]
 [connection signal="input_event" from="EnemyBoard/3-5" to="EnemyBoard/3-5" method="_on_input_event"]
 [connection signal="pressed" from="ButtonContainer/EndTurnButton" to="GameManager" method="_on_end_turn_button_pressed"]
+[connection signal="pressed" from="ButtonContainer/Cancel attack" to="GameManager" method="_on_cancel_attack_pressed"]

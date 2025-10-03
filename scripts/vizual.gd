@@ -1,7 +1,9 @@
 extends Node
-@onready var card:Control = $".."
+@onready var card:Card = $".."
 @onready var attack_button = $"../ButtonsContainer/attack"
 @onready var buttons = $"../ButtonsContainer"
+
+
 var cd:float = 0.0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

@@ -15,23 +15,23 @@ void fragment() {
     // Get texture color
 	if (hover_ratio > 0.0){
     vec4 tex_color = texture(TEXTURE, UV);
-    
+
     // Calculate glow factor with pulse animation
     float time_pulse = sin(TIME * pulse_speed) * pulse_amount;
     float glow_factor = glow_intensity * (1.0 + time_pulse)-0.2;
-    
+
     // Boost glow when hovered
     glow_factor += hover_ratio * hover_glow_boost;
-    
+
     // Create glow effect
     vec4 glow = glow_color * glow_factor * tex_color.a;
-    
+
     // Mix base color with glow
     vec4 final_color = mix(base_color * tex_color, glow, glow_factor);
-    
+
     // Ensure we don't exceed reasonable brightness
     final_color = clamp(final_color, vec4(0.0), vec4(1.0));
-    
+
     COLOR = final_color;
 }
 }

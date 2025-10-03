@@ -128,7 +128,8 @@ func enemy_play_card():
 						area = all_area
 						break
 			if area:
-				card.movement.play_card_to_board(area,180)
+				var rot = area.scew_dict[area.name]
+				card.movement.play_card_to_board(area,180 - rot )
 				print("Enemy is playing card " + card.card_name +" to field slot " + area.name)
 			else:
 				print("Enemy passes. No playable cards.")

@@ -1,24 +1,36 @@
 extends Node2D
-@onready var card:Control = $".."
+@onready var card:Card = $".."
 var highlighted = false
 var mana_tween
 var highlightTween: Tween
-
+var targeting_arrow
+const _TARGETING_SCENE_FILE = "res://scenes/TargetingArrow.tscn"
+const _TARGETING_SCENE = preload(_TARGETING_SCENE_FILE)
+func attack_target():
+	if card.is_ancestor_of(targeting_arrow):
+		pass
+	else:
+		card.add_child(targeting_arrow)
+	targeting_arrow.initiate_targeting()
+	card.board_pos.color_range(false)
 func on_click(event):
 	if event is InputEventMouseButton: 
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if card.player_controled and TurnManager.is_selecting_mana and  not card.controller.mana_selected and card.card_location == "hand":  # New global flag
 				move_to_mana_zone()
-		if card.player_controled and TurnManager.current_phase == "main1"  and card.card_location == "hand":
-			if event.pressed:
-				TurnManager.dragging = card
-				card.dragging = true
-				card.offset = get_global_mouse_position() - card.global_position
-				card.set_drag_visuals(card.dragging)
-				raise()  # Bring to front  # New global flag
-			else:
-				print("released card")
-				check_and_return_to_hand()
+			if card.player_controled and TurnManager.current_phase == "main1"  and card.card_location == "hand":
+				if event.pressed:
+					TurnManager.dragging = card
+					card.dragging = true
+					card.offset = get_global_mouse_position() - card.global_position
+					card.set_drag_visuals(card.dragging)
+					raise()  # Bring to front  # New global flag
+				else:
+					print("released card")
+					check_and_return_to_hand()
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			#attack_target()
+			pass
 	elif event is InputEventMouseMotion and card.dragging and card.card_location =="hand":
 		card.global_position = get_global_mouse_position() - card.offset
 		rotation = 0
@@ -47,7 +59,6 @@ func play_card_to_board(area:Node,rot = 0):
 	card.controller.board.reset_higlight()
 	card.face_up = true
 	card.get_parent().remove_child(card)
-	print(card.controller.player_name)
 	area.get_parent().add_child(card)
 	#normal_scale = Vector2(0.5,0.5)
 	var tween := get_tree().create_tween()
@@ -115,6 +126,8 @@ func _after_mana_move():
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	targeting_arrow = _TARGETING_SCENE.instantiate()
+	
 	pass # Replace with function body.
 func lower():
 	if card.z_index >= 1000:

@@ -1,5 +1,5 @@
 extends HBoxContainer
-@onready var card:Control = $".."
+@onready var card:Card = $".."
 func _ready() -> void:
 	visible = false
 

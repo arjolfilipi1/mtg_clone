@@ -28,29 +28,29 @@ void fragment() {
     // Get the original texture color
     vec4 tex_color = texture(TEXTURE, UV);
     vec4 final_color = tex_color;
-    
+
     // Early return if effects are disabled
     if (!Enable_Effects) {
         COLOR = vec4(0.0);
 
     }
-    
+
     // Only apply effects if the texture has some alpha (is visible)
     if (tex_color.a > 0.0) {
         // BORDER EFFECT
         if (Enable_Border) {
             vec2 pixel_size = 1.0 / TEXTURE_PIXEL_SIZE;
-            
+
             // Sample neighboring pixels
             float center = tex_color.a;
             float top = texture(TEXTURE, UV + vec2(0.0, -pixel_size.y)).a;
             float bottom = texture(TEXTURE, UV + vec2(0.0, pixel_size.y)).a;
             float left = texture(TEXTURE, UV + vec2(-pixel_size.x, 0.0)).a;
             float right = texture(TEXTURE, UV + vec2(pixel_size.x, 0.0)).a;
-            
+
             // Calculate edge gradient
             float edge = max(max(top, bottom), max(left, right)) - center;
-            
+
             if (Border_Fade_Inwards) {
                 // Inward fading border
                 float border_mask = smoothstep(0.0, Border_Width + Border_Feather, edge);
@@ -98,7 +98,7 @@ void fragment() {
 
         final_color.rgb += remapped_line * vec3(1.0) * Brightness;
     }
-    
+
     // Apply alpha uniform
     final_color.a *= Alpha;
 	if (Enable_Effects) {

@@ -1,5 +1,5 @@
 extends TextureButton
-@onready var card:Control = $"../.."
+@onready var card:Card = $"../.."
 @onready var container = $".."
 @onready var image:ColorRect = $ColorRect
 var highlight: float
@@ -38,12 +38,11 @@ func _process(_delta: float) -> void:
 func _attack_pressed(event: InputEvent) -> void:
 	if event is InputEventMouseButton: 
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			if TurnManager.current_phase == "main1":
-				TurnManager.current_phase = TurnManager.turn_phases[4]
-
+			if TurnManager.current_phase == "main1" and card.can_attack():
+				TurnManager.current_phase = "attack"
+				card.movement.attack_target()
 
 func _on_color_rect_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton: 
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			print("rect")
 			_attack_pressed(event)

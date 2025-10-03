@@ -21,6 +21,7 @@ var enemy_mana_count = {
 	"black": 0}
 var is_selecting_mana = false
 var dragging: Node
+var targeting: Card
 var current_phase = null
 var player_mana_card_nr = 0
 var enemy_mana_card_nr = 0
@@ -42,7 +43,13 @@ var enemy_orbs = {"generic": [],
 	"white": [],
 	"black": []}
 var highlighted_slots : Array[Area2D] = []
-var highlighted: Node
+var highlighted: Card
+
+enum TargetKindEnum  {
+	ATTACK,
+	EFFECT
+}
+var Target_kind : TargetKindEnum
 func reset_highlited():
 	for node:Area2D in highlighted_slots:
 		node.og_color = Vector4(0,0,0,0)

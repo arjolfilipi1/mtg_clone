@@ -57,26 +57,33 @@ func accepts_card(_card: Control) -> bool:
 		return true
 	else:
 		return false
+		
+func color_range(dragging = true):
+	all_nodes = get_tree().get_nodes_in_group("slots")
+	var ranges :Array
+	if dragging:
+		ranges  = (TurnManager.dragging.card_data['range'])
+	elif TurnManager.targeting:
+		ranges = (TurnManager.targeting.card_data['range'])
+	var aplied : Array[String] = []
+	var altered: Array[Area2D] = []
+	for node in all_nodes:
+		var origin = name.split("-")
+		for r in ranges :
+			var parts = r.split(".")
+			if node.name == str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) ):
+				node.set_color(Vector4(0.8,0,0,0.75))
+				node.og_color = Vector4(0.8,0,0,0.75)
+				aplied.append(node.name)
+				altered.append(node)
+			elif node.name not in aplied:
+				node.og_color = (Vector4(0,0,0,0))
+	TurnManager.highlighted_slots = altered
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func highlight_range() -> void:
 	if TurnManager.dragging:
 			if TurnManager.dragging.can_be_payed():
-				all_nodes = get_tree().get_nodes_in_group("slots")
-				var ranges :Array = (TurnManager.dragging.card_data['range'])
-				var aplied : Array[String] = []
-				var altered: Array[Area2D] = []
-				for node in all_nodes:
-					var origin = name.split("-")
-					for r in ranges :
-						var parts = r.split(".")
-						if node.name == str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) ):
-							node.set_color(Vector4(0.8,0,0,0.75))
-							node.og_color = Vector4(0.8,0,0,0.75)
-							aplied.append(node.name)
-							altered.append(node)
-						elif node.name not in aplied:
-							node.og_color = (Vector4(0,0,0,0))
-				TurnManager.highlighted_slots = altered
+				color_range()
 func _process(_delta: float) -> void:
 	if og_color:
 		set_color(og_color)
