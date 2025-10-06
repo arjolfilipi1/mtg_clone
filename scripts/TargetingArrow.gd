@@ -74,7 +74,7 @@ func complete_targeting() -> void:
 #
 # It takes care to highlight potential cards which can serve as targets.
 func _on_ArrowHead_area_entered(area: Control) -> void:
-	print("enter "+ area.name)
+
 	if area.is_in_group("card") and not area in _potential_targets:
 		_potential_targets.append(area)
 		if 'highlight' in owner_object:
@@ -102,32 +102,49 @@ func _on_ArrowHead_area_exited(area: Area2D) -> void:
 
 # Draws a curved arrow, from the center of a card, to the mouse pointer
 func _draw_targeting_arrow() -> void:
+	# This variable calculates the card center's position on the whole board
 	var card_half_size
 	if "size" in owner_object:
 		card_half_size = owner_object.size/4
 	else: 
 		card_half_size = owner_object.card_size/2
 	var centerpos = global_position + card_half_size * scale
+	# We want the line to be drawn anew every frame
 	clear_points()
-	var final_point = get_global_mouse_position() - (position + card_half_size)
+	# The final position is the mouse position,
+	# but we offset it by the position of the card center on the map
+	var final_point = get_global_mouse_position()\
+			- (position + card_half_size)
 	var curve = Curve2D.new()
 	
-	curve.add_point(to_local(centerpos),
-		Vector2(0,0),
-		centerpos.direction_to(get_viewport().size/2) * 75)
+	# NEW: Calculate a raised middle point
+	var start_point = to_local(centerpos)
+	var end_point = to_local(position + card_half_size + final_point)
+	var middle_point = (start_point + end_point) / 2
 	
-	var mid_point = centerpos + (get_global_mouse_position() - centerpos) * 0.5
-	var offset_dir = centerpos.direction_to(get_viewport().size/2).orthogonal()
-	var offset_mid_point = mid_point + offset_dir * 20
+	# Raise the middle point (adjust the 50.0 value to change the height)
+	var raise_height = 50.0
+	middle_point.y -= raise_height
 	
-	curve.add_point(to_local(offset_mid_point))
+	# Calculate direction vectors for smooth curves
+	var start_to_end_dir = (end_point - start_point).normalized()
+	var perpendicular = Vector2(-start_to_end_dir.y, start_to_end_dir.x)
 	
-	curve.add_point(to_local(position + card_half_size + final_point),
-		Vector2(0, 0), Vector2(0, 0))
+	# Control point offsets for smooth curve
+	var control_distance = start_point.distance_to(end_point) * 0.3
+	curve.add_point(start_point, Vector2(0,0), centerpos.direction_to(get_viewport().size/2) * 75)
+	curve.add_point(end_point, centerpos.direction_to(get_viewport().size/2) * 75, Vector2(0,0))
 	
+	# Finally we use the Curve2D object to get the points which will be drawn
+	# by our lined2D
 	set_points(curve.get_baked_points())
+	# We place the arrowhead to start from the last point in the line2D
 	$ArrowHead.position = get_point_position(get_point_count() - 1)
+	# We delete the last 3 Line2D points, because the arrowhead will
+	# be covering those areas
 	for _del in range(1,3):
 		remove_point(get_point_count() - 1)
+	# We setup the angle the arrowhead is pointing by finding the angle of
+	# the last point on the line towards the mouse position
 	$ArrowHead.rotation = get_point_position(get_point_count() - 1).direction_to(
-		to_local(position + card_half_size + final_point)).angle()
+			to_local(position + card_half_size + final_point)).angle()

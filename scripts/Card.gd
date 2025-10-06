@@ -34,13 +34,16 @@ var card_name : String
 @onready var m_container: HBoxContainer = $SubViewportContainer/SubViewport/ManaCostContainer
 @onready var movement: Node =  $movement
 
-
+#add other cecks later
 func  can_attack() :
 	if card_location == "field" and has_summoning_sickness == false:
 		return true
 	return false
-
-
+#add other cecks later
+func  can_be_attacked() :
+	if card_location == "field" :
+		return true
+	return false
 
 func setup(data,players_card,_controller):
 	visual = $vizual
@@ -87,11 +90,9 @@ func _ready():
 
 func _on_mouse_entered():
 	if TurnManager.targeting:
-		print("enter")
 		if movement.targeting_arrow:
-			if not self in movement.targeting_arrow._potential_targets:
+			if not self in movement.targeting_arrow._potential_targets and can_be_attacked():
 				movement.targeting_arrow._potential_targets.append(self.card_name)
-				print("tar",movement.targeting_arrow._potential_targets)
 	card_index = self.z_index
 	if face_up and card_location != "mana":
 		movement.highlighted = true

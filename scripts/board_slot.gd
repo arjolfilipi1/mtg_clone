@@ -61,10 +61,13 @@ func accepts_card(_card: Control) -> bool:
 func color_range(dragging = true):
 	all_nodes = get_tree().get_nodes_in_group("slots")
 	var ranges :Array
+	var coloring_type: String = ""
 	if dragging:
+		coloring_type = "to_play"
 		ranges  = (TurnManager.dragging.card_data['range'])
 	elif TurnManager.targeting:
-		ranges = (TurnManager.targeting.card_data['range'])
+		if TurnManager.targeting.card_location == 'field':
+			ranges = (TurnManager.targeting.card_data['range'])
 	var aplied : Array[String] = []
 	var altered: Array[Area2D] = []
 	for node in all_nodes:

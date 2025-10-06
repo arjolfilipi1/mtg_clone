@@ -9,10 +9,11 @@ extends Node
 @onready var player_mana_zone = $"../PlayerMana"
 @onready var enemy_mana_zone = $"../EnemyMana"
 @onready var enemy_ai = $"../EnemyAI"
-@onready var prio = $"../Priority"
+@onready var prio = $"../debug2/Priority"
 @onready var debug = $"../debug"
-@onready var turn = $"../turn"
-@onready var high = $"../high"
+@onready var turn = $"../debug2/turn"
+@onready var high = $"../debug2/high"
+@onready var confirm_overlay = $"../ConfirmOverlay"
 var player1 : Player
 var player2 : Player
 var card_database = []
@@ -23,6 +24,25 @@ func _ready():
 	spawn_players()
 	load_cards()
 	start_game()
+	# Connect overlay signals
+	confirm_overlay.confirmed.connect(_on_overlay_confirmed)
+	confirm_overlay.cancelled.connect(_on_overlay_cancelled)
+func request_confirmation(action_message: String, on_confirm_callback: Callable) -> void:
+	# Store the callback for later execution
+	confirm_overlay.set_meta("pending_callback", on_confirm_callback)
+	confirm_overlay.show_confirm(action_message)
+
+func _on_overlay_confirmed() -> void:
+	# Execute the pending callback if it exists
+	var callback = confirm_overlay.get_meta("pending_callback", null)
+	if callback != null:
+		callback.call()
+	confirm_overlay.set_meta("pending_callback", null)
+
+func _on_overlay_cancelled() -> void:
+	# Clear the pending callback
+	confirm_overlay.set_meta("pending_callback", null)
+	print("Action cancelled")
 func spawn_players():
 	player1 = Player.new("You",player_mana_zone,player_hand,player_board,player_deck)
 	player2 = Player.new("Enemy",enemy_mana_zone,enemy_hand,enemy_board,enemy_deck)
@@ -128,6 +148,7 @@ func _on_cancel_attack_pressed() -> void:
 	TurnManager.targeting.movement.targeting_arrow.is_targeting = false
 	TurnManager.targeting.movement.targeting_arrow.complete_targeting()
 	TurnManager.targeting.board_pos.reset_higlight()
+	TurnManager.reset_highlited()
 	TurnManager.targeting = null
 	TurnManager.current_phase = "main1"
 	pass # Replace with function body.

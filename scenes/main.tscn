@@ -1,4 +1,4 @@
-[gd_scene load_steps=59 format=3 uid="uid://ciikqwfm6mbci"]
+[gd_scene load_steps=64 format=3 uid="uid://ciikqwfm6mbci"]
 
 [ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_qqfnl"]
 [ext_resource type="Script" path="res://scripts/fan.gd" id="2_x817q"]
@@ -25,7 +25,6 @@
 [ext_resource type="Texture2D" uid="uid://dw6i74ris2e5p" path="res://assets/field/5-3.png" id="13_sd2je"]
 [ext_resource type="Texture2D" uid="uid://cdv6e0d1hlexg" path="res://assets/field/5-4.png" id="14_718f3"]
 [ext_resource type="Texture2D" uid="uid://dxipsbpk8jik1" path="res://assets/field/5-5.png" id="15_b5581"]
-[ext_resource type="Script" path="res://scripts/combat_manager.gd" id="16_6vc4y"]
 [ext_resource type="Texture2D" uid="uid://b5qci2irph06b" path="res://assets/field/6-1.png" id="16_g5jpl"]
 [ext_resource type="Texture2D" uid="uid://1w5hy7th33do" path="res://assets/field/6-2.png" id="17_l2xaa"]
 [ext_resource type="Theme" uid="uid://c5pcn6ih6roqj" path="res://assets/themes/end_turn.tres" id="18_iqc7k"]
@@ -47,6 +46,7 @@
 [ext_resource type="Texture2D" uid="uid://bmyd2vjrmn5fn" path="res://assets/field/3-3.png" id="35_t7bpt"]
 [ext_resource type="Texture2D" uid="uid://bmlkobjn4livq" path="res://assets/field/3-4.png" id="36_ay0ry"]
 [ext_resource type="Texture2D" uid="uid://5rynyv3f33c0" path="res://assets/field/3-5.png" id="37_uoigk"]
+[ext_resource type="Script" path="res://scripts/confirm_overlay.gd" id="47_oseo6"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2udy6"]
 
@@ -205,6 +205,20 @@ shader_parameter/radius = 0.5
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_wgdt0"]
 shader = ExtResource("8_i1e4f")
 shader_parameter/corner_scale = 0.3
+
+[sub_resource type="Theme" id="Theme_ycla5"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_62q5x"]
+keycode = 4194309
+
+[sub_resource type="Shortcut" id="Shortcut_23v8s"]
+events = [SubResource("InputEventKey_62q5x")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_jte54"]
+keycode = 4194305
+
+[sub_resource type="Shortcut" id="Shortcut_2m60o"]
+events = [SubResource("InputEventKey_jte54")]
 
 [node name="Main" type="Node2D" groups=["mana_orb"]]
 
@@ -746,10 +760,6 @@ script = ExtResource("2_x817q")
 [node name="TurnManager" type="Node" parent="."]
 script = ExtResource("10_jl0nv")
 
-[node name="CombatManager" type="Node2D" parent="."]
-position = Vector2(396, 441)
-script = ExtResource("16_6vc4y")
-
 [node name="debug" type="Label" parent="."]
 offset_left = 22.0
 offset_top = 162.0
@@ -757,38 +767,6 @@ offset_right = 219.0
 offset_bottom = 755.0
 text = "debug:"
 autowrap_mode = 2
-
-[node name="turn" type="Label" parent="."]
-offset_left = 23.0
-offset_top = 86.0
-offset_right = 220.0
-offset_bottom = 121.0
-text = "turn
-"
-
-[node name="selected" type="Label" parent="."]
-offset_left = 18.0
-offset_top = 131.0
-offset_right = 215.0
-offset_bottom = 166.0
-text = "selected
-"
-
-[node name="Priority" type="Label" parent="."]
-offset_left = 20.0
-offset_top = 41.0
-offset_right = 217.0
-offset_bottom = 76.0
-text = "Prioriy
-"
-
-[node name="high" type="Label" parent="."]
-offset_left = 406.0
-offset_top = 252.0
-offset_right = 489.0
-offset_bottom = 287.0
-text = "high
-"
 
 [node name="ButtonContainer" type="HBoxContainer" parent="."]
 custom_minimum_size = Vector2(100, 20)
@@ -814,6 +792,75 @@ layout_mode = 2
 theme = ExtResource("18_iqc7k")
 disabled = true
 text = "Cancel Attack"
+
+[node name="debug2" type="VBoxContainer" parent="."]
+offset_left = 79.0
+offset_top = 240.0
+offset_right = 144.0
+offset_bottom = 563.0
+theme_override_constants/separation = 12
+
+[node name="turn" type="Label" parent="debug2"]
+layout_mode = 2
+text = "turn
+"
+
+[node name="selected" type="Label" parent="debug2"]
+layout_mode = 2
+text = "selected
+"
+
+[node name="Priority" type="Label" parent="debug2"]
+layout_mode = 2
+text = "Prioriy
+"
+
+[node name="high" type="Label" parent="debug2"]
+layout_mode = 2
+text = "high
+"
+
+[node name="ConfirmOverlay" type="CanvasLayer" parent="."]
+script = ExtResource("47_oseo6")
+
+[node name="Panel" type="ColorRect" parent="ConfirmOverlay"]
+z_index = 1000
+z_as_relative = false
+offset_left = 769.0
+offset_top = 441.0
+offset_right = 1150.0
+offset_bottom = 556.0
+color = Color(0.423529, 0.443137, 0.439216, 0.431373)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ConfirmOverlay"]
+z_index = 1000
+z_as_relative = false
+offset_left = 769.0
+offset_top = 441.0
+offset_right = 1150.0
+offset_bottom = 556.0
+alignment = 1
+
+[node name="Message" type="Label" parent="ConfirmOverlay/VBoxContainer"]
+layout_mode = 2
+text = "Confirm?"
+horizontal_alignment = 1
+
+[node name="ButtonContainer" type="HBoxContainer" parent="ConfirmOverlay/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="ConfirmButton" type="Button" parent="ConfirmOverlay/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+theme = SubResource("Theme_ycla5")
+shortcut = SubResource("Shortcut_23v8s")
+text = "Yes"
+
+[node name="CancelButton" type="Button" parent="ConfirmOverlay/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+shortcut = SubResource("Shortcut_2m60o")
+text = "No"
 
 [connection signal="input_event" from="PlayerBoard/4-2" to="PlayerBoard/4-2" method="_on_input_event"]
 [connection signal="input_event" from="PlayerBoard/4-3" to="PlayerBoard/4-3" method="_on_input_event"]
