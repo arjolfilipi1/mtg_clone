@@ -105,9 +105,7 @@ func _on_mouse_exited():
 		movement.highlighted = false
 	
 	self.z_index = card_index
-	#movement.animate_scale(normal_scale)
-	#highlightTween = create_tween()
-	#highlightTween.tween_property(self, "scale", normal_scale, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	
 
 func get_power():
 	return card_data.get("power", 0)
@@ -200,14 +198,12 @@ func _process(_delta: float) -> void:
 		#has_summoning_sickness = true
 	else:
 		has_summoning_sickness = false
-	
 	#if (movement.highlighted and  card_location == "hand" ) or (movement.highlighted and  card_location == "field") :
 		#self.z_index = card_index + 10
 	#else:
 		#self.z_index = card_index
 		
-	if dragging:
-		global_position = get_global_mouse_position() - offset
+	
 	if face_up:
 		if $Flip_animator.current_state == $Flip_animator.CardState.BACK_VISIBLE:
 			$Flip_animator.flip_to_front()

@@ -1,9 +1,11 @@
 extends HBoxContainer
 @onready var card:Card = $".."
+@onready var attack:TextureButton = $attack
+var original_pos: Vector2
 func _ready() -> void:
 	visible = false
-
-
+	original_pos = position
+	
 func _on_mouse_entered() -> void:
 	if visible:
 		card.hilight_on()
@@ -13,3 +15,7 @@ func _on_mouse_entered() -> void:
 func _process(_delta: float) -> void:
 	if not TurnManager.highlighted == card:
 		visible = false
+	else:
+		scale =  card.hover_scale /card.scale
+		position.y = -100 * (card.hover_scale /card.scale).y
+		

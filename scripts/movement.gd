@@ -48,10 +48,12 @@ func animate_scale(target_scale: Vector2) -> void:
 	if highlightTween:
 		highlightTween.kill() # stop existing tweens
 	highlightTween = create_tween()
-	var track := highlightTween.tween_property(card, "scale", target_scale, 0.8)
-	if track != null:
-		track.set_trans(Tween.TRANS_ELASTIC)
-		track.set_ease(Tween.EASE_OUT)
+	var track := highlightTween.parallel().tween_property(card, "scale", target_scale, 0.8).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+
+	
+	# Calculate how much the card will expand and adjust position
+	
+
 func play_card_to_board(area:Node,rot = 0):
 	TurnManager.dragging = null
 	TurnManager.reset_highlited()
@@ -60,7 +62,6 @@ func play_card_to_board(area:Node,rot = 0):
 	card.face_up = true
 	card.get_parent().remove_child(card)
 	area.get_parent().add_child(card)
-	#normal_scale = Vector2(0.5,0.5)
 	var tween := get_tree().create_tween()
 	tween.parallel().tween_property(card, "position", area.pos, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tween.parallel().tween_property(card, "scale", card.normal_scale, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
@@ -95,9 +96,7 @@ func move_to_mana_zone():
 	card.card_location = "mana"
 	card.get_parent().remove_child(card)
 	card.controller.player_mana_zone.add_child(card)
-	#z_index = mana_index
 	card.z_index = mana_index
-		#normal_scale = Vector2(0.6,0.6)
 	card.global_position = start_pos
 	mana_tween = get_tree().create_tween()
 	
@@ -136,6 +135,8 @@ func raise():
 	card.z_index += 1000
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
+	if card.dragging:
+		card.global_position = card.get_global_mouse_position() - card.offset
 	match card.card_location:
 		"hand": 
 			card.normal_scale = Vector2(1.0,1.0)

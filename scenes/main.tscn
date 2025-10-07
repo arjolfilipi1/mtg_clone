@@ -220,7 +220,7 @@ keycode = 4194305
 [sub_resource type="Shortcut" id="Shortcut_2m60o"]
 events = [SubResource("InputEventKey_jte54")]
 
-[node name="Main" type="Node2D" groups=["mana_orb"]]
+[node name="Main" type="Node2D"]
 
 [node name="Deck" type="Node" parent="."]
 
@@ -761,10 +761,10 @@ script = ExtResource("2_x817q")
 script = ExtResource("10_jl0nv")
 
 [node name="debug" type="Label" parent="."]
-offset_left = 22.0
-offset_top = 162.0
-offset_right = 219.0
-offset_bottom = 755.0
+offset_left = 1627.0
+offset_top = 166.0
+offset_right = 1824.0
+offset_bottom = 759.0
 text = "debug:"
 autowrap_mode = 2
 
@@ -805,11 +805,6 @@ layout_mode = 2
 text = "turn
 "
 
-[node name="selected" type="Label" parent="debug2"]
-layout_mode = 2
-text = "selected
-"
-
 [node name="Priority" type="Label" parent="debug2"]
 layout_mode = 2
 text = "Prioriy
@@ -818,6 +813,16 @@ text = "Prioriy
 [node name="high" type="Label" parent="debug2"]
 layout_mode = 2
 text = "high
+"
+
+[node name="pos" type="Label" parent="debug2"]
+layout_mode = 2
+text = "pos
+"
+
+[node name="selected" type="Label" parent="debug2"]
+layout_mode = 2
+text = "selected
 "
 
 [node name="ConfirmOverlay" type="CanvasLayer" parent="."]

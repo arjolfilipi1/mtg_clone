@@ -14,6 +14,8 @@ extends Node
 @onready var turn = $"../debug2/turn"
 @onready var high = $"../debug2/high"
 @onready var confirm_overlay = $"../ConfirmOverlay"
+@onready var sp:Label = $"../debug2/pos"
+@onready var sl:Label = $"../debug2/selected"
 var player1 : Player
 var player2 : Player
 var card_database = []
@@ -108,6 +110,10 @@ func draw_card(card: Card, from_pos: Vector2, to_pos: Vector2, duration: float =
 	card.controller.player_hand.reset()
 	
 func _process(_delta: float) -> void:
+	#debug putton size
+	if TurnManager.highlighted:
+		sp.text = str(TurnManager.highlighted.visual.buttons.position)
+		sl.text = str(TurnManager.highlighted.visual.buttons.original_pos)
 	if TurnManager.priority:
 		current_player = player1
 		$"../PlayerBoard/sprite/OverlayEffect".visible = true
@@ -143,7 +149,7 @@ func _process(_delta: float) -> void:
 		$"../ButtonContainer/Cancel attack".disabled = true
 	prio.text = current_player.player_name
 	turn.text = TurnManager.current_phase
-	high.text = TurnManager.highlighted.card_name+ str(TurnManager.highlighted.scale) if TurnManager.highlighted else "No focus"
+	high.text = TurnManager.highlighted.card_name+ str(snappedf( TurnManager.highlighted.size.x,0.01)) if TurnManager.highlighted else "No focus"
 func _on_cancel_attack_pressed() -> void:
 	TurnManager.targeting.movement.targeting_arrow.is_targeting = false
 	TurnManager.targeting.movement.targeting_arrow.complete_targeting()
