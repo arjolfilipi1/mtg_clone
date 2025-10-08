@@ -74,13 +74,9 @@ func complete_targeting() -> void:
 #
 # It takes care to highlight potential cards which can serve as targets.
 func _on_ArrowHead_area_entered(area: Control) -> void:
-
+#add code later to remove not in range
 	if area.is_in_group("card") and not area in _potential_targets:
 		_potential_targets.append(area)
-		if 'highlight' in owner_object:
-			owner_object.highlight.highlight_potential_card(
-					CFConst.TARGET_HOVER_COLOUR, _potential_targets)
-		emit_signal("potential_target_found", area)
 
 
 # Triggers when a targetting arrow stops hovering over a card

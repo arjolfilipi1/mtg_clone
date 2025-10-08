@@ -6,32 +6,29 @@ var Mana_creation
 var card_data = {}
 var player_controled = false
 var card_location
-var unique_material
 var is_creature: bool
 var face_up: bool = false
 #dragging 
 var dragging = false
-var position_before_drag
+var position_before_drag: Vector2
 var rotation_before_drag
 var offset: Vector2 = Vector2.ZERO
 var board_pos:Area2D = null
 var tapped := false
 var has_summoning_sickness := false
-var summoned_on_turn 
+var summoned_on_turn:int 
 	
 var hover_scale = Vector2(1.2, 1.2)  # scale when hovered
 var normal_scale = Vector2(1.0, 1.0)
-var duration = 0.2  # seconds for the tween
+var duration:float = 0.2  # seconds for the tween
 var highlightTween: Tween
-var background: Sprite2D
 var controller : Player
 #signal clicked()
 var parts_highlighted:= false
 var is_card = true
-var mana_tween
+var mana_tween: Tween
 var card_name : String
 @onready var visual : Node = $vizual
-@onready var m_container: HBoxContainer = $SubViewportContainer/SubViewport/ManaCostContainer
 @onready var movement: Node =  $movement
 
 #add other cecks later
@@ -53,20 +50,16 @@ func setup(data,players_card,_controller):
 	controller = _controller
 	if controller.is_human:
 		face_up = true
-		$Summoning_sickness.show()
-	$SubViewportContainer/SubViewport/Panel/Name.text = card_data['name']
 	card_name = card_data['name']
-	$SubViewportContainer/SubViewport/Panel/Health.text = str(card_data['toughness'])
 	mana_cost = card_data['mana_cost']
 	visual.set_background_color()
 	is_creature = card_data['type'] == "Creature"
 	Mana_creation = card_data['Mana_creation']
 	var new_texture = load("res://assets/art/" + data['image'])
 	visual.set_card_art(new_texture)
-	$SubViewportContainer/SubViewport/Panel/Power.text = str(card_data['power']) 
 	# Update visuals (mana cost, power, etc.)
-
-
+	#visual.setup()
+	
 func hilight_on():
 	self._on_mouse_entered()
 	
@@ -80,13 +73,7 @@ func _ready():
 	#self.pivot_offset = self.size / 2
 	scale = normal_scale
 	#highlightTween = create_tween()
-	background = $SubViewportContainer/SubViewport/Panel/front/backgourd
-	var sprites = [$Playable,$SubViewportContainer,$Summoning_sickness,$Back/Sprite2D]
-	for sprite in sprites:
-		var mat = sprite.material
-		if mat and mat is ShaderMaterial:
-			unique_material = mat.duplicate()
-			sprite.material = unique_material
+	
 
 func _on_mouse_entered():
 	if TurnManager.targeting:
@@ -113,11 +100,7 @@ func get_power():
 func get_toughness():
 	return card_data.get("toughness", 0)
 
-func set_drag_visuals(is_dragging: bool):
-	$SubViewportContainer.material.set_shader_parameter("grayscale_amount",  1.0 if is_dragging else 0.0)
-	$SubViewportContainer.material.set_shader_parameter("alpha_override", 0.5 if is_dragging else 1.0)
-	if can_be_payed() and is_dragging:
-		controller.board.check_card(self)
+
 func _on_gui_input(event: InputEvent) -> void:
 	movement.on_click(event)
 
@@ -191,8 +174,7 @@ func can_be_payed() -> bool:
 func _process(_delta: float) -> void:
 	if TurnManager.highlighted != self:
 		movement.animate_scale(normal_scale)
-	if $Summoning_sickness.material is ShaderMaterial:
-			$Summoning_sickness.material.set_shader_parameter("ss", summoned_on_turn == TurnManager.turn)
+	
 	if  summoned_on_turn == TurnManager.turn:
 		pass
 		#has_summoning_sickness = true
@@ -203,16 +185,3 @@ func _process(_delta: float) -> void:
 	#else:
 		#self.z_index = card_index
 		
-	
-	if face_up:
-		if $Flip_animator.current_state == $Flip_animator.CardState.BACK_VISIBLE:
-			$Flip_animator.flip_to_front()
-			
-		pass
-	if player_controled  and TurnManager.current_phase == "main1":
-		if can_be_payed() and card_location=="hand":
-			if $Playable.material is ShaderMaterial:
-				$Playable.material.set_shader_parameter("is_glowing", true)
-		else:
-			if $Playable.material is ShaderMaterial:
-				$Playable.material.set_shader_parameter("is_glowing", false)

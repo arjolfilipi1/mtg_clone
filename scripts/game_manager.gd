@@ -10,7 +10,7 @@ extends Node
 @onready var enemy_mana_zone = $"../EnemyMana"
 @onready var enemy_ai = $"../EnemyAI"
 @onready var prio = $"../debug2/Priority"
-@onready var debug = $"../debug"
+@onready var debug = $"../ScrollContainer/debug"
 @onready var turn = $"../debug2/turn"
 @onready var high = $"../debug2/high"
 @onready var confirm_overlay = $"../ConfirmOverlay"
@@ -113,7 +113,7 @@ func _process(_delta: float) -> void:
 	#debug putton size
 	if TurnManager.highlighted:
 		sp.text = str(TurnManager.highlighted.visual.buttons.position)
-		sl.text = str(TurnManager.highlighted.visual.buttons.original_pos)
+		sl.text = "ai:" + str(TurnManager.highlighted.visual.buttons.attack.z_index) + " bi:" + str(TurnManager.highlighted.visual.buttons.z_index)
 	if TurnManager.priority:
 		current_player = player1
 		$"../PlayerBoard/sprite/OverlayEffect".visible = true

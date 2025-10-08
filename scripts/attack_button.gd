@@ -32,10 +32,11 @@ func _on_mouse_exited():
 		pass
 		#card.hilight_off()
 func _process(_delta: float) -> void:
-	highlight = highlight - (_delta/50)
+	highlight = highlight - (_delta/5)
 	material.set_shader_parameter("hover_ratio", highlight)
 	pass
 func _attack_pressed(event: InputEvent) -> void:
+	print("attack")
 	if event is InputEventMouseButton: 
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if TurnManager.current_phase == "main1" and card.can_attack():
@@ -43,6 +44,8 @@ func _attack_pressed(event: InputEvent) -> void:
 				card.movement.attack_target()
 
 func _on_color_rect_gui_input(event: InputEvent) -> void:
+	print("rect hover")
 	if event is InputEventMouseButton: 
 		if event.button_index == MOUSE_BUTTON_LEFT:
+			print("rect click")
 			_attack_pressed(event)

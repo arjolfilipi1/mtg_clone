@@ -2,11 +2,33 @@ extends Node
 @onready var card:Card = $".."
 @onready var attack_button = $"../ButtonsContainer/attack"
 @onready var buttons = $"../ButtonsContainer"
-
+@onready var target_overlay:ColorRect =$"../target"
+@onready var subvp:= $"../SubViewportContainer"
+@onready var Summoning_sickness:= $"../Summoning_sickness"
+@onready var Flip_animator:= $"../Flip_animator"
+@onready var Playable:= $"../Playable"
+@onready var name_panel:= $"../SubViewportContainer/SubViewport/Panel/Name"
+@onready var health_panel:= $"../SubViewportContainer/SubViewport/Panel/Health"
+@onready var power_panel:= $"../SubViewportContainer/SubViewport/Panel/Power"
+@onready var m_container = $"../SubViewportContainer/SubViewport/ManaCostContainer"
+var valid_target := false
 
 var cd:float = 0.0
+
+
+	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	name_panel.text = card.card_name
+	health_panel.text = str(card.card_data['toughness'])
+	power_panel.text = str(card.card_data['power'])
+	var unique_material:Material 
+	var sprites = [$"../Playable",$"../SubViewportContainer",$"../Summoning_sickness",$"../Back/Sprite2D"]
+	for sprite in sprites:
+		var mat = sprite.material
+		if mat and mat is ShaderMaterial:
+			unique_material = mat.duplicate()
+			sprite.material = unique_material
 	pass # Replace with function body.
 
 func set_background_color():
@@ -52,9 +74,8 @@ func set_card_art(texture: Texture2D):
 	$"../SubViewportContainer/SubViewport/Panel/front/art".texture = texture
 	scale_sprite_preserving_center($"../SubViewportContainer/SubViewport/Panel/front/art")
 func add_mana_symbols():
-	card.m_container = $"../SubViewportContainer/SubViewport/ManaCostContainer"
-	if card.m_container:
-		for child in card.m_container.get_children():
+	if m_container:
+		for child in m_container.get_children():
 			child.queue_free()
 		
 		# Parse cost string and create symbols
@@ -73,7 +94,7 @@ func add_mana_symbols():
 					_total_symbols_width += symbol_size.x
 		
 		# Calculate starting position for centering
-		var _container_width = card.m_container.size.x
+		var _container_width = m_container.size.x
 		#var start_x = (container_width - total_symbols_width) / 2
 		var start_x = 15
 		# Second pass: position and add symbols
@@ -82,12 +103,12 @@ func add_mana_symbols():
 			var symbol = symbols[0]
 			symbol.position.x = 3
 			symbol.position.y = 0  # Center vertically
-			card.m_container.add_child(symbol)
+			m_container.add_child(symbol)
 		else:
 			for symbol in symbols:
 				symbol.position.x = current_x-(16 * symbol.scale.x)
 				symbol.position.y = 0  # Center vertically
-				card.m_container.add_child(symbol)
+				m_container.add_child(symbol)
 				current_x += symbol_size.x
 func scale_sprite_preserving_center(sprite: Sprite2D, frame_size: Vector2 = Vector2(160, 140), fill: bool = false) -> void:
 	if sprite.texture == null:
@@ -103,14 +124,40 @@ func scale_sprite_preserving_center(sprite: Sprite2D, frame_size: Vector2 = Vect
 
 	sprite.scale = Vector2.ONE * scale_factor
 	#sprite.offset = -tex_size / 2  # Center the texture visually
+func set_drag_visuals(is_dragging: bool):
+	subvp.material.set_shader_parameter("grayscale_amount",  1.0 if is_dragging else 0.0)
+	subvp.material.set_shader_parameter("alpha_override", 0.5 if is_dragging else 1.0)
+	if card.can_be_payed() and is_dragging:
+		card.controller.board.check_card(card)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-
+	if Summoning_sickness.material is ShaderMaterial:
+			Summoning_sickness.material.set_shader_parameter("ss", card.summoned_on_turn == TurnManager.turn)
+	if card.face_up:
+		if Flip_animator.current_state == Flip_animator.CardState.BACK_VISIBLE:
+			Flip_animator.flip_to_front()
+			
+		pass
+	if card.player_controled  and TurnManager.current_phase == "main1":
+		if card.can_be_payed() and card.card_location=="hand":
+			if Playable.material is ShaderMaterial:
+				Playable.material.set_shader_parameter("is_glowing", true)
+		else:
+			if Playable.material is ShaderMaterial:
+				Playable.material.set_shader_parameter("is_glowing", false)
+	if valid_target:
+		if target_overlay.material is ShaderMaterial:
+			target_overlay.show()
+			target_overlay.material.set_shader_parameter('Enable_Effects', true)
+			target_overlay.material.set_shader_parameter('Border_Color', Vector4(1,1,0,1))
+	elif TurnManager.targeting == null:
+		target_overlay.hide()
+		target_overlay.material.set_shader_parameter('Enable_Effects', false)
 	if card.movement.highlighted and card.controller.is_human:
 		buttons.visible = true
 		#buttons.mouse_filter = Control.MOUSE_FILTER_PASS
 		cd = 1
-		if card.can_attack():
+		if card.can_attack() and TurnManager.current_phase == "main1":
 			attack_button.visible = true
 		else:
 			attack_button.visible = false

@@ -95,16 +95,23 @@ shader_parameter/corner_scale = 0.348
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_arkvt"]
 shader = ExtResource("22_m58xb")
-shader_parameter/Line_Smoothness = 0.087
-shader_parameter/Line_Width = 0.171
-shader_parameter/Brightness = 10.0
-shader_parameter/Rotation_deg = 45.0
-shader_parameter/Distortion = 2.0
+shader_parameter/Enable_Effects = true
+shader_parameter/Line_Smoothness = 0.045
+shader_parameter/Line_Width = 0.2
+shader_parameter/Brightness = 3.0
+shader_parameter/Rotation_deg = 30.0
+shader_parameter/Distortion = 1.8
 shader_parameter/Speed = 0.7
 shader_parameter/Position = 0.0
 shader_parameter/Position_Min = 0.25
 shader_parameter/Position_Max = 0.5
 shader_parameter/Alpha = 1.0
+shader_parameter/Border_Color = Vector4(1, 1, 0, 1)
+shader_parameter/Border_Width = 0.02
+shader_parameter/Border_Feather = 0.01
+shader_parameter/Border_Alpha = 0.42
+shader_parameter/Border_Fade_Inwards = true
+shader_parameter/Enable_Border = true
 
 [node name="control" type="Control" groups=["card"]]
 material = SubResource("ShaderMaterial_cd0ai")
@@ -408,6 +415,7 @@ script = ExtResource("16_fj7vn")
 script = ExtResource("17_rvavj")
 
 [node name="ButtonsContainer" type="HBoxContainer" parent="."]
+z_index = 10
 custom_minimum_size = Vector2(200, 90)
 layout_mode = 1
 anchors_preset = 7
@@ -458,12 +466,13 @@ layout_mode = 0
 offset_right = 200.0
 offset_bottom = 255.0
 mouse_filter = 2
-color = Color(1, 0.921569, 0, 0.341176)
+color = Color(1, 0.921569, 0, 1)
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
 [connection signal="mouse_entered" from="ButtonsContainer" to="ButtonsContainer" method="_on_mouse_entered"]
+[connection signal="gui_input" from="ButtonsContainer/attack" to="ButtonsContainer/attack" method="_attack_pressed"]
 [connection signal="mouse_entered" from="ButtonsContainer/attack" to="ButtonsContainer/attack" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="ButtonsContainer/attack" to="ButtonsContainer/attack" method="_on_mouse_exited"]
 [connection signal="gui_input" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_color_rect_gui_input"]

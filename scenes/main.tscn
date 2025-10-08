@@ -1,4 +1,4 @@
-[gd_scene load_steps=64 format=3 uid="uid://ciikqwfm6mbci"]
+[gd_scene load_steps=65 format=3 uid="uid://ciikqwfm6mbci"]
 
 [ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_qqfnl"]
 [ext_resource type="Script" path="res://scripts/fan.gd" id="2_x817q"]
@@ -207,12 +207,17 @@ shader = ExtResource("8_i1e4f")
 shader_parameter/corner_scale = 0.3
 
 [sub_resource type="Theme" id="Theme_ycla5"]
+Button/colors/font_color = Color(0.0784314, 0.87451, 0.152941, 1)
+Button/styles/disabled = null
 
 [sub_resource type="InputEventKey" id="InputEventKey_62q5x"]
 keycode = 4194309
 
 [sub_resource type="Shortcut" id="Shortcut_23v8s"]
 events = [SubResource("InputEventKey_62q5x")]
+
+[sub_resource type="Theme" id="Theme_y6kbh"]
+Button/colors/font_color = Color(0.87451, 0.168627, 0.176471, 1)
 
 [sub_resource type="InputEventKey" id="InputEventKey_jte54"]
 keycode = 4194305
@@ -243,6 +248,7 @@ mouse_filter = 2
 script = ExtResource("6_yttyj")
 
 [node name="4-1" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 material = SubResource("ShaderMaterial_4ira4")
 position = Vector2(60, 63)
 script = ExtResource("7_kgt4o")
@@ -258,6 +264,7 @@ scale = Vector2(1, 1.0979)
 texture = ExtResource("8_fnel2")
 
 [node name="4-2" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(180, 63)
 script = ExtResource("7_kgt4o")
 
@@ -271,6 +278,7 @@ scale = Vector2(1, 1.09353)
 texture = ExtResource("9_dt4yl")
 
 [node name="4-3" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(301, 63)
 script = ExtResource("7_kgt4o")
 
@@ -284,6 +292,7 @@ scale = Vector2(1, 1.06556)
 texture = ExtResource("10_87vau")
 
 [node name="4-4" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(419, 63)
 script = ExtResource("7_kgt4o")
 
@@ -297,6 +306,7 @@ scale = Vector2(1.01572, 1.08654)
 texture = ExtResource("11_1yw7l")
 
 [node name="4-5" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(540, 63)
 script = ExtResource("7_kgt4o")
 
@@ -310,6 +320,7 @@ scale = Vector2(1.00588, 1.06818)
 texture = ExtResource("11_utbb0")
 
 [node name="5-1" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(59, 227)
 script = ExtResource("7_kgt4o")
 
@@ -323,6 +334,7 @@ scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("12_tex2u")
 
 [node name="5-2" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(179, 227)
 script = ExtResource("7_kgt4o")
 
@@ -336,6 +348,7 @@ scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("12_520se")
 
 [node name="5-3" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(300, 227)
 script = ExtResource("7_kgt4o")
 
@@ -349,6 +362,7 @@ scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("13_sd2je")
 
 [node name="5-4" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(418, 227)
 script = ExtResource("7_kgt4o")
 
@@ -363,6 +377,7 @@ scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("14_718f3")
 
 [node name="5-5" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(539, 227)
 script = ExtResource("7_kgt4o")
 
@@ -376,6 +391,7 @@ scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("15_b5581")
 
 [node name="6-1" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(60, 391)
 script = ExtResource("7_kgt4o")
 
@@ -390,6 +406,7 @@ scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("16_g5jpl")
 
 [node name="6-2" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(180, 391)
 script = ExtResource("7_kgt4o")
 
@@ -403,6 +420,7 @@ scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("17_l2xaa")
 
 [node name="6-3" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(301, 391)
 script = ExtResource("7_kgt4o")
 
@@ -416,6 +434,7 @@ scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("18_y4cfv")
 
 [node name="6-4" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(419, 391)
 script = ExtResource("7_kgt4o")
 
@@ -429,6 +448,7 @@ scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("19_686g0")
 
 [node name="6-5" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
 position = Vector2(540, 391)
 script = ExtResource("7_kgt4o")
 
@@ -760,14 +780,6 @@ script = ExtResource("2_x817q")
 [node name="TurnManager" type="Node" parent="."]
 script = ExtResource("10_jl0nv")
 
-[node name="debug" type="Label" parent="."]
-offset_left = 1627.0
-offset_top = 166.0
-offset_right = 1824.0
-offset_bottom = 759.0
-text = "debug:"
-autowrap_mode = 2
-
 [node name="ButtonContainer" type="HBoxContainer" parent="."]
 custom_minimum_size = Vector2(100, 20)
 anchors_preset = 4
@@ -835,14 +847,15 @@ offset_left = 769.0
 offset_top = 441.0
 offset_right = 1150.0
 offset_bottom = 556.0
+mouse_filter = 1
 color = Color(0.423529, 0.443137, 0.439216, 0.431373)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ConfirmOverlay"]
 z_index = 1000
 z_as_relative = false
-offset_left = 769.0
+offset_left = 836.0
 offset_top = 441.0
-offset_right = 1150.0
+offset_right = 1080.0
 offset_bottom = 556.0
 alignment = 1
 
@@ -864,8 +877,21 @@ text = "Yes"
 
 [node name="CancelButton" type="Button" parent="ConfirmOverlay/VBoxContainer/ButtonContainer"]
 layout_mode = 2
+theme = SubResource("Theme_y6kbh")
 shortcut = SubResource("Shortcut_2m60o")
 text = "No"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+offset_left = 1737.0
+offset_top = 323.0
+offset_right = 1998.0
+offset_bottom = 865.0
+
+[node name="debug" type="Label" parent="ScrollContainer"]
+custom_minimum_size = Vector2(250, 100)
+layout_mode = 2
+text = "debug:"
+autowrap_mode = 2
 
 [connection signal="input_event" from="PlayerBoard/4-2" to="PlayerBoard/4-2" method="_on_input_event"]
 [connection signal="input_event" from="PlayerBoard/4-3" to="PlayerBoard/4-3" method="_on_input_event"]

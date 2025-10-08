@@ -6,12 +6,27 @@ var highlightTween: Tween
 var targeting_arrow
 const _TARGETING_SCENE_FILE = "res://scenes/TargetingArrow.tscn"
 const _TARGETING_SCENE = preload(_TARGETING_SCENE_FILE)
+var affected: Array[Card]
+
 func attack_target():
 	if card.is_ancestor_of(targeting_arrow):
 		pass
 	else:
 		card.add_child(targeting_arrow)
 	targeting_arrow.initiate_targeting()
+	var sn:String = TurnManager.targeting.board_pos.name
+	var origin = sn.split("-")
+	for player:Player in TurnManager.players:
+		for slot in  (player.board.board_slots):
+			if slot.card_list:
+				var ranges :Array = TurnManager.targeting.card_data['range']
+				for r in ranges :
+					var parts = r.split(".")
+					if slot.name == str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) ):
+						for card:Card in slot.card_list:
+							card.visual.valid_target = true
+							affected.append(card)
+
 	card.board_pos.color_range(false)
 func on_click(event):
 	if event is InputEventMouseButton: 
@@ -23,11 +38,13 @@ func on_click(event):
 					TurnManager.dragging = card
 					card.dragging = true
 					card.offset = get_global_mouse_position() - card.global_position
-					card.set_drag_visuals(card.dragging)
+					card.visual.set_drag_visuals(card.dragging)
 					raise()  # Bring to front  # New global flag
 				else:
 					print("released card")
 					check_and_return_to_hand()
+			if TurnManager.targeting and TurnManager.current_phase == "attack"  and card.card_location == "field":
+				pass
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			#attack_target()
 			pass
@@ -41,7 +58,7 @@ func check_and_return_to_hand():
 	card.dragging = false
 	position = Vector2(0,0)
 	TurnManager.dragging = null
-	card.set_drag_visuals(card.dragging)
+	card.visual.set_drag_visuals(card.dragging)
 	card.check_drop_area()
 	card.controller.player_hand.reset()
 func animate_scale(target_scale: Vector2) -> void:
