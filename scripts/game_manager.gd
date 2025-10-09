@@ -29,6 +29,7 @@ func _ready():
 	# Connect overlay signals
 	confirm_overlay.confirmed.connect(_on_overlay_confirmed)
 	confirm_overlay.cancelled.connect(_on_overlay_cancelled)
+	TurnManager.game_manager = self
 func request_confirmation(action_message: String, on_confirm_callback: Callable) -> void:
 	# Store the callback for later execution
 	confirm_overlay.set_meta("pending_callback", on_confirm_callback)
@@ -110,6 +111,10 @@ func draw_card(card: Card, from_pos: Vector2, to_pos: Vector2, duration: float =
 	card.controller.player_hand.reset()
 	
 func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("ui_cancel"):
+		if TurnManager.targeting:
+				TurnManager.game_manager._on_cancel_attack_pressed()
+				print("attack canceled")
 	#debug putton size
 	if TurnManager.highlighted:
 		sp.text = str(TurnManager.highlighted.visual.buttons.position)

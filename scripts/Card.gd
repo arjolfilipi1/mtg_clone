@@ -61,6 +61,7 @@ func setup(data,players_card,_controller):
 	#visual.setup()
 	
 func hilight_on():
+	movement.highlighted = true
 	self._on_mouse_entered()
 	
 func hilight_off():
@@ -180,8 +181,8 @@ func _process(_delta: float) -> void:
 		#has_summoning_sickness = true
 	else:
 		has_summoning_sickness = false
-	#if (movement.highlighted and  card_location == "hand" ) or (movement.highlighted and  card_location == "field") :
-		#self.z_index = card_index + 10
-	#else:
-		#self.z_index = card_index
+	if (movement.highlighted and  card_location == "hand" ) or (movement.highlighted and  card_location == "field") :
+		z_index = card_index + 10
+	elif TurnManager.highlighted != self:
+		self.z_index = card_index
 		

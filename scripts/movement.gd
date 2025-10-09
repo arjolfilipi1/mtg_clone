@@ -29,10 +29,12 @@ func attack_target():
 
 	card.board_pos.color_range(false)
 func on_click(event):
+
 	if event is InputEventMouseButton: 
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			if card.player_controled and TurnManager.is_selecting_mana and  not card.controller.mana_selected and card.card_location == "hand":  # New global flag
+		if event.button_index == MOUSE_BUTTON_LEFT :
+			if card.player_controled and TurnManager.is_selecting_mana and  not card.controller.mana_selected and card.card_location == "hand" and event.pressed:  # New global flag
 				move_to_mana_zone()
+
 			if card.player_controled and TurnManager.current_phase == "main1"  and card.card_location == "hand":
 				if event.pressed:
 					TurnManager.dragging = card
@@ -43,10 +45,11 @@ func on_click(event):
 				else:
 					print("released card")
 					check_and_return_to_hand()
-			if TurnManager.targeting and TurnManager.current_phase == "attack"  and card.card_location == "field":
+			if TurnManager.targeting and TurnManager.current_phase == "attack"  and card.card_location == "field" and  event.pressed:
+				print("attack?")
 				pass
-		elif event.button_index == MOUSE_BUTTON_RIGHT:
-			#attack_target()
+		elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed: 
+			
 			pass
 	elif event is InputEventMouseMotion and card.dragging and card.card_location =="hand":
 		card.global_position = get_global_mouse_position() - card.offset

@@ -12,13 +12,14 @@ extends Node
 @onready var power_panel:= $"../SubViewportContainer/SubViewport/Panel/Power"
 @onready var m_container = $"../SubViewportContainer/SubViewport/ManaCostContainer"
 var valid_target := false
-
+var b_index:int
 var cd:float = 0.0
 
 
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	b_index = buttons.z_index
 	name_panel.text = card.card_name
 	health_panel.text = str(card.card_data['toughness'])
 	power_panel.text = str(card.card_data['power'])
@@ -131,6 +132,9 @@ func set_drag_visuals(is_dragging: bool):
 		card.controller.board.check_card(card)
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
+	if card.parts_highlighted:
+		buttons.z_index = b_index + 10
+	
 	if Summoning_sickness.material is ShaderMaterial:
 			Summoning_sickness.material.set_shader_parameter("ss", card.summoned_on_turn == TurnManager.turn)
 	if card.face_up:

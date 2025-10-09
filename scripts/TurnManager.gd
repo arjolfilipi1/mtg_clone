@@ -3,6 +3,7 @@ var orb_list = []
 var turn = 1
 var players: Array[Player] = []
 var debug : Label
+var game_manager:Node
 var player_mana_count = {
 	"generic": 0,
 	"red": 0,
