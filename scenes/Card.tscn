@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=39 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/playable.gdshader" id="1_6a0q4"]
@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://bmsrnk2ic51i2" path="res://assets/attackb.png" id="18_3t4xt"]
 [ext_resource type="Shader" path="res://assets/shaders/button.gdshader" id="18_8tvem"]
 [ext_resource type="Script" path="res://scripts/buttons_container.gd" id="18_j83j1"]
+[ext_resource type="Script" path="res://scripts/attack.gd" id="18_ye35g"]
 [ext_resource type="Script" path="res://scripts/attack_button.gd" id="19_0p84n"]
 [ext_resource type="Shader" path="res://assets/shaders/target.gdshader" id="22_m58xb"]
 
@@ -113,6 +114,11 @@ shader_parameter/Border_Alpha = 0.42
 shader_parameter/Border_Fade_Inwards = true
 shader_parameter/Enable_Border = true
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_bxdqp"]
+lifetime_randomness = 0.08
+particle_flag_disable_z = true
+gravity = Vector3(0, 98, 0)
+
 [node name="control" type="Control" groups=["card"]]
 material = SubResource("ShaderMaterial_cd0ai")
 custom_minimum_size = Vector2(200, 250)
@@ -143,7 +149,7 @@ offset_left = -94.0
 offset_top = -119.0
 offset_right = 111.0
 offset_bottom = 131.0
-pivot_offset = Vector2(100, 125)
+pivot_offset = Vector2(94, 117)
 color = Color(0.388235, 0.388235, 0.388235, 0.301961)
 script = ExtResource("4_txeqe")
 
@@ -391,6 +397,7 @@ offset_right = 100.0
 offset_bottom = 125.0
 grow_horizontal = 2
 grow_vertical = 2
+pivot_offset = Vector2(100, 125)
 mouse_filter = 1
 color = Color(1, 1, 0.607843, 1)
 
@@ -400,7 +407,7 @@ layout_mode = 0
 offset_top = -1.0
 offset_right = 200.0
 offset_bottom = 250.0
-pivot_offset = Vector2(100, 125)
+pivot_offset = Vector2(100, 126)
 mouse_filter = 1
 color = Color(0.787599, 0.0141668, 0.365911, 1)
 
@@ -413,6 +420,9 @@ script = ExtResource("16_fj7vn")
 
 [node name="vizual" type="Node" parent="."]
 script = ExtResource("17_rvavj")
+
+[node name="attack" type="Node2D" parent="vizual"]
+script = ExtResource("18_ye35g")
 
 [node name="ButtonsContainer" type="HBoxContainer" parent="."]
 z_index = 10
@@ -467,6 +477,10 @@ offset_right = 200.0
 offset_bottom = 255.0
 mouse_filter = 2
 color = Color(1, 0.921569, 0, 1)
+
+[node name="TrailParticles" type="GPUParticles2D" parent="."]
+position = Vector2(100, 125)
+process_material = SubResource("ParticleProcessMaterial_bxdqp")
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]

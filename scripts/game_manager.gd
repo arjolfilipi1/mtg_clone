@@ -1,5 +1,5 @@
 extends Node
-
+class_name GameManager
 @onready var player_deck := $"../PlayerDeck"
 @onready var enemy_deck := $"../EnemyDeck"
 @onready var player_hand = $"../PlayerHand"
@@ -22,29 +22,35 @@ var card_database = []
 var last_card_drawn:Card
 var is_player_turn = true
 var current_player : Player
+
+
 func _ready():
 	spawn_players()
 	load_cards()
 	start_game()
 	# Connect overlay signals
-	confirm_overlay.confirmed.connect(_on_overlay_confirmed)
-	confirm_overlay.cancelled.connect(_on_overlay_cancelled)
+
 	TurnManager.game_manager = self
 func request_confirmation(action_message: String, on_confirm_callback: Callable) -> void:
 	# Store the callback for later execution
-	confirm_overlay.set_meta("pending_callback", on_confirm_callback)
+	TurnManager.waiting_for_input = true
+	confirm_overlay.meta = on_confirm_callback
 	confirm_overlay.show_confirm(action_message)
 
 func _on_overlay_confirmed() -> void:
 	# Execute the pending callback if it exists
-	var callback = confirm_overlay.get_meta("pending_callback", null)
-	if callback != null:
+	TurnManager.waiting_for_input = false
+	var callback = confirm_overlay.meta
+	if callback != confirm_overlay.null_meta:
 		callback.call()
-	confirm_overlay.set_meta("pending_callback", null)
+	else:
+		print("it was null")
+	confirm_overlay.meta = confirm_overlay.null_meta
 
 func _on_overlay_cancelled() -> void:
 	# Clear the pending callback
-	confirm_overlay.set_meta("pending_callback", null)
+	confirm_overlay.meta = confirm_overlay.null_meta
+	TurnManager.waiting_for_input = false
 	print("Action cancelled")
 func spawn_players():
 	player1 = Player.new("You",player_mana_zone,player_hand,player_board,player_deck)
@@ -72,7 +78,7 @@ func load_cards():
 @onready var initialPosition =  $"../PlayerDeck".global_position
 func start_game():
 	#Engine.time_scale = 0.1
-	TurnManager.current_phase = TurnManager.turn_phases[0]
+	TurnManager.current_phase = TurnManager.TurnEnum.DRAW
 	TurnManager.debug = debug
 	for i in range(5):
 		initial_draw_card(player1)
@@ -109,16 +115,19 @@ func draw_card(card: Card, from_pos: Vector2, to_pos: Vector2, duration: float =
 	# Convert global position to new parent's local coordinates
 	TurnManager.finish_draw()
 	card.controller.player_hand.reset()
-	
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+			if TurnManager.targeting and TurnManager.Target_kind == TurnManager.TargetKindEnum.ATTACK:
+				_on_cancel_attack_pressed()
+
+			get_viewport().set_input_as_handled()  # Prevent other nodes from processing
 func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed("ui_cancel"):
-		if TurnManager.targeting:
-				TurnManager.game_manager._on_cancel_attack_pressed()
-				print("attack canceled")
+	
 	#debug putton size
 	if TurnManager.highlighted:
-		sp.text = str(TurnManager.highlighted.visual.buttons.position)
-		sl.text = "ai:" + str(TurnManager.highlighted.visual.buttons.attack.z_index) + " bi:" + str(TurnManager.highlighted.visual.buttons.z_index)
+		sp.text = "glob_pos: " + str(TurnManager.highlighted.global_position)
+		sl.text = "pos: " + str(TurnManager.highlighted.position)
 	if TurnManager.priority:
 		current_player = player1
 		$"../PlayerBoard/sprite/OverlayEffect".visible = true
@@ -127,14 +136,14 @@ func _process(_delta: float) -> void:
 		$"../EnemyBoard/sprite/OverlayEffect".visible = true
 		$"../PlayerBoard/sprite/OverlayEffect".visible = false
 		current_player = player2 
-	if TurnManager.current_phase == "mana_create":
+	if TurnManager.current_phase == TurnManager.TurnEnum.MANA_CREATE:
 		current_player.reset_mana()
 		
 		current_player.create_mana()
 		#await get_tree().create_timer(1.0).timeout  # Small delay
-	if TurnManager.current_phase == "mana_select":
+	if TurnManager.current_phase == TurnManager.TurnEnum.MANA_SELECT:
 		TurnManager.is_selecting_mana = true
-	if TurnManager.current_phase == "draw" and current_player.did_draw == false:
+	if TurnManager.current_phase == TurnManager.TurnEnum.DRAW and current_player.did_draw == false:
 		var card := preload("res://scenes/Card.tscn").instantiate()
 		var random_card = card_database[randi() % card_database.size()]
 		card.card_location = "hand"
@@ -144,16 +153,16 @@ func _process(_delta: float) -> void:
 		draw_card(card, current_player.deck.position, current_player.player_hand.position)
 		TurnManager.debug.text += current_player.player_name+" drawing \n"
 		current_player.did_draw = true
-	if TurnManager.current_phase == "main1" and TurnManager.priority:
+	if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and TurnManager.priority:
 		$"../ButtonContainer/EndTurnButton".disabled = false
 	else:
 		$"../ButtonContainer/EndTurnButton".disabled = true
-	if TurnManager.current_phase == "attack" and TurnManager.priority:
+	if TurnManager.current_phase ==TurnManager.TurnEnum.ATTACK and TurnManager.priority:
 		$"../ButtonContainer/Cancel attack".disabled = false
 	else:
 		$"../ButtonContainer/Cancel attack".disabled = true
 	prio.text = current_player.player_name
-	turn.text = TurnManager.current_phase
+	turn.text = TurnManager.TurnEnum.keys()[ TurnManager.current_phase]
 	high.text = TurnManager.highlighted.card_name+ str(snappedf( TurnManager.highlighted.size.x,0.01)) if TurnManager.highlighted else "No focus"
 func _on_cancel_attack_pressed() -> void:
 	TurnManager.targeting.movement.targeting_arrow.is_targeting = false
@@ -161,7 +170,7 @@ func _on_cancel_attack_pressed() -> void:
 	TurnManager.targeting.board_pos.reset_higlight()
 	TurnManager.reset_highlited()
 	TurnManager.targeting = null
-	TurnManager.current_phase = "main1"
+	TurnManager.current_phase = TurnManager.TurnEnum.MAIN
 	pass # Replace with function body.
 func _on_end_turn_button_pressed() -> void:
 	TurnManager.end_turn()

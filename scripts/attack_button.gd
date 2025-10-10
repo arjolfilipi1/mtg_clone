@@ -38,8 +38,8 @@ func _process(_delta: float) -> void:
 func _attack_pressed(event: InputEvent) -> void:
 	if event is InputEventMouseButton: 
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			if TurnManager.current_phase == "main1" and card.can_attack():
-				TurnManager.current_phase = "attack"
+			if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and card.can_attack():
+				TurnManager.current_phase = TurnManager.TurnEnum.ATTACK
 				card.movement.attack_target()
 
 func _on_color_rect_gui_input(event: InputEvent) -> void:

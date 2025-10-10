@@ -105,7 +105,7 @@ func _process(_delta):
 	pass
 	if TurnManager.priority == false:
 		card_played = false
-	if TurnManager.current_phase=="main1" and TurnManager.priority == false and  card_played == false and thinking == false:
+	if TurnManager.current_phase==TurnManager.TurnEnum.MAIN and TurnManager.priority == false and  card_played == false and thinking == false:
 		thinking = true
 		print("Enemy is thinking of playing card to field")
 		TurnManager.debug.text += "Enemy is playing card to field \n"

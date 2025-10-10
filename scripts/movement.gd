@@ -7,7 +7,7 @@ var targeting_arrow
 const _TARGETING_SCENE_FILE = "res://scenes/TargetingArrow.tscn"
 const _TARGETING_SCENE = preload(_TARGETING_SCENE_FILE)
 var affected: Array[Card]
-
+var pending_target:Card
 func attack_target():
 	if card.is_ancestor_of(targeting_arrow):
 		pass
@@ -35,7 +35,7 @@ func on_click(event):
 			if card.player_controled and TurnManager.is_selecting_mana and  not card.controller.mana_selected and card.card_location == "hand" and event.pressed:  # New global flag
 				move_to_mana_zone()
 
-			if card.player_controled and TurnManager.current_phase == "main1"  and card.card_location == "hand":
+			if card.player_controled and TurnManager.current_phase == TurnManager.TurnEnum.MAIN  and card.card_location == "hand":
 				if event.pressed:
 					TurnManager.dragging = card
 					card.dragging = true
@@ -45,16 +45,19 @@ func on_click(event):
 				else:
 					print("released card")
 					check_and_return_to_hand()
-			if TurnManager.targeting and TurnManager.current_phase == "attack"  and card.card_location == "field" and  event.pressed:
+			if TurnManager.targeting and TurnManager.current_phase == TurnManager.TurnEnum.ATTACK  and card.card_location == "field" and  event.pressed:
 				print("attack?")
+				TurnManager.targeting.movement.pending_target = card
+				TurnManager.game_manager.request_confirmation("Attack "+card.card_name+"?",attack_card)
 				pass
-		elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed: 
-			
-			pass
+		
 	elif event is InputEventMouseMotion and card.dragging and card.card_location =="hand":
 		card.global_position = get_global_mouse_position() - card.offset
 		rotation = 0
 	pass # Replace with function body.
+func attack_card():
+	print("attacked "+ TurnManager.targeting.movement.pending_target.card_name)
+	$"../vizual/attack".start_slam_attack()
 func check_and_return_to_hand():
 	card.controller.board.reset_higlight()
 	TurnManager.reset_highlited()

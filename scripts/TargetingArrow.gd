@@ -33,7 +33,7 @@ func _ready() -> void:
 	card = self.get_parent()
 
 func _process(_delta: float) -> void:
-	if is_targeting:
+	if is_targeting and TurnManager.waiting_for_input == false:
 		_draw_targeting_arrow()
 
 

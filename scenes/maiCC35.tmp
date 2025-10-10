@@ -1,0 +1,926 @@
+[gd_scene load_steps=65 format=3 uid="uid://ciikqwfm6mbci"]
+
+[ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_qqfnl"]
+[ext_resource type="Script" path="res://scripts/fan.gd" id="2_x817q"]
+[ext_resource type="Script" path="res://scripts/enemy_hand.gd" id="3_rtxx5"]
+[ext_resource type="Texture2D" uid="uid://drnnngycy3782" path="res://assets/player-field-slots.png" id="4_jnk5p"]
+[ext_resource type="Script" path="res://scripts/enemy_ai.gd" id="4_lgu2c"]
+[ext_resource type="Shader" path="res://assets/shaders/fire.gdshader" id="5_m13by"]
+[ext_resource type="Shader" path="res://assets/shaders/slot.gdshader" id="6_4gsu0"]
+[ext_resource type="Texture2D" uid="uid://bbx7g0mf4n0q3" path="res://assets/Organizata..PNG" id="6_7l7re"]
+[ext_resource type="Script" path="res://scripts/player_board.gd" id="6_yttyj"]
+[ext_resource type="Script" path="res://scripts/board_slot.gd" id="7_kgt4o"]
+[ext_resource type="Texture2D" uid="uid://bk3g4dvbrss1u" path="res://assets/efield.png" id="7_wtrlh"]
+[ext_resource type="Texture2D" uid="uid://c3naqhgwpa07c" path="res://assets/field/4-1.png" id="8_fnel2"]
+[ext_resource type="Shader" path="res://assets/shaders/rounded.gdshader" id="8_i1e4f"]
+[ext_resource type="Texture2D" uid="uid://dyder8lp4tl60" path="res://assets/field/4-2.png" id="9_dt4yl"]
+[ext_resource type="Texture2D" uid="uid://dlywb5l7fdts8" path="res://assets/slott.png" id="9_qwdrg"]
+[ext_resource type="Texture2D" uid="uid://djeqjq8cyh3s3" path="res://assets/field/4-3.png" id="10_87vau"]
+[ext_resource type="Script" path="res://scripts/TurnManager.gd" id="10_jl0nv"]
+[ext_resource type="Texture2D" uid="uid://cvanvtyyrpq41" path="res://assets/field/4-4.png" id="11_1yw7l"]
+[ext_resource type="Texture2D" uid="uid://da7ofl0piv5m3" path="res://assets/field/4-5.png" id="11_utbb0"]
+[ext_resource type="Script" path="res://scripts/player_mana.gd" id="12_46n2y"]
+[ext_resource type="Texture2D" uid="uid://dldx5wp54cfhi" path="res://assets/field/5-2.png" id="12_520se"]
+[ext_resource type="Texture2D" uid="uid://3cmlxw07q7mr" path="res://assets/field/5-1.png" id="12_tex2u"]
+[ext_resource type="Texture2D" uid="uid://dw6i74ris2e5p" path="res://assets/field/5-3.png" id="13_sd2je"]
+[ext_resource type="Texture2D" uid="uid://cdv6e0d1hlexg" path="res://assets/field/5-4.png" id="14_718f3"]
+[ext_resource type="Texture2D" uid="uid://dxipsbpk8jik1" path="res://assets/field/5-5.png" id="15_b5581"]
+[ext_resource type="Texture2D" uid="uid://b5qci2irph06b" path="res://assets/field/6-1.png" id="16_g5jpl"]
+[ext_resource type="Texture2D" uid="uid://1w5hy7th33do" path="res://assets/field/6-2.png" id="17_l2xaa"]
+[ext_resource type="Theme" uid="uid://c5pcn6ih6roqj" path="res://assets/themes/end_turn.tres" id="18_iqc7k"]
+[ext_resource type="Texture2D" uid="uid://f8p7o7sq7bhy" path="res://assets/field/6-3.png" id="18_y4cfv"]
+[ext_resource type="Texture2D" uid="uid://dphqr0vrfrjti" path="res://assets/field/6-4.png" id="19_686g0"]
+[ext_resource type="Texture2D" uid="uid://du1oyqhjlsqs4" path="res://assets/field/6-5.png" id="20_102rg"]
+[ext_resource type="Texture2D" uid="uid://bahehd212ocno" path="res://assets/field/1-1.png" id="23_h42om"]
+[ext_resource type="Texture2D" uid="uid://c6mt8aloxvadj" path="res://assets/field/1-2.png" id="24_jcqp2"]
+[ext_resource type="Texture2D" uid="uid://tv67qi65k0db" path="res://assets/field/1-3.png" id="25_f3t5r"]
+[ext_resource type="Texture2D" uid="uid://c14hx44rapfdf" path="res://assets/field/1-4.png" id="26_3km4t"]
+[ext_resource type="Texture2D" uid="uid://dyw01lptxgash" path="res://assets/field/1-5.png" id="27_7ct2v"]
+[ext_resource type="Texture2D" uid="uid://b63asdpiccwbo" path="res://assets/field/2-1.png" id="28_plgir"]
+[ext_resource type="Texture2D" uid="uid://dlmxcqh5lh612" path="res://assets/field/2-2.png" id="29_443o6"]
+[ext_resource type="Texture2D" uid="uid://dujcshgmcr1dq" path="res://assets/field/2-3.png" id="30_yw37f"]
+[ext_resource type="Texture2D" uid="uid://b7x1tdq6omc1g" path="res://assets/field/2-4.png" id="31_nnv65"]
+[ext_resource type="Texture2D" uid="uid://dyincqj61miuc" path="res://assets/field/2-5.png" id="32_jaigk"]
+[ext_resource type="Texture2D" uid="uid://klbdmxxxhlmm" path="res://assets/field/3-1.png" id="33_npy22"]
+[ext_resource type="Texture2D" uid="uid://cmhgovjfhfwg8" path="res://assets/field/3-2.png" id="34_i8773"]
+[ext_resource type="Texture2D" uid="uid://bmyd2vjrmn5fn" path="res://assets/field/3-3.png" id="35_t7bpt"]
+[ext_resource type="Texture2D" uid="uid://bmlkobjn4livq" path="res://assets/field/3-4.png" id="36_ay0ry"]
+[ext_resource type="Texture2D" uid="uid://5rynyv3f33c0" path="res://assets/field/3-5.png" id="37_uoigk"]
+[ext_resource type="Script" path="res://scripts/confirm_overlay.gd" id="47_oseo6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2udy6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4ira4"]
+shader = ExtResource("6_4gsu0")
+shader_parameter/Enable_Effects = true
+shader_parameter/Line_Smoothness = 0.045
+shader_parameter/Line_Width = 0.09
+shader_parameter/Brightness = 3.0
+shader_parameter/Rotation_deg = 30.0
+shader_parameter/Distortion = 1.8
+shader_parameter/Speed = 0.7
+shader_parameter/Position = 0.0
+shader_parameter/Position_Min = 0.25
+shader_parameter/Position_Max = 0.5
+shader_parameter/Alpha = 1.0
+shader_parameter/Border_Color = Vector4(1, 1, 1, 1)
+shader_parameter/Border_Width = 0.02
+shader_parameter/Border_Feather = 0.01
+shader_parameter/Border_Alpha = 1.0
+shader_parameter/Border_Fade_Inwards = true
+shader_parameter/Enable_Border = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_muooh"]
+shader = ExtResource("6_4gsu0")
+shader_parameter/Enable_Effects = false
+shader_parameter/Line_Smoothness = 0.045
+shader_parameter/Line_Width = 0.2
+shader_parameter/Brightness = 3.0
+shader_parameter/Rotation_deg = 30.0
+shader_parameter/Distortion = 1.8
+shader_parameter/Speed = 0.7
+shader_parameter/Position = 0.0
+shader_parameter/Position_Min = 0.25
+shader_parameter/Position_Max = 0.5
+shader_parameter/Alpha = 1.0
+shader_parameter/Border_Color = Vector4(1, 1, 1, 1)
+shader_parameter/Border_Width = 0.02
+shader_parameter/Border_Feather = 0.01
+shader_parameter/Border_Alpha = 0.7
+shader_parameter/Border_Fade_Inwards = true
+shader_parameter/Enable_Border = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xhskb"]
+shader = ExtResource("6_4gsu0")
+shader_parameter/Enable_Effects = false
+shader_parameter/Line_Smoothness = 0.045
+shader_parameter/Line_Width = 0.2
+shader_parameter/Brightness = 3.0
+shader_parameter/Rotation_deg = 30.0
+shader_parameter/Distortion = 1.8
+shader_parameter/Speed = 0.7
+shader_parameter/Position = 0.0
+shader_parameter/Position_Min = 0.25
+shader_parameter/Position_Max = 0.5
+shader_parameter/Alpha = 1.0
+shader_parameter/Border_Color = Vector4(1, 1, 1, 1)
+shader_parameter/Border_Width = 0.02
+shader_parameter/Border_Feather = 0.01
+shader_parameter/Border_Alpha = 0.7
+shader_parameter/Border_Fade_Inwards = true
+shader_parameter/Enable_Border = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xq0dx"]
+shader = ExtResource("6_4gsu0")
+shader_parameter/Enable_Effects = false
+shader_parameter/Line_Smoothness = 0.045
+shader_parameter/Line_Width = 0.2
+shader_parameter/Brightness = 3.0
+shader_parameter/Rotation_deg = 30.0
+shader_parameter/Distortion = 1.8
+shader_parameter/Speed = 0.7
+shader_parameter/Position = 0.0
+shader_parameter/Position_Min = 0.25
+shader_parameter/Position_Max = 0.5
+shader_parameter/Alpha = 1.0
+shader_parameter/Border_Color = Vector4(1, 1, 1, 1)
+shader_parameter/Border_Width = 0.02
+shader_parameter/Border_Feather = 0.01
+shader_parameter/Border_Alpha = 0.7
+shader_parameter/Border_Fade_Inwards = true
+shader_parameter/Enable_Border = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qvbld"]
+shader = ExtResource("6_4gsu0")
+shader_parameter/Enable_Effects = false
+shader_parameter/Line_Smoothness = 0.045
+shader_parameter/Line_Width = 0.2
+shader_parameter/Brightness = 3.0
+shader_parameter/Rotation_deg = 30.0
+shader_parameter/Distortion = 1.8
+shader_parameter/Speed = 0.7
+shader_parameter/Position = 0.0
+shader_parameter/Position_Min = 0.25
+shader_parameter/Position_Max = 0.5
+shader_parameter/Alpha = 1.0
+shader_parameter/Border_Color = Vector4(1, 1, 1, 1)
+shader_parameter/Border_Width = 0.02
+shader_parameter/Border_Feather = 0.01
+shader_parameter/Border_Alpha = 0.7
+shader_parameter/Border_Fade_Inwards = true
+shader_parameter/Enable_Border = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_woy2o"]
+shader = ExtResource("6_4gsu0")
+shader_parameter/Enable_Effects = false
+shader_parameter/Line_Smoothness = 0.045
+shader_parameter/Line_Width = 0.2
+shader_parameter/Brightness = 3.0
+shader_parameter/Rotation_deg = 30.0
+shader_parameter/Distortion = 1.8
+shader_parameter/Speed = 0.7
+shader_parameter/Position = 0.0
+shader_parameter/Position_Min = 0.25
+shader_parameter/Position_Max = 0.5
+shader_parameter/Alpha = 1.0
+shader_parameter/Border_Color = Vector4(1, 1, 1, 1)
+shader_parameter/Border_Width = 0.02
+shader_parameter/Border_Feather = 0.01
+shader_parameter/Border_Alpha = 0.7
+shader_parameter/Border_Fade_Inwards = true
+shader_parameter/Enable_Border = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c4w6m"]
+shader = ExtResource("6_4gsu0")
+shader_parameter/Enable_Effects = false
+shader_parameter/Line_Smoothness = 0.045
+shader_parameter/Line_Width = 0.2
+shader_parameter/Brightness = 3.0
+shader_parameter/Rotation_deg = 30.0
+shader_parameter/Distortion = 1.8
+shader_parameter/Speed = 0.7
+shader_parameter/Position = 0.0
+shader_parameter/Position_Min = 0.25
+shader_parameter/Position_Max = 0.5
+shader_parameter/Alpha = 1.0
+shader_parameter/Border_Color = Vector4(1, 1, 1, 1)
+shader_parameter/Border_Width = 0.02
+shader_parameter/Border_Feather = 0.01
+shader_parameter/Border_Alpha = 0.7
+shader_parameter/Border_Fade_Inwards = true
+shader_parameter/Enable_Border = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qq0gl"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o7myf"]
+shader = ExtResource("5_m13by")
+shader_parameter/is_glowing = false
+shader_parameter/fade_strength = 1.0
+shader_parameter/screen_size = null
+shader_parameter/glow_color = Vector4(0, 1, 0, 1)
+shader_parameter/speed = 2.0
+shader_parameter/eff_intensity = 1.5
+shader_parameter/radius = 0.5
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wgdt0"]
+shader = ExtResource("8_i1e4f")
+shader_parameter/corner_scale = 0.3
+
+[sub_resource type="Theme" id="Theme_ycla5"]
+Button/colors/font_color = Color(0.0784314, 0.87451, 0.152941, 1)
+Button/styles/disabled = null
+
+[sub_resource type="InputEventKey" id="InputEventKey_62q5x"]
+keycode = 4194309
+
+[sub_resource type="Shortcut" id="Shortcut_23v8s"]
+events = [SubResource("InputEventKey_62q5x")]
+
+[sub_resource type="Theme" id="Theme_y6kbh"]
+Button/colors/font_color = Color(0.87451, 0.168627, 0.176471, 1)
+
+[sub_resource type="InputEventKey" id="InputEventKey_jte54"]
+keycode = 4194305
+
+[sub_resource type="Shortcut" id="Shortcut_2m60o"]
+events = [SubResource("InputEventKey_jte54")]
+
+[node name="Main" type="Node2D"]
+
+[node name="Deck" type="Node" parent="."]
+
+[node name="GameManager" type="Node" parent="."]
+script = ExtResource("1_qqfnl")
+
+[node name="EnemyAI" type="Node" parent="."]
+script = ExtResource("4_lgu2c")
+
+[node name="PlayerBoard" type="Control" parent="."]
+z_index = -100
+material = SubResource("ShaderMaterial_2udy6")
+layout_mode = 3
+anchors_preset = 0
+offset_left = 599.0
+offset_top = 474.0
+offset_right = 1398.0
+offset_bottom = 1018.0
+mouse_filter = 2
+script = ExtResource("6_yttyj")
+
+[node name="4-1" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+material = SubResource("ShaderMaterial_4ira4")
+position = Vector2(60, 63)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/4-1"]
+position = Vector2(1, 1)
+polygon = PackedVector2Array(-110, 2, -121, 156, 42, 155, 47, 3)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/4-1"]
+material = SubResource("ShaderMaterial_muooh")
+position = Vector2(-35, 81.5)
+scale = Vector2(1, 1.0979)
+texture = ExtResource("8_fnel2")
+
+[node name="4-2" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(180, 63)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/4-2"]
+polygon = PackedVector2Array(-65, 4, -70, 158, 92, 157, 94, 4)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/4-2"]
+material = SubResource("ShaderMaterial_xhskb")
+position = Vector2(12, 79.8125)
+scale = Vector2(1, 1.09353)
+texture = ExtResource("9_dt4yl")
+
+[node name="4-3" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(301, 63)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/4-3"]
+polygon = PackedVector2Array(-20, 5, -24, 157, 145, 155, 146, 5)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/4-3"]
+material = SubResource("ShaderMaterial_xq0dx")
+position = Vector2(62, 76.8125)
+scale = Vector2(1, 1.06556)
+texture = ExtResource("10_87vau")
+
+[node name="4-4" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(419, 63)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/4-4"]
+polygon = PackedVector2Array(33, 4, 34, 154, 189, 155, 185, 4)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/4-4"]
+material = SubResource("ShaderMaterial_qvbld")
+position = Vector2(111.75, 80.3125)
+scale = Vector2(1.01572, 1.08654)
+texture = ExtResource("11_1yw7l")
+
+[node name="4-5" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(540, 63)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/4-5"]
+polygon = PackedVector2Array(73, 4, 78, 157, 240, 158, 230, 5)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/4-5"]
+material = SubResource("ShaderMaterial_woy2o")
+position = Vector2(155, 81)
+scale = Vector2(1.00588, 1.06818)
+texture = ExtResource("11_utbb0")
+
+[node name="5-1" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(59, 227)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/5-1"]
+polygon = PackedVector2Array(-120, 1, -127, 145, 38, 144, 42, 1)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/5-1"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(-42, 72)
+scale = Vector2(1.00588, 1.11278)
+texture = ExtResource("12_tex2u")
+
+[node name="5-2" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(179, 227)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/5-2"]
+polygon = PackedVector2Array(-70, 1, -74, 143, 88, 144, 91, -1)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/5-2"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(10, 74)
+scale = Vector2(1.00588, 1.11278)
+texture = ExtResource("12_520se")
+
+[node name="5-3" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(300, 227)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/5-3"]
+polygon = PackedVector2Array(-20, 1, -23, 145, 145, 144, 144, 1)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/5-3"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(61, 73)
+scale = Vector2(1.00588, 1.11278)
+texture = ExtResource("13_sd2je")
+
+[node name="5-4" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(418, 227)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/5-4"]
+position = Vector2(33, 10)
+polygon = PackedVector2Array(2, -9, 1, 135, 165, 134, 159, -9)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/5-4"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(116, 73)
+scale = Vector2(1.00588, 1.11278)
+texture = ExtResource("14_718f3")
+
+[node name="5-5" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(539, 227)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/5-5"]
+polygon = PackedVector2Array(79, -1, 85, 144, 248, 143, 240, -1)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/5-5"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(165, 74)
+scale = Vector2(1.00588, 1.11278)
+texture = ExtResource("15_b5581")
+
+[node name="6-1" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(60, 391)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/6-1"]
+position = Vector2(-134, -3)
+polygon = PackedVector2Array(2, -9, -5, 140, 161, 141, 171, -9)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/6-1"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(-53, 65)
+scale = Vector2(1.00588, 1.11278)
+texture = ExtResource("16_g5jpl")
+
+[node name="6-2" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(180, 391)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/6-2"]
+polygon = PackedVector2Array(-75, -10, -80, 135, 88, 137, 88, -11)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/6-2"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(4, 65)
+scale = Vector2(1.00588, 1.11278)
+texture = ExtResource("17_l2xaa")
+
+[node name="6-3" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(301, 391)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/6-3"]
+polygon = PackedVector2Array(-21, -12, -24, 136, 142, 138, 144, -12)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/6-3"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(57, 63)
+scale = Vector2(1.00588, 1.11278)
+texture = ExtResource("18_y4cfv")
+
+[node name="6-4" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(419, 391)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/6-4"]
+polygon = PackedVector2Array(33, -11, 34, 137, 203, 139, 195, -11)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/6-4"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(119, 62)
+scale = Vector2(1.00588, 1.11278)
+texture = ExtResource("19_686g0")
+
+[node name="6-5" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
+z_index = -1
+position = Vector2(540, 391)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerBoard/6-5"]
+polygon = PackedVector2Array(86, -12, 92, 136, 259, 139, 249, -12)
+
+[node name="overlay" type="Sprite2D" parent="PlayerBoard/6-5"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(175, 57)
+scale = Vector2(1.00588, 1.11278)
+texture = ExtResource("20_102rg")
+
+[node name="sprite" type="Sprite2D" parent="PlayerBoard"]
+material = SubResource("ShaderMaterial_qq0gl")
+position = Vector2(360, 299)
+scale = Vector2(1, 1.088)
+texture = ExtResource("4_jnk5p")
+
+[node name="OverlayEffect" type="ColorRect" parent="PlayerBoard/sprite"]
+material = SubResource("ShaderMaterial_o7myf")
+anchors_preset = -1
+anchor_left = 0.056
+anchor_top = 0.0187273
+anchor_right = 0.990044
+anchor_bottom = 1.0
+offset_left = -476.624
+offset_top = -236.24
+offset_right = -457.0
+offset_bottom = -221.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(1, 1, 0, 0.172549)
+metadata/_edit_use_anchors_ = true
+
+[node name="EnemyBoard" type="Control" parent="."]
+z_index = -100
+layout_mode = 3
+anchors_preset = 0
+offset_left = 598.0
+offset_top = 61.0
+offset_right = 1389.0
+offset_bottom = 229.0
+script = ExtResource("6_yttyj")
+
+[node name="1-1" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(60, 10)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/1-1"]
+polygon = PackedVector2Array(-83, 46, -94, 160, 57, 162, 64, 45)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/1-1"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(-15, 103)
+texture = ExtResource("23_h42om")
+
+[node name="1-2" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(60, 10)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/1-2"]
+position = Vector2(120, 0)
+polygon = PackedVector2Array(-49, 46, -53, 162, 95, 160, 97, 45)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/1-2"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(142, 102)
+texture = ExtResource("24_jcqp2")
+
+[node name="1-3" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(363, 105)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/1-3"]
+position = Vector2(-61, -95)
+polygon = PackedVector2Array(-17, 45, -17, 160, 144, 158, 143, 45)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/1-3"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(0, 9)
+texture = ExtResource("25_f3t5r")
+
+[node name="1-4" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(522, 105)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/1-4"]
+position = Vector2(-102, -95)
+polygon = PackedVector2Array(33, 44, 33, 159, 172, 159, 166, 43)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/1-4"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(0, 8)
+texture = ExtResource("26_3km4t")
+
+[node name="1-5" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(674, 105)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/1-5"]
+position = Vector2(-134, -95)
+polygon = PackedVector2Array(58, 45, 61, 158, 211, 158, 201, 44)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/1-5"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(0, 7)
+texture = ExtResource("27_7ct2v")
+
+[node name="2-1" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(59, 162)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/2-1"]
+polygon = PackedVector2Array(-92, 16, -100, 127, 53, 127, 57, 18)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/2-1"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(-23, 70)
+texture = ExtResource("28_plgir")
+
+[node name="2-2" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(59, 162)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/2-2"]
+position = Vector2(120, 0)
+polygon = PackedVector2Array(-54, 18, -59, 127, 95, 126, 95, 17)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/2-2"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(139, 73)
+texture = ExtResource("29_443o6")
+
+[node name="2-3" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(59, 162)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/2-3"]
+position = Vector2(241, 1)
+polygon = PackedVector2Array(-14, 16, -15, 124, 144, 124, 145, 17)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/2-3"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(306, 72)
+texture = ExtResource("30_yw37f")
+
+[node name="2-4" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(59, 162)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/2-4"]
+position = Vector2(361, 1)
+polygon = PackedVector2Array(34, 17, 32, 126, 177, 127, 172, 17)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/2-4"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(468, 73)
+texture = ExtResource("31_nnv65")
+
+[node name="2-5" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(59, 162)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/2-5"]
+position = Vector2(481, 1)
+polygon = PackedVector2Array(64, 17, 66, 124, 220, 124, 211, 17)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/2-5"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(623, 70)
+texture = ExtResource("32_jaigk")
+
+[node name="3-1" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(59, 311)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/3-1"]
+position = Vector2(-103, -14)
+polygon = PackedVector2Array(2, -1, -5, 113, 151, 111, 155, -1)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/3-1"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(-30, 44)
+texture = ExtResource("33_npy22")
+
+[node name="3-2" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(59, 311)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/3-2"]
+position = Vector2(60, -13)
+polygon = PackedVector2Array(2, -1, -2, 111, 154, 112, 155, -2)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/3-2"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(136, 44)
+texture = ExtResource("34_i8773")
+
+[node name="3-3" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(59, 311)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/3-3"]
+position = Vector2(241, 1)
+polygon = PackedVector2Array(-16, -14, -17, 98, 142, 96, 142, -13)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/3-3"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(303, 45)
+texture = ExtResource("35_t7bpt")
+
+[node name="3-4" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(59, 311)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/3-4"]
+position = Vector2(394, -12)
+polygon = PackedVector2Array(2, -1, 3, 109, 152, 111, 145, 0)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/3-4"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(472, 44)
+texture = ExtResource("36_ay0ry")
+
+[node name="3-5" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
+position = Vector2(59, 311)
+script = ExtResource("7_kgt4o")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="EnemyBoard/3-5"]
+position = Vector2(481, 1)
+polygon = PackedVector2Array(68, -12, 75, 95, 227, 96, 218, -12)
+
+[node name="overlay" type="Sprite2D" parent="EnemyBoard/3-5"]
+material = SubResource("ShaderMaterial_c4w6m")
+position = Vector2(630, 44)
+texture = ExtResource("37_uoigk")
+
+[node name="sprite" type="Sprite2D" parent="EnemyBoard"]
+position = Vector2(360, 233)
+texture = ExtResource("7_wtrlh")
+
+[node name="OverlayEffect" type="ColorRect" parent="EnemyBoard/sprite"]
+material = SubResource("ShaderMaterial_o7myf")
+anchors_preset = -1
+anchor_left = 0.056
+anchor_top = 0.0187273
+anchor_right = 0.990044
+anchor_bottom = 1.0
+offset_left = -476.624
+offset_top = -236.24
+offset_right = -457.0
+offset_bottom = -221.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(1, 1, 0, 0.172549)
+metadata/_edit_use_anchors_ = true
+
+[node name="PlayerDeck" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_wgdt0")
+position = Vector2(1511, 929)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("6_7l7re")
+
+[node name="EnemyDeck" type="Sprite2D" parent="."]
+position = Vector2(456, 122)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("6_7l7re")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(961, 539)
+zoom = Vector2(0.8, 0.8)
+
+[node name="EnemyMana" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1456.0
+offset_top = 334.0
+offset_right = 1587.0
+offset_bottom = 492.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(65, 78)
+script = ExtResource("12_46n2y")
+
+[node name="Sprite2D" type="Sprite2D" parent="EnemyMana"]
+scale = Vector2(0.664948, 0.664948)
+texture = ExtResource("9_qwdrg")
+centered = false
+
+[node name="PlayerMana" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 406.0
+offset_top = 546.0
+offset_right = 526.0
+offset_bottom = 698.0
+pivot_offset = Vector2(60, 78)
+script = ExtResource("12_46n2y")
+
+[node name="Sprite2D" type="Sprite2D" parent="PlayerMana"]
+scale = Vector2(0.664948, 0.664948)
+texture = ExtResource("9_qwdrg")
+centered = false
+
+[node name="EnemyHand" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 712.0
+offset_top = -31.0
+offset_right = 712.0
+offset_bottom = -31.0
+scale = Vector2(0.8, 0.8)
+script = ExtResource("3_rtxx5")
+
+[node name="PlayerHand" type="Control" parent="."]
+z_index = 100
+layout_mode = 3
+anchors_preset = 0
+offset_left = 698.0
+offset_top = 810.0
+offset_right = 1229.0
+offset_bottom = 1044.0
+script = ExtResource("2_x817q")
+
+[node name="TurnManager" type="Node" parent="."]
+script = ExtResource("10_jl0nv")
+
+[node name="ButtonContainer" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(100, 20)
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 544.0
+offset_top = 484.0
+offset_right = 1373.0
+offset_bottom = 524.0
+grow_vertical = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="EndTurnButton" type="Button" parent="ButtonContainer"]
+layout_mode = 2
+theme = ExtResource("18_iqc7k")
+disabled = true
+text = "    End Turn    "
+
+[node name="Cancel attack" type="Button" parent="ButtonContainer"]
+layout_mode = 2
+theme = ExtResource("18_iqc7k")
+disabled = true
+text = "Cancel Attack"
+
+[node name="debug2" type="VBoxContainer" parent="."]
+offset_left = 79.0
+offset_top = 240.0
+offset_right = 144.0
+offset_bottom = 563.0
+theme_override_constants/separation = 12
+
+[node name="turn" type="Label" parent="debug2"]
+layout_mode = 2
+text = "turn
+"
+
+[node name="Priority" type="Label" parent="debug2"]
+layout_mode = 2
+text = "Prioriy
+"
+
+[node name="high" type="Label" parent="debug2"]
+layout_mode = 2
+text = "high
+"
+
+[node name="pos" type="Label" parent="debug2"]
+layout_mode = 2
+text = "pos
+"
+
+[node name="selected" type="Label" parent="debug2"]
+layout_mode = 2
+text = "selected
+"
+
+[node name="ConfirmOverlay" type="CanvasLayer" parent="."]
+script = ExtResource("47_oseo6")
+
+[node name="Panel" type="ColorRect" parent="ConfirmOverlay"]
+z_index = 1000
+z_as_relative = false
+offset_left = 769.0
+offset_top = 441.0
+offset_right = 1150.0
+offset_bottom = 556.0
+mouse_filter = 1
+color = Color(0.423529, 0.443137, 0.439216, 0.431373)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ConfirmOverlay"]
+z_index = 1000
+z_as_relative = false
+offset_left = 836.0
+offset_top = 441.0
+offset_right = 1080.0
+offset_bottom = 556.0
+alignment = 1
+
+[node name="Message" type="Label" parent="ConfirmOverlay/VBoxContainer"]
+layout_mode = 2
+text = "Confirm?"
+horizontal_alignment = 1
+
+[node name="ButtonContainer" type="HBoxContainer" parent="ConfirmOverlay/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="ConfirmButton" type="Button" parent="ConfirmOverlay/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+theme = SubResource("Theme_ycla5")
+shortcut = SubResource("Shortcut_23v8s")
+text = "Yes"
+
+[node name="CancelButton" type="Button" parent="ConfirmOverlay/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+theme = SubResource("Theme_y6kbh")
+shortcut = SubResource("Shortcut_2m60o")
+text = "No"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+offset_left = 1737.0
+offset_top = 323.0
+offset_right = 1998.0
+offset_bottom = 865.0
+
+[node name="debug" type="Label" parent="ScrollContainer"]
+custom_minimum_size = Vector2(250, 100)
+layout_mode = 2
+text = "debug:"
+autowrap_mode = 2
+
+[connection signal="input_event" from="PlayerBoard/4-2" to="PlayerBoard/4-2" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/4-3" to="PlayerBoard/4-3" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/4-4" to="PlayerBoard/4-4" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/4-5" to="PlayerBoard/4-5" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/5-1" to="PlayerBoard/5-1" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/5-2" to="PlayerBoard/5-2" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/5-3" to="PlayerBoard/5-3" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/5-4" to="PlayerBoard/5-4" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/5-5" to="PlayerBoard/5-5" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/6-1" to="PlayerBoard/6-1" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/6-2" to="PlayerBoard/6-2" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/6-3" to="PlayerBoard/6-3" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/6-4" to="PlayerBoard/6-4" method="_on_input_event"]
+[connection signal="input_event" from="PlayerBoard/6-5" to="PlayerBoard/6-5" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/1-1" to="EnemyBoard/1-1" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/1-2" to="EnemyBoard/1-2" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/1-3" to="EnemyBoard/1-3" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/1-4" to="EnemyBoard/1-4" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/1-5" to="EnemyBoard/1-5" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/2-1" to="EnemyBoard/2-1" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/2-2" to="EnemyBoard/2-2" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/2-3" to="EnemyBoard/2-3" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/2-4" to="EnemyBoard/2-4" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/2-5" to="EnemyBoard/2-5" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/3-1" to="EnemyBoard/3-1" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/3-2" to="EnemyBoard/3-2" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/3-3" to="EnemyBoard/3-3" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/3-4" to="EnemyBoard/3-4" method="_on_input_event"]
+[connection signal="input_event" from="EnemyBoard/3-5" to="EnemyBoard/3-5" method="_on_input_event"]
+[connection signal="pressed" from="ButtonContainer/EndTurnButton" to="GameManager" method="_on_end_turn_button_pressed"]
+[connection signal="pressed" from="ButtonContainer/Cancel attack" to="GameManager" method="_on_cancel_attack_pressed"]

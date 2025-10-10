@@ -77,16 +77,7 @@ func _ready():
 	
 
 func _on_mouse_entered():
-	if TurnManager.targeting:
-		if movement.targeting_arrow:
-			if not self in movement.targeting_arrow._potential_targets and can_be_attacked():
-				movement.targeting_arrow._potential_targets.append(self.card_name)
-	card_index = self.z_index
-	if face_up and card_location != "mana":
-		movement.highlighted = true
-		TurnManager.highlighted = self
-		self.z_index = card_index + 10
-		movement.animate_scale(hover_scale)
+	visual._on_mouse_entered()
 
 func _on_mouse_exited():
 	if not parts_highlighted:

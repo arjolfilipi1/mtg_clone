@@ -3,7 +3,7 @@ var orb_list = []
 var turn = 1
 var players: Array[Player] = []
 var debug : Label
-var game_manager:Node
+var game_manager:GameManager
 var player_mana_count = {
 	"generic": 0,
 	"red": 0,
@@ -23,10 +23,19 @@ var enemy_mana_count = {
 var is_selecting_mana = false
 var dragging: Node
 var targeting: Card
-var current_phase = null
 var player_mana_card_nr = 0
 var enemy_mana_card_nr = 0
-var turn_phases =["draw","mana_select","mana_create","main1","attack","end"]
+var waiting_for_input:bool = false
+enum TurnEnum  {
+	DRAW,
+	MANA_SELECT,
+	MANA_CREATE,
+	MAIN,
+	ATTACK,
+	WAITING_FOR_INPUT,
+	END
+}
+var current_phase :TurnEnum
 var priority = true
 var player_orbs = {
 	"generic": [],
@@ -56,7 +65,7 @@ func reset_highlited():
 		node.og_color = Vector4(0,0,0,0)
 func end_turn():
 	turn += 1
-	current_phase = "draw"
+	current_phase = TurnEnum.DRAW
 	priority = false
 	#is_selecting_mana = true
 	#print(turn)
@@ -64,14 +73,14 @@ func _pass_priority():
 	priority = !priority
 func start_turn():
 	is_selecting_mana = true
-	current_phase = turn_phases[1]
+	current_phase = TurnEnum.MANA_SELECT
 func finish_mana_creation():
 	for player in players:
 		if player.mana_created == false:
 			return null
 	for player in players:
 		player.mana_created = false
-	current_phase = turn_phases[3]
+	current_phase = TurnEnum.MAIN
 func finish_draw():
 	var i = 0
 	for pl in players:
@@ -80,7 +89,7 @@ func finish_draw():
 	if i == len(players):
 		for pl in players:
 			pl.did_draw = false
-		current_phase = turn_phases[1]
+		current_phase = TurnEnum.MANA_SELECT
 	_pass_priority()
 func finish_mana_selection():
 	var i = 0
@@ -91,7 +100,7 @@ func finish_mana_selection():
 		for pl in players:
 			pl.mana_selected = false
 		is_selecting_mana = false
-		current_phase = turn_phases[2]
+		current_phase = TurnEnum.MANA_CREATE
 		print("finish mana select")
 	else:
 		return null

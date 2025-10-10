@@ -130,6 +130,15 @@ func set_drag_visuals(is_dragging: bool):
 	subvp.material.set_shader_parameter("alpha_override", 0.5 if is_dragging else 1.0)
 	if card.can_be_payed() and is_dragging:
 		card.controller.board.check_card(card)
+
+func _on_mouse_entered():
+	card.card_index = card.z_index
+	if card.face_up and card.card_location != "mana":
+		card.movement.highlighted = true
+		TurnManager.highlighted = card
+		card.z_index = card.card_index + 10
+		card.movement.animate_scale(card.hover_scale)
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	if card.parts_highlighted:
@@ -142,7 +151,7 @@ func _process(_delta: float) -> void:
 			Flip_animator.flip_to_front()
 			
 		pass
-	if card.player_controled  and TurnManager.current_phase == "main1":
+	if card.player_controled  and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
 		if card.can_be_payed() and card.card_location=="hand":
 			if Playable.material is ShaderMaterial:
 				Playable.material.set_shader_parameter("is_glowing", true)
@@ -161,7 +170,7 @@ func _process(_delta: float) -> void:
 		buttons.visible = true
 		#buttons.mouse_filter = Control.MOUSE_FILTER_PASS
 		cd = 1
-		if card.can_attack() and TurnManager.current_phase == "main1":
+		if card.can_attack() and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
 			attack_button.visible = true
 		else:
 			attack_button.visible = false
