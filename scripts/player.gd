@@ -7,7 +7,7 @@ var player_name: String = ""
 var life_total: int = 20
 var hand = []
 var creatures = []  # Creatures on battlefield
-var lands = []
+var mana = []
 var battlefield = []
 var graveyard = []
 var library = []
@@ -77,7 +77,7 @@ func create_mana():
 		if child is Sprite2D:
 			continue
 		if child.is_card:
-			var list = TurnManager.cost_to_list(child.Mana_creation)
+			var list = TurnManager.cost_to_list(child.state.mana_creation)
 			for l in list:
 				mana_pool[l] += 1
 				var orb = player_mana_zone.spawn_mana_orb(l,Vector2(100,125),player_mana_zone)
@@ -93,8 +93,8 @@ func create_mana():
 func pay_for_card( card) -> void:
 	#return 
 	TurnManager.debug.text += "Paying for card by "+ player_name +" \n"
-	for color in card.mana_cost.keys():
-		var required = card.mana_cost[color]
+	for color in card.state.mana_cost.keys():
+		var required = card.state.mana_cost[color]
 		var available = mana_pool.get(color, 0)
 		
 		if available >= required:
@@ -140,21 +140,7 @@ func draw_card():
 	hand.append(card)
 	print("%s draws %s" % [player_name, card.name])
 
-func play_card(card):
-	if not hand.has(card):
-		return
-	hand.erase(card)
 
-	match card.card_type:
-		"Creature":
-			creatures.append(card)
-		"Land":
-			lands.append(card)
-		_:
-			battlefield.append(card)
-
-	card.controller = self
-	emit_signal("card_played", card)
 
 func take_damage(amount: int):
 	life_total -= amount
@@ -174,11 +160,3 @@ func pass_priority():
 
 func get_attackable_creatures() -> Array:
 	return creatures.filter(func(c): return c.can_attack and not c.tapped and not c.has_summoning_sickness)
-
-func reset_for_new_turn():
-	priority = false
-	is_active = false
-	mana_pool.clear()
-	for c in creatures + lands:
-		c.tapped = false
-		c.has_summoning_sickness = false

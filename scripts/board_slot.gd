@@ -12,6 +12,7 @@ var scew_dict = {
 '1-1':-3,'1-2':-1.5,'1-3':0,'1-4':1.5,'1-5':3,'2-1':-3,'2-2':-1.5,'2-3':0,'2-4':1.5,'2-5':3,'3-1':-3,'3-2':-1.5,'3-3':0,'3-4':1.5,'3-5':3,
 }
 @onready var sp: Sprite2D = $"../sprite"
+@onready var la: Label = $"Label"
 var pos : Vector2
 var is_hovered = false
 var card_list = []
@@ -51,7 +52,7 @@ func check_mouse():
 func accepts_card(_card: Control) -> bool:
 	# Add logic for rules, e.g., mana cost, etc.
 	#return is_hovered
-	if _card.controller.board != self.get_parent() or _card.can_be_payed() == false:
+	if _card.state.controller.board != self.get_parent() or _card.state.can_be_payed() == false:
 		return false
 	if not card_list:
 		return true
@@ -66,7 +67,7 @@ func color_range(dragging = true):
 		coloring_type = "to_play"
 		ranges  = (TurnManager.dragging.card_data['range'])
 	elif TurnManager.targeting:
-		if TurnManager.targeting.card_location == 'field':
+		if TurnManager.targeting.state.card_location == CardState.le.field:
 			ranges = (TurnManager.targeting.card_data['range'])
 	var aplied : Array[String] = []
 	var altered: Array[Area2D] = []
@@ -85,9 +86,11 @@ func color_range(dragging = true):
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func highlight_range() -> void:
 	if TurnManager.dragging:
-			if TurnManager.dragging.can_be_payed():
+			if TurnManager.dragging.state.can_be_payed():
 				color_range()
 func _process(_delta: float) -> void:
+	if la:
+		la.text = str(len(card_list))
 	if og_color:
 		set_color(og_color)
 	elif og_color == null or og_color == Vector4(0,0,0,0):
@@ -104,9 +107,14 @@ func _process(_delta: float) -> void:
 		card_list[0].movement.highlighted = true
 		TurnManager.highlighted = card_list[0]
 		card_list[0].movement.animate_scale(card_list[0].hover_scale)
-	elif is_hovered == false and card_list:
-		card_list[0].movement.highlighted = false
-		card_list[0].movement.animate_scale(card_list[0].normal_scale)
+	elif is_hovered == false and len(card_list) > 0:
+		var card = card_list[0]
+		if is_instance_valid(card) and card.movement:
+			card.movement.highlighted = false
+			card.movement.animate_scale(card.normal_scale)
+		else:
+		# Remove invalid card from list
+			card_list.erase(card)
 	pass
 func reset_higlight():
 	if  not overlay:overlay = $overlay

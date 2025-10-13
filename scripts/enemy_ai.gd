@@ -16,11 +16,12 @@ func evaluate_mana_value(produced: Mana, need: Mana) -> int:
 func setup(game_state_ref) -> void:
 	game_state = game_state_ref
 # Select best mana-producing card, considering its cost
-func get_best_mana_card(hand: Array, mana_need: Mana) -> Node:
+func get_best_mana_card(hand: Array, mana_need: Mana) -> Card:
 	var best_card = null
 	var best_score := -1
 
-	for card in hand:
+	for cardnode in hand:
+		var card = cardnode.state
 		var mana_cost = Mana.new()
 		var Mana_creation = Mana.new()
 		for color in ["generic","red", "blue", "green", "earth", "white", "black"]:
@@ -32,7 +33,7 @@ func get_best_mana_card(hand: Array, mana_need: Mana) -> Node:
 				"earth":mana_cost.earth += card.mana_cost["earth"]
 				"white":mana_cost.white += card.mana_cost["white"]
 				"black":mana_cost.black += card.mana_cost["black"]
-		for color in card.Mana_creation:
+		for color in card.mana_creation:
 			match color:
 				"generic":Mana_creation.generic += 1
 				"red":Mana_creation.red += 1
@@ -45,7 +46,7 @@ func get_best_mana_card(hand: Array, mana_need: Mana) -> Node:
 		var score := evaluate_mana_value(Mana_creation, adjusted_need)
 		if score > best_score:
 			best_score = score
-			best_card = card
+			best_card = cardnode
 
 	return best_card
 func select_mana():
@@ -59,8 +60,9 @@ func select_mana():
 		TurnManager.finish_mana_selection()
 	if all_nodes:
 		var need := Mana.new()
-		for node in all_nodes:
-			if not node.is_in_group("card"):
+		for c in all_nodes:
+			var node = c.state
+			if not c.is_in_group("card"):
 				continue
 			for color in ["generic","red", "blue", "green", "earth", "white", "black"]:
 				match color:
@@ -118,7 +120,7 @@ func enemy_play_card():
 	var area = null
 	
 	for card in pl.player_hand.get_children():
-		if card.can_be_payed and not card_played:
+		if card.state.can_be_payed() and not card_played:
 			var area_list = pl.board.get_children()
 			area_list.shuffle()
 			for all_area in area_list:
@@ -130,7 +132,7 @@ func enemy_play_card():
 			if area:
 				var rot = area.scew_dict[area.name]
 				card.movement.play_card_to_board(area,180 - rot )
-				print("Enemy is playing card " + card.card_name +" to field slot " + area.name)
+				print("Enemy is playing card " + card.state.card_name +" to field slot " + area.name)
 			else:
 				print("Enemy passes. No playable cards.")
 			#play_card_to_board(area,card)

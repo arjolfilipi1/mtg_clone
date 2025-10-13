@@ -22,12 +22,13 @@ var card_database = []
 var last_card_drawn:Card
 var is_player_turn = true
 var current_player : Player
-
+var cm:CombatManager
 
 func _ready():
 	spawn_players()
 	load_cards()
 	start_game()
+	cm = CombatManager.new()
 	# Connect overlay signals
 
 	TurnManager.game_manager = self
@@ -86,11 +87,12 @@ func start_game():
 	#while player_hand.drawTween.is_running:
 		#pass
 	TurnManager.start_turn()
-func initial_draw_card(_player,player = true):
+func initial_draw_card(_player:Player,player = true):
 	var random_card = card_database[randi() % card_database.size()]
 	var card = preload("res://scenes/Card.tscn").instantiate()
 	card.setup(random_card,player,_player)
-	card.card_location = "hand"
+	card.state.card_location = card.state.le.hand
+	_player.hand.append(card)
 	_player.player_hand.add_child(card)
 	_player.player_hand.initial_draw(initialPosition)
 
@@ -101,7 +103,7 @@ func draw_card(card: Card, from_pos: Vector2, to_pos: Vector2, duration: float =
 	card.scale = Vector2(0.8, 0.8)
 	card.global_position = from_pos
 	last_card_drawn = card
-	card.card_location = "hand"
+	card.state.card_location = CardState.le.hand
 	# Keep card in current parent during tweening
 	var tween = get_tree().create_tween()
 	tween.set_parallel(true)
@@ -114,7 +116,7 @@ func draw_card(card: Card, from_pos: Vector2, to_pos: Vector2, duration: float =
 	await tween.finished
 	# Convert global position to new parent's local coordinates
 	TurnManager.finish_draw()
-	card.controller.player_hand.reset()
+	card.state.controller.player_hand.reset()
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
@@ -126,8 +128,8 @@ func _process(_delta: float) -> void:
 	
 	#debug putton size
 	if TurnManager.highlighted:
-		sp.text = "glob_pos: " + str(TurnManager.highlighted.global_position)
-		sl.text = "pos: " + str(TurnManager.highlighted.position)
+		sp.text = "e: h" + str(len(player2.hand)) +"b"+ str(player2.battlefield)
+		sl.text = "e: h" + str(len(player1.hand)) +"b"+ str(player1.battlefield)
 	if TurnManager.priority:
 		current_player = player1
 		$"../PlayerBoard/sprite/OverlayEffect".visible = true
@@ -146,9 +148,9 @@ func _process(_delta: float) -> void:
 	if TurnManager.current_phase == TurnManager.TurnEnum.DRAW and current_player.did_draw == false:
 		var card := preload("res://scenes/Card.tscn").instantiate()
 		var random_card = card_database[randi() % card_database.size()]
-		card.card_location = "hand"
-		card.controller = current_player
 		card.setup(random_card,current_player.is_human,current_player)
+		card.state.card_location = CardState.le.hand
+		card.state.controller = current_player
 		current_player.player_hand.add_child(card)
 		draw_card(card, current_player.deck.position, current_player.player_hand.position)
 		TurnManager.debug.text += current_player.player_name+" drawing \n"
@@ -163,13 +165,13 @@ func _process(_delta: float) -> void:
 		$"../ButtonContainer/Cancel attack".disabled = true
 	prio.text = current_player.player_name
 	turn.text = TurnManager.TurnEnum.keys()[ TurnManager.current_phase]
-	high.text = TurnManager.highlighted.card_name+ str(snappedf( TurnManager.highlighted.size.x,0.01)) if TurnManager.highlighted else "No focus"
+	high.text = TurnManager.highlighted.state.card_name+ str(snappedf( TurnManager.highlighted.size.x,0.01)) if TurnManager.highlighted else "No focus"
 func _on_cancel_attack_pressed() -> void:
 	TurnManager.targeting.movement.targeting_arrow.is_targeting = false
 	TurnManager.targeting.movement.targeting_arrow.complete_targeting()
 	TurnManager.targeting.board_pos.reset_higlight()
 	TurnManager.reset_highlited()
-	TurnManager.targeting = null
+	#TurnManager.targeting = null
 	TurnManager.current_phase = TurnManager.TurnEnum.MAIN
 	pass # Replace with function body.
 func _on_end_turn_button_pressed() -> void:

@@ -1,65 +1,68 @@
 extends Control
 class_name Card
+#z_index when highlighted
 var card_index = 10
-var mana_cost 
-var Mana_creation
+#data of the card
+#store data from card database
 var card_data = {}
-var player_controled = false
-var card_location
-var is_creature: bool
-var face_up: bool = false
-#dragging 
+var state:CardState
+#location hand,mana,field etc
+var board_pos:Area2D = null
+#if fase up for visual
+#if is dragging
 var dragging = false
 var position_before_drag: Vector2
 var rotation_before_drag
-var offset: Vector2 = Vector2.ZERO
-var board_pos:Area2D = null
-var tapped := false
-var has_summoning_sickness := false
-var summoned_on_turn:int 
+#stores offset during movement
+var offset: Vector2 = Vector2.ZERO 
 	
 var hover_scale = Vector2(1.2, 1.2)  # scale when hovered
 var normal_scale = Vector2(1.0, 1.0)
-var duration:float = 0.2  # seconds for the tween
+var duration:float = 0.2  # seconds for the highlight tween
 var highlightTween: Tween
-var controller : Player
-#signal clicked()
+
+#if any of the cildren is highlighted
 var parts_highlighted:= false
 var is_card = true
 var mana_tween: Tween
-var card_name : String
+#nodes to handle visual and movement(also clicking
 @onready var visual : Node = $vizual
 @onready var movement: Node =  $movement
 
-#add other cecks later
-func  can_attack() :
-	if card_location == "field" and has_summoning_sickness == false:
-		return true
-	return false
-#add other cecks later
-func  can_be_attacked() :
-	if card_location == "field" :
-		return true
-	return false
 
+
+#initial setup of the card, called by the game_manager script
 func setup(data,players_card,_controller):
+	state= CardState.new()
 	visual = $vizual
 	visual.card = self
-	player_controled = players_card
+	state.player_controled = players_card
 	card_data = data
-	controller = _controller
-	if controller.is_human:
-		face_up = true
-	card_name = card_data['name']
-	mana_cost = card_data['mana_cost']
+	state.card_data = card_data
+	state.controller = _controller
+	if state.controller.is_human:
+		state.face_up = true
+	state.card_name = card_data['name']
+	state.power = card_data['power']
+	state.toughness = card_data['toughness']
+	state.mana_cost = card_data['mana_cost']
 	visual.set_background_color()
-	is_creature = card_data['type'] == "Creature"
-	Mana_creation = card_data['Mana_creation']
+	state.is_creature = card_data['type'] == "Creature"
+	state.mana_creation = card_data['Mana_creation']
 	var new_texture = load("res://assets/art/" + data['image'])
 	visual.set_card_art(new_texture)
-	# Update visuals (mana cost, power, etc.)
-	#visual.setup()
-	
+
+#destroy card in game
+func send_to_grave():
+	TurnManager.waiting_for_input = true
+	state.card_location = state.le.grave
+	state.controller.battlefield.erase(self)
+	if board_pos:
+		board_pos.card_list.erase(self)
+	if TurnManager.highlighted == self:
+		TurnManager.highlighted = null
+	queue_free()
+#highlight card
 func hilight_on():
 	movement.highlighted = true
 	self._on_mouse_entered()
@@ -71,11 +74,9 @@ func _ready():
 	await get_tree().process_frame
 	visual.add_mana_symbols()
 	visual.set_range()
-	#self.pivot_offset = self.size / 2
 	scale = normal_scale
-	#highlightTween = create_tween()
-	
 
+#sends signal to the visual node
 func _on_mouse_entered():
 	visual._on_mouse_entered()
 
@@ -86,11 +87,6 @@ func _on_mouse_exited():
 	self.z_index = card_index
 	
 
-func get_power():
-	return card_data.get("power", 0)
-
-func get_toughness():
-	return card_data.get("toughness", 0)
 
 
 func _on_gui_input(event: InputEvent) -> void:
@@ -98,81 +94,19 @@ func _on_gui_input(event: InputEvent) -> void:
 
 
 
-func check_drop_area():
-	var mouse_pos = get_global_mouse_position()
-	var space_state = get_world_2d().direct_space_state
-	var parameters = PhysicsPointQueryParameters2D.new()
-	if not can_be_payed():
-		return false
-	parameters.position= mouse_pos
-	parameters.collide_with_areas = true
-	parameters.collide_with_bodies = false
-	parameters.collision_mask = 0xFFFFFFFF
-	var result = space_state.intersect_point(parameters)
-	
-	for hit in result:
-		var collider = hit.collider
-		if collider is Area2D and collider.is_in_group("player_slots"):
-			board_pos =  collider
-			print("Dropped on Area2D:", collider.name)
-			movement.play_card_to_board(collider,collider.scew_dict[collider.name])
-			return
-	dragging = false
-	controller.player_hand.reset()
 
-func can_be_payed() -> bool:
-	var mana_pool = controller.mana_pool
 
-	var pool = mana_pool.duplicate()
-	
-	for color in mana_cost.keys():
-		var required = mana_cost[color]
-		var available = pool.get(color, 0)
 		
-		if available >= required:
-			# Use same-color mana
-			pool[color] -= required
-		else:
-			# Calculate remaining cost
-			var remaining = required - available
-			pool[color] = 0
-			
-			# Calculate how much more we need in other colors (2:1 rate)
-			var substitute_needed = remaining * 2
-			var substitute_pool = 0
-			
-			for other_color in pool.keys():
-				if other_color == color or other_color == "generic":
-					continue
-				substitute_pool += pool[other_color]
-			
-			if substitute_pool < substitute_needed:
-				return false  # Not enough alternate mana
-			
-			# Spend substitute mana
-			var to_spend = substitute_needed
-			for other_color in pool.keys():
-				if other_color == color or other_color == "generic":
-					continue
-				var usable = min(pool[other_color], to_spend)
-				pool[other_color] -= usable
-				to_spend -= usable
-				if to_spend == 0:
-					break
-	if is_creature:
-		return true
-	else:
-		return false
 func _process(_delta: float) -> void:
 	if TurnManager.highlighted != self:
 		movement.animate_scale(normal_scale)
-	
-	if  summoned_on_turn == TurnManager.turn:
+	if  state.summoned_on_turn == TurnManager.turn:
 		pass
+		#right now i am checking attack script, will uncomment later
 		#has_summoning_sickness = true
 	else:
-		has_summoning_sickness = false
-	if (movement.highlighted and  card_location == "hand" ) or (movement.highlighted and  card_location == "field") :
+		state.has_summoning_sickness = false
+	if (movement.highlighted and  state.card_location == state.le.hand) or (movement.highlighted and  state.card_location == state.le.field) :
 		z_index = card_index + 10
 	elif TurnManager.highlighted != self:
 		self.z_index = card_index

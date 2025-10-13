@@ -14,15 +14,15 @@ extends Node
 var valid_target := false
 var b_index:int
 var cd:float = 0.0
-
+@onready var attack = $attack
 
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	b_index = buttons.z_index
-	name_panel.text = card.card_name
-	health_panel.text = str(card.card_data['toughness'])
-	power_panel.text = str(card.card_data['power'])
+	name_panel.text = card.state.card_name
+	health_panel.text = str(card.state.toughness)
+	power_panel.text = str(card.state.power)
 	var unique_material:Material 
 	var sprites = [$"../Playable",$"../SubViewportContainer",$"../Summoning_sickness",$"../Back/Sprite2D"]
 	for sprite in sprites:
@@ -30,8 +30,27 @@ func _ready() -> void:
 		if mat and mat is ShaderMaterial:
 			unique_material = mat.duplicate()
 			sprite.material = unique_material
+	subvp.material.set_shader_parameter("destroy", false)
 	pass # Replace with function body.
 
+func update_pt()->void:
+	var style = StyleBoxFlat.new()
+	power_panel.text = str(card.state.power)
+	if card.state.card_data['power'] > card.state.power:
+		power_panel.add_theme_color_override("font_color", Color.RED)
+	if card.state.card_data['power'] < card.state.power:
+		style.bg_color = Color(0, 0, 1) # blue color
+		power_panel.add_theme_color_override("font_color", Color.BLUE)
+	health_panel.text = str(card.state.toughness)
+	if card.state.card_data['toughness'] > card.state.toughness:
+		health_panel.add_theme_color_override("font_color", Color.RED)
+	if card.state.card_data['toughness'] < card.state.toughness:
+		health_panel.add_theme_color_override("font_color", Color.BLUE)
+	if card.state.toughness == 0:
+		var rng = RandomNumberGenerator.new()
+		burnCard(rng.randf_range(0.0, 360.0))
+	pass
+	
 func set_background_color():
 	#ShaderMaterial
 	const _MANA_COLORS = {
@@ -48,8 +67,8 @@ func set_background_color():
 	var bg_unique_material := card_sprite.material.duplicate()
 	card_sprite.material = bg_unique_material
 	var color_list = []
-	for color in card.mana_cost.keys():
-		if card.mana_cost[color] and color != "generic":
+	for color in card.state.mana_cost.keys():
+		if card.state.mana_cost[color] and color != "generic":
 			color_list.append(color)
 	var multi_color = len(color_list)
 	if color_list[0] :
@@ -65,8 +84,8 @@ func set_background_color():
 
 func set_range():
 	var grid = $"../SubViewportContainer/SubViewport/CenterContainer/grid"
-	if card.is_creature:
-		for s:String in card.card_data['range']:
+	if card.state.is_creature:
+		for s:String in card.state.card_data['range']:
 			var t = grid.get_node(s.replace(".","_"))
 			t.show()
 	else:
@@ -85,9 +104,9 @@ func add_mana_symbols():
 		var symbol_size = Vector2(24, 24)  # Adjust based on your symbol size
 		
 		# First pass: create all symbols and calculate total width
-		for i in card.mana_cost.keys():
-			if card.mana_cost[i] > 0:
-				for j in range(card.mana_cost[i]):
+		for i in card.state.mana_cost.keys():
+			if card.state.mana_cost[i] > 0:
+				for j in range(card.state.mana_cost[i]):
 					var symbol = Sprite2D.new()
 					symbol.texture = load("res://assets/symbol/%s.png" % i)
 					symbol.scale = Vector2(0.75, 0.75)  # Adjust scale if needed
@@ -128,16 +147,33 @@ func scale_sprite_preserving_center(sprite: Sprite2D, frame_size: Vector2 = Vect
 func set_drag_visuals(is_dragging: bool):
 	subvp.material.set_shader_parameter("grayscale_amount",  1.0 if is_dragging else 0.0)
 	subvp.material.set_shader_parameter("alpha_override", 0.5 if is_dragging else 1.0)
-	if card.can_be_payed() and is_dragging:
-		card.controller.board.check_card(card)
+	if card.state.can_be_payed() and is_dragging:
+		card.state.controller.board.check_card(card)
 
 func _on_mouse_entered():
 	card.card_index = card.z_index
-	if card.face_up and card.card_location != "mana":
+	if card.state.face_up and card.state.card_location != CardState.le.mana:
 		card.movement.highlighted = true
 		TurnManager.highlighted = card
 		card.z_index = card.card_index + 10
 		card.movement.animate_scale(card.hover_scale)
+
+func burnCard(direction):
+	TurnManager.waiting_for_input = true
+	if subvp.material and subvp.material is ShaderMaterial:
+		subvp.material.set_shader_parameter("destroy", true)
+		
+		var tween = create_tween()
+		# set burning direction in degrees
+		subvp.material.set_shader_parameter("direction", direction)
+		# use tweens to animate the progress value
+		tween.tween_method(up, -1.5, 1.5, 1.0)
+		tween.tween_callback(card.send_to_grave)
+
+func up(value: float):
+	if subvp.material:
+		subvp.material.set_shader_parameter("progress", value)
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
@@ -145,14 +181,14 @@ func _process(_delta: float) -> void:
 		buttons.z_index = b_index + 10
 	
 	if Summoning_sickness.material is ShaderMaterial:
-			Summoning_sickness.material.set_shader_parameter("ss", card.summoned_on_turn == TurnManager.turn)
-	if card.face_up:
-		if Flip_animator.current_state == Flip_animator.CardState.BACK_VISIBLE:
+			Summoning_sickness.material.set_shader_parameter("ss", card.state.summoned_on_turn == TurnManager.turn)
+	if card.state.face_up:
+		if Flip_animator.current_state == Flip_animator.CardSide.BACK_VISIBLE:
 			Flip_animator.flip_to_front()
 			
 		pass
-	if card.player_controled  and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
-		if card.can_be_payed() and card.card_location=="hand":
+	if card.state.player_controled  and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
+		if card.state.can_be_payed() and card.state.card_location==CardState.le.hand:
 			if Playable.material is ShaderMaterial:
 				Playable.material.set_shader_parameter("is_glowing", true)
 		else:
@@ -166,11 +202,11 @@ func _process(_delta: float) -> void:
 	elif TurnManager.targeting == null:
 		target_overlay.hide()
 		target_overlay.material.set_shader_parameter('Enable_Effects', false)
-	if card.movement.highlighted and card.controller.is_human:
+	if card.movement.highlighted and card.state.controller.is_human:
 		buttons.visible = true
 		#buttons.mouse_filter = Control.MOUSE_FILTER_PASS
 		cd = 1
-		if card.can_attack() and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
+		if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and card.state.can_attack(TurnManager.turn) and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
 			attack_button.visible = true
 		else:
 			attack_button.visible = false

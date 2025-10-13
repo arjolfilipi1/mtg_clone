@@ -5,8 +5,8 @@ extends Node
 @onready var ss: ColorRect = $"../Summoning_sickness"
 var hide_node:Node
 var show_node:Node
-enum CardState { FRONT_VISIBLE, BACK_VISIBLE, FLIPPING }
-var current_state: CardState = CardState.BACK_VISIBLE
+enum CardSide { FRONT_VISIBLE, BACK_VISIBLE, FLIPPING }
+var current_state: CardSide = CardSide.BACK_VISIBLE
 var tween1:Tween
 var tween_shadow:Tween
 var flip_duration: float = 0.5
@@ -21,31 +21,31 @@ func _ready():
 	
 
 func flip_to_back():
-	if current_state != CardState.FRONT_VISIBLE:
+	if current_state != CardSide.FRONT_VISIBLE:
 		return
 	
-	current_state = CardState.FLIPPING
+	current_state = CardSide.FLIPPING
 	card_back.show()
 	
 	# Animate scale and shader
 	animate_flip(card_front, card_back)
 	await tween1.finished
 	card_front.hide()
-	current_state = CardState.BACK_VISIBLE
+	current_state = CardSide.BACK_VISIBLE
 
 func flip_to_front():
 	
-	if current_state != CardState.BACK_VISIBLE or card_back == null:
+	if current_state != CardSide.BACK_VISIBLE or card_back == null:
 		return
 	
-	current_state = CardState.FLIPPING
+	current_state = CardSide.FLIPPING
 	hide_node = card_back
 	show_node = card_front
 	# Animate scale and shader
 	animate_flip(card_back, card_front)
 	await tween1.finished
 	#card_back.hide()
-	current_state = CardState.FRONT_VISIBLE
+	current_state = CardSide.FRONT_VISIBLE
 
 func animate_flip(_hide_node, _show_node):
 	if tween1:

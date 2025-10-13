@@ -1,28 +1,30 @@
-[gd_scene load_steps=39 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=41 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/playable.gdshader" id="1_6a0q4"]
 [ext_resource type="Shader" path="res://assets/shaders/ss.gdshader" id="1_12wvl"]
-[ext_resource type="Texture2D" uid="uid://vcmgexvswsjo" path="res://assets/paper-146904_1920.png" id="3_2g06r"]
+[ext_resource type="Texture2D" uid="uid://c36f45bcsmbqq" path="res://assets/paper-146904_1920.png" id="3_2g06r"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="3_fl2mh"]
 [ext_resource type="Script" path="res://scripts/shadow.gd" id="4_txeqe"]
 [ext_resource type="Shader" path="res://assets/shaders/gray.gdshader" id="5_7keh7"]
-[ext_resource type="Texture2D" uid="uid://bbx7g0mf4n0q3" path="res://assets/Organizata..PNG" id="5_tdvel"]
+[ext_resource type="Texture2D" uid="uid://c7h6u0fwqhhwl" path="res://assets/Organizata..PNG" id="5_tdvel"]
 [ext_resource type="Shader" path="res://assets/shaders/cardBackbround.gdshader" id="6_3qgkq"]
 [ext_resource type="Shader" path="res://assets/shaders/rounded.gdshader" id="6_r5pbg"]
-[ext_resource type="Texture2D" uid="uid://ckhe21031vc86" path="res://assets/art/Earthgolem.jpg" id="9_xnj1b"]
+[ext_resource type="Texture2D" uid="uid://cv6u4ndetmqm7" path="res://assets/MultiNoiseTexture2D.svg" id="7_qve8i"]
+[ext_resource type="Texture2D" uid="uid://pnacnp87bydg" path="res://assets/art/Earthgolem.jpg" id="9_xnj1b"]
 [ext_resource type="Script" path="res://scripts/flip_animator.gd" id="12_leg65"]
-[ext_resource type="Texture2D" uid="uid://ek7m3gb0ctyv" path="res://assets/symbol/red.png" id="12_nmeia"]
-[ext_resource type="Texture2D" uid="uid://c5gkoe4s5jpq2" path="res://assets/grid.png" id="14_44mby"]
-[ext_resource type="Texture2D" uid="uid://d4ark1yb3gsdq" path="res://assets/attack.png" id="15_plbfy"]
+[ext_resource type="Texture2D" uid="uid://bg3gaujkvq44d" path="res://assets/symbol/red.png" id="12_nmeia"]
+[ext_resource type="Texture2D" uid="uid://dhl14vtpkwk3w" path="res://assets/grid.png" id="14_44mby"]
+[ext_resource type="Texture2D" uid="uid://mwqabb0ir18g" path="res://assets/attack.png" id="15_plbfy"]
 [ext_resource type="Script" path="res://scripts/movement.gd" id="16_fj7vn"]
 [ext_resource type="Script" path="res://scripts/vizual.gd" id="17_rvavj"]
-[ext_resource type="Texture2D" uid="uid://bmsrnk2ic51i2" path="res://assets/attackb.png" id="18_3t4xt"]
 [ext_resource type="Shader" path="res://assets/shaders/button.gdshader" id="18_8tvem"]
 [ext_resource type="Script" path="res://scripts/buttons_container.gd" id="18_j83j1"]
 [ext_resource type="Script" path="res://scripts/attack.gd" id="18_ye35g"]
 [ext_resource type="Script" path="res://scripts/attack_button.gd" id="19_0p84n"]
+[ext_resource type="Texture2D" uid="uid://v0u8tnqylcg0" path="res://assets/attackh.png" id="21_h2m4k"]
 [ext_resource type="Shader" path="res://assets/shaders/target.gdshader" id="22_m58xb"]
+[ext_resource type="Script" path="res://scripts/test.gd" id="23_xadkh"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cd0ai"]
 shader = ExtResource("6_r5pbg")
@@ -41,9 +43,16 @@ shader_parameter/corner_scale = 0.2
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ae88b"]
 shader = ExtResource("5_7keh7")
+shader_parameter/destroy = false
 shader_parameter/grayscale_amount = 0.0
 shader_parameter/alpha_override = 1.0
 shader_parameter/corner_scale = 0.15
+shader_parameter/progress = -1.0
+shader_parameter/noiseForce = 0.5
+shader_parameter/burnColor = Color(0.443137, 0, 0, 1)
+shader_parameter/borderWidth = 0.1
+shader_parameter/direction = 180.0
+shader_parameter/noiseTexture = ExtResource("7_qve8i")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_frppa"]
 
@@ -82,12 +91,13 @@ shader_parameter/pulse_strength = 0.3
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_85fdt"]
 shader = ExtResource("18_8tvem")
-shader_parameter/base_color = Color(0.431396, 0.439399, 0.415396, 1)
+shader_parameter/base_color = Color(0.8, 1, 0.1, 1)
 shader_parameter/glow_color = Color(0.9, 0, 0.05, 1)
 shader_parameter/glow_intensity = 0.8
 shader_parameter/hover_glow_boost = 1.5
 shader_parameter/pulse_speed = 2.382
 shader_parameter/pulse_amount = 0.1
+shader_parameter/white_threshold = 0.9
 shader_parameter/hover_ratio = 0.427
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_23tgi"]
@@ -115,9 +125,15 @@ shader_parameter/Border_Fade_Inwards = true
 shader_parameter/Enable_Border = true
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_bxdqp"]
-lifetime_randomness = 0.08
+lifetime_randomness = 0.58
 particle_flag_disable_z = true
-gravity = Vector3(0, 98, 0)
+emission_shape = 3
+emission_box_extents = Vector3(200, 300, 1)
+gravity = Vector3(0, 0, 0)
+radial_accel_min = 74.2
+radial_accel_max = 100.0
+scale_min = 3.0
+scale_max = 10.0
 
 [node name="control" type="Control" groups=["card"]]
 material = SubResource("ShaderMaterial_cd0ai")
@@ -128,10 +144,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -676.0
-offset_top = -449.0
-offset_right = -476.0
-offset_bottom = -199.0
+offset_left = -576.0
+offset_top = -324.0
+offset_right = -376.0
+offset_bottom = -74.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(100, 125)
@@ -451,7 +467,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_filter = 1
-texture_normal = ExtResource("18_3t4xt")
+texture_normal = ExtResource("21_h2m4k")
 script = ExtResource("19_0p84n")
 
 [node name="ColorRect" type="ColorRect" parent="ButtonsContainer/attack"]
@@ -469,6 +485,11 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.686275, 0.686275, 0.686275, 0.811765)
 
+[node name="Button" type="Button" parent="ButtonsContainer"]
+layout_mode = 2
+text = "test"
+script = ExtResource("23_xadkh")
+
 [node name="target" type="ColorRect" parent="."]
 visible = false
 material = SubResource("ShaderMaterial_arkvt")
@@ -480,6 +501,8 @@ color = Color(1, 0.921569, 0, 1)
 
 [node name="TrailParticles" type="GPUParticles2D" parent="."]
 position = Vector2(100, 125)
+emitting = false
+amount = 100
 process_material = SubResource("ParticleProcessMaterial_bxdqp")
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
@@ -493,3 +516,4 @@ process_material = SubResource("ParticleProcessMaterial_bxdqp")
 [connection signal="mouse_entered" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_mouse_exited"]
 [connection signal="visibility_changed" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_visibility_changed"]
+[connection signal="pressed" from="ButtonsContainer/Button" to="ButtonsContainer/Button" method="_pressed"]

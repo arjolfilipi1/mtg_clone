@@ -43,6 +43,7 @@ func _process(_delta: float) -> void:
 func initiate_targeting() -> void:
 	is_targeting = true
 	TurnManager.targeting = card
+	print("initiate_targeting")
 	$ArrowHead.visible = true
 	$ArrowHead/Area2D.monitoring = true
 	emit_signal("initiated_targeting")
@@ -73,7 +74,7 @@ func complete_targeting() -> void:
 # Triggers when a targetting arrow hovers over another card while being dragged
 #
 # It takes care to highlight potential cards which can serve as targets.
-func _on_ArrowHead_area_entered(area: Control) -> void:
+func _on_ArrowHead_area_entered(area: Node) -> void:
 #add code later to remove not in range
 	if area.is_in_group("card") and not area in _potential_targets:
 		_potential_targets.append(area)
