@@ -12,7 +12,7 @@ var scew_dict = {
 '1-1':-3,'1-2':-1.5,'1-3':0,'1-4':1.5,'1-5':3,'2-1':-3,'2-2':-1.5,'2-3':0,'2-4':1.5,'2-5':3,'3-1':-3,'3-2':-1.5,'3-3':0,'3-4':1.5,'3-5':3,
 }
 @onready var sp: Sprite2D = $"../sprite"
-@onready var la: Label = $"Label"
+
 var pos : Vector2
 var is_hovered = false
 var card_list = []
@@ -89,8 +89,7 @@ func highlight_range() -> void:
 			if TurnManager.dragging.state.can_be_payed():
 				color_range()
 func _process(_delta: float) -> void:
-	if la:
-		la.text = str(len(card_list))
+
 	if og_color:
 		set_color(og_color)
 	elif og_color == null or og_color == Vector4(0,0,0,0):

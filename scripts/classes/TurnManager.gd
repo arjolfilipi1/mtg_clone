@@ -26,6 +26,7 @@ var targeting: Card
 var player_mana_card_nr = 0
 var enemy_mana_card_nr = 0
 var waiting_for_input:bool = false
+var board_slots: Dictionary
 enum TurnEnum  {
 	DRAW,
 	MANA_SELECT,

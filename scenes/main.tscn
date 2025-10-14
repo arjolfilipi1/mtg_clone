@@ -1,25 +1,25 @@
 [gd_scene load_steps=65 format=3 uid="uid://ciikqwfm6mbci"]
 
-[ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_qqfnl"]
-[ext_resource type="Script" path="res://scripts/fan.gd" id="2_x817q"]
-[ext_resource type="Script" path="res://scripts/enemy_hand.gd" id="3_rtxx5"]
+[ext_resource type="Script" path="res://scripts/classes/game_manager.gd" id="1_qqfnl"]
+[ext_resource type="Script" path="res://scripts/board/fan.gd" id="2_x817q"]
+[ext_resource type="Script" path="res://scripts/board/enemy_hand.gd" id="3_rtxx5"]
 [ext_resource type="Texture2D" uid="uid://dqpjf6wpdl0f7" path="res://assets/player-field-slots.png" id="4_jnk5p"]
-[ext_resource type="Script" path="res://scripts/enemy_ai.gd" id="4_lgu2c"]
+[ext_resource type="Script" path="res://scripts/board/enemy_ai.gd" id="4_lgu2c"]
 [ext_resource type="Shader" path="res://assets/shaders/fire.gdshader" id="5_m13by"]
 [ext_resource type="Shader" path="res://assets/shaders/slot.gdshader" id="6_4gsu0"]
 [ext_resource type="Texture2D" uid="uid://c7h6u0fwqhhwl" path="res://assets/Organizata..PNG" id="6_7l7re"]
-[ext_resource type="Script" path="res://scripts/player_board.gd" id="6_yttyj"]
-[ext_resource type="Script" path="res://scripts/board_slot.gd" id="7_kgt4o"]
+[ext_resource type="Script" path="res://scripts/board/player_board.gd" id="6_yttyj"]
+[ext_resource type="Script" path="res://scripts/board/board_slot.gd" id="7_kgt4o"]
 [ext_resource type="Texture2D" uid="uid://csgphbivagpqj" path="res://assets/efield.png" id="7_wtrlh"]
 [ext_resource type="Texture2D" uid="uid://byj41eeypnult" path="res://assets/field/4-1.png" id="8_fnel2"]
 [ext_resource type="Shader" path="res://assets/shaders/rounded.gdshader" id="8_i1e4f"]
 [ext_resource type="Texture2D" uid="uid://x4og87peaahb" path="res://assets/field/4-2.png" id="9_dt4yl"]
 [ext_resource type="Texture2D" uid="uid://dfoa34ylnurx5" path="res://assets/slott.png" id="9_qwdrg"]
 [ext_resource type="Texture2D" uid="uid://dqd6604xfpfvo" path="res://assets/field/4-3.png" id="10_87vau"]
-[ext_resource type="Script" path="res://scripts/TurnManager.gd" id="10_jl0nv"]
+[ext_resource type="Script" path="res://scripts/classes/TurnManager.gd" id="10_jl0nv"]
 [ext_resource type="Texture2D" uid="uid://dplsk6ixt312m" path="res://assets/field/4-4.png" id="11_1yw7l"]
 [ext_resource type="Texture2D" uid="uid://xltkg4xelp4q" path="res://assets/field/4-5.png" id="11_utbb0"]
-[ext_resource type="Script" path="res://scripts/player_mana.gd" id="12_46n2y"]
+[ext_resource type="Script" path="res://scripts/board/player_mana.gd" id="12_46n2y"]
 [ext_resource type="Texture2D" uid="uid://dpdxrm10nw6wx" path="res://assets/field/5-2.png" id="12_520se"]
 [ext_resource type="Texture2D" uid="uid://b4v8lfa4ou43" path="res://assets/field/5-1.png" id="12_tex2u"]
 [ext_resource type="Texture2D" uid="uid://gpsk1xw0lbe8" path="res://assets/field/5-3.png" id="13_sd2je"]
@@ -46,7 +46,7 @@
 [ext_resource type="Texture2D" uid="uid://bcp7nsxritwa5" path="res://assets/field/3-3.png" id="35_t7bpt"]
 [ext_resource type="Texture2D" uid="uid://cbltjbrywjwhy" path="res://assets/field/3-4.png" id="36_ay0ry"]
 [ext_resource type="Texture2D" uid="uid://d4f1dkt45n3bs" path="res://assets/field/3-5.png" id="37_uoigk"]
-[ext_resource type="Script" path="res://scripts/confirm_overlay.gd" id="47_oseo6"]
+[ext_resource type="Script" path="res://scripts/board/confirm_overlay.gd" id="47_oseo6"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2udy6"]
 
@@ -263,12 +263,6 @@ position = Vector2(-35, 81.5)
 scale = Vector2(1, 1.0979)
 texture = ExtResource("8_fnel2")
 
-[node name="Label" type="Label" parent="PlayerBoard/4-1"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="4-2" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
 position = Vector2(180, 63)
@@ -282,12 +276,6 @@ material = SubResource("ShaderMaterial_xhskb")
 position = Vector2(12, 79.8125)
 scale = Vector2(1, 1.09353)
 texture = ExtResource("9_dt4yl")
-
-[node name="Label" type="Label" parent="PlayerBoard/4-2"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="4-3" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
@@ -303,12 +291,6 @@ position = Vector2(62, 76.8125)
 scale = Vector2(1, 1.06556)
 texture = ExtResource("10_87vau")
 
-[node name="Label" type="Label" parent="PlayerBoard/4-3"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="4-4" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
 position = Vector2(419, 63)
@@ -322,12 +304,6 @@ material = SubResource("ShaderMaterial_qvbld")
 position = Vector2(111.75, 80.3125)
 scale = Vector2(1.01572, 1.08654)
 texture = ExtResource("11_1yw7l")
-
-[node name="Label" type="Label" parent="PlayerBoard/4-4"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="4-5" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
@@ -343,12 +319,6 @@ position = Vector2(155, 81)
 scale = Vector2(1.00588, 1.06818)
 texture = ExtResource("11_utbb0")
 
-[node name="Label" type="Label" parent="PlayerBoard/4-5"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="5-1" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
 position = Vector2(59, 227)
@@ -362,12 +332,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(-42, 72)
 scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("12_tex2u")
-
-[node name="Label" type="Label" parent="PlayerBoard/5-1"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="5-2" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
@@ -383,12 +347,6 @@ position = Vector2(10, 74)
 scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("12_520se")
 
-[node name="Label" type="Label" parent="PlayerBoard/5-2"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="5-3" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
 position = Vector2(300, 227)
@@ -402,12 +360,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(61, 73)
 scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("13_sd2je")
-
-[node name="Label" type="Label" parent="PlayerBoard/5-3"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="5-4" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
@@ -424,12 +376,6 @@ position = Vector2(116, 73)
 scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("14_718f3")
 
-[node name="Label" type="Label" parent="PlayerBoard/5-4"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="5-5" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
 position = Vector2(539, 227)
@@ -443,12 +389,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(165, 74)
 scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("15_b5581")
-
-[node name="Label" type="Label" parent="PlayerBoard/5-5"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="6-1" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
@@ -465,12 +405,6 @@ position = Vector2(-53, 65)
 scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("16_g5jpl")
 
-[node name="Label" type="Label" parent="PlayerBoard/6-1"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="6-2" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
 position = Vector2(180, 391)
@@ -484,12 +418,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(4, 65)
 scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("17_l2xaa")
-
-[node name="Label" type="Label" parent="PlayerBoard/6-2"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="6-3" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
@@ -505,12 +433,6 @@ position = Vector2(57, 63)
 scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("18_y4cfv")
 
-[node name="Label" type="Label" parent="PlayerBoard/6-3"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="6-4" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
 position = Vector2(419, 391)
@@ -525,12 +447,6 @@ position = Vector2(119, 62)
 scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("19_686g0")
 
-[node name="Label" type="Label" parent="PlayerBoard/6-4"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="6-5" type="Area2D" parent="PlayerBoard" groups=["player_slots", "slots"]]
 z_index = -1
 position = Vector2(540, 391)
@@ -544,12 +460,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(175, 57)
 scale = Vector2(1.00588, 1.11278)
 texture = ExtResource("20_102rg")
-
-[node name="Label" type="Label" parent="PlayerBoard/6-5"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="sprite" type="Sprite2D" parent="PlayerBoard"]
 material = SubResource("ShaderMaterial_qq0gl")
@@ -596,12 +506,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(-15, 103)
 texture = ExtResource("23_h42om")
 
-[node name="Label" type="Label" parent="EnemyBoard/1-1"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="1-2" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(60, 10)
 script = ExtResource("7_kgt4o")
@@ -614,12 +518,6 @@ polygon = PackedVector2Array(-49, 46, -53, 162, 95, 160, 97, 45)
 material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(142, 102)
 texture = ExtResource("24_jcqp2")
-
-[node name="Label" type="Label" parent="EnemyBoard/1-2"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="1-3" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(363, 105)
@@ -634,12 +532,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(0, 9)
 texture = ExtResource("25_f3t5r")
 
-[node name="Label" type="Label" parent="EnemyBoard/1-3"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="1-4" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(522, 105)
 script = ExtResource("7_kgt4o")
@@ -652,12 +544,6 @@ polygon = PackedVector2Array(33, 44, 33, 159, 172, 159, 166, 43)
 material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(0, 8)
 texture = ExtResource("26_3km4t")
-
-[node name="Label" type="Label" parent="EnemyBoard/1-4"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="1-5" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(674, 105)
@@ -672,12 +558,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(0, 7)
 texture = ExtResource("27_7ct2v")
 
-[node name="Label" type="Label" parent="EnemyBoard/1-5"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="2-1" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(59, 162)
 script = ExtResource("7_kgt4o")
@@ -689,12 +569,6 @@ polygon = PackedVector2Array(-92, 16, -100, 127, 53, 127, 57, 18)
 material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(-23, 70)
 texture = ExtResource("28_plgir")
-
-[node name="Label" type="Label" parent="EnemyBoard/2-1"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="2-2" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(59, 162)
@@ -709,12 +583,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(139, 73)
 texture = ExtResource("29_443o6")
 
-[node name="Label" type="Label" parent="EnemyBoard/2-2"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="2-3" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(59, 162)
 script = ExtResource("7_kgt4o")
@@ -727,12 +595,6 @@ polygon = PackedVector2Array(-14, 16, -15, 124, 144, 124, 145, 17)
 material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(306, 72)
 texture = ExtResource("30_yw37f")
-
-[node name="Label" type="Label" parent="EnemyBoard/2-3"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="2-4" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(59, 162)
@@ -747,12 +609,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(468, 73)
 texture = ExtResource("31_nnv65")
 
-[node name="Label" type="Label" parent="EnemyBoard/2-4"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="2-5" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(59, 162)
 script = ExtResource("7_kgt4o")
@@ -765,12 +621,6 @@ polygon = PackedVector2Array(64, 17, 66, 124, 220, 124, 211, 17)
 material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(623, 70)
 texture = ExtResource("32_jaigk")
-
-[node name="Label" type="Label" parent="EnemyBoard/2-5"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="3-1" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(59, 311)
@@ -785,12 +635,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(-30, 44)
 texture = ExtResource("33_npy22")
 
-[node name="Label" type="Label" parent="EnemyBoard/3-1"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="3-2" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(59, 311)
 script = ExtResource("7_kgt4o")
@@ -803,12 +647,6 @@ polygon = PackedVector2Array(2, -1, -2, 111, 154, 112, 155, -2)
 material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(136, 44)
 texture = ExtResource("34_i8773")
-
-[node name="Label" type="Label" parent="EnemyBoard/3-2"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="3-3" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(59, 311)
@@ -823,12 +661,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(303, 45)
 texture = ExtResource("35_t7bpt")
 
-[node name="Label" type="Label" parent="EnemyBoard/3-3"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="3-4" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(59, 311)
 script = ExtResource("7_kgt4o")
@@ -842,12 +674,6 @@ material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(472, 44)
 texture = ExtResource("36_ay0ry")
 
-[node name="Label" type="Label" parent="EnemyBoard/3-4"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
-
 [node name="3-5" type="Area2D" parent="EnemyBoard" groups=["enemy_slots", "slots"]]
 position = Vector2(59, 311)
 script = ExtResource("7_kgt4o")
@@ -860,12 +686,6 @@ polygon = PackedVector2Array(68, -12, 75, 95, 227, 96, 218, -12)
 material = SubResource("ShaderMaterial_c4w6m")
 position = Vector2(630, 44)
 texture = ExtResource("37_uoigk")
-
-[node name="Label" type="Label" parent="EnemyBoard/3-5"]
-offset_left = -85.0
-offset_top = 68.0
-offset_right = 21.0
-offset_bottom = 102.0
 
 [node name="sprite" type="Sprite2D" parent="EnemyBoard"]
 position = Vector2(360, 233)
@@ -965,10 +785,10 @@ custom_minimum_size = Vector2(100, 20)
 anchors_preset = 4
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = 544.0
-offset_top = 484.0
-offset_right = 1373.0
-offset_bottom = 524.0
+offset_left = 1397.0
+offset_top = 496.0
+offset_right = 1641.0
+offset_bottom = 536.0
 grow_vertical = 2
 theme_override_constants/separation = 20
 alignment = 1

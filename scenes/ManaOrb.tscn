@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://cgmdfik2ygglp"]
 
-[ext_resource type="Script" path="res://scripts/mana_orb.gd" id="1_ganmu"]
+[ext_resource type="Script" path="res://scripts/board/mana_orb.gd" id="1_ganmu"]
 [ext_resource type="Shader" path="res://assets/shaders/ManaOrb.gdshader" id="1_opnrq"]
-[ext_resource type="Texture2D" uid="uid://do62ud7pj5et0" path="res://assets/mana.png" id="1_t8wq8"]
+[ext_resource type="Texture2D" uid="uid://cnk5gjstxymim" path="res://assets/mana.png" id="1_t8wq8"]
 [ext_resource type="Shader" path="res://assets/shaders/storm.gdshader" id="1_ueae6"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a6s85"]

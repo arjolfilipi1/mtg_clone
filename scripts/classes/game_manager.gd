@@ -28,6 +28,13 @@ func _ready():
 	spawn_players()
 	load_cards()
 	start_game()
+	for c in enemy_board.get_children():
+		if c.is_in_group("enemy_slots"):
+			TurnManager.board_slots[c.name] = c
+	for c in player_board.get_children():
+		if c.is_in_group("player_slots"):
+			TurnManager.board_slots[c.name] = c
+
 	cm = CombatManager.new()
 	# Connect overlay signals
 

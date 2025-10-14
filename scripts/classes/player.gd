@@ -1,7 +1,7 @@
 class_name Player
 
 extends Resource
-
+signal mana_changed(Player)
 # --- Gameplay State ---
 var player_name: String = ""
 var life_total: int = 20
@@ -18,7 +18,6 @@ var board : Node = null
 var deck : Node = null
 var player_hand : Node = null
 var player_mana_card_nr = 0
-
 var player_orbs = {
 	"generic": [],
 	"red": [],
@@ -52,6 +51,7 @@ func _init(_pn,_pmz,_ph,_b,_d):
 	player_hand = _ph
 	board = _b
 	deck = _d
+	mana_changed.connect(mana_match_visual)
 	pass
 func reset_mana():
 	TurnManager.debug.text += "reseting mana \n"
@@ -64,7 +64,7 @@ func reset_mana():
 	"white": 0,
 	"black": 0
 }
-	mana_match_visual()
+	emit_signal("mana_changed",self)
 func create_mana():
 	print("mana create")
 	for color in player_orbs.keys():
@@ -117,16 +117,17 @@ func pay_for_card( card) -> void:
 				to_spend -= usable
 				if to_spend == 0:
 					break
-	mana_match_visual()
-func mana_match_visual():
-	TurnManager.debug.text += "Seting mana visuals for "+ player_name +" \n"
-	for color in player_orbs.keys():
-		while len(player_orbs[color]) > mana_pool[color] :
-			var  node = player_orbs[color][-1]
-			if is_instance_valid(node):
-				player_orbs[color].erase(node)
-				node.queue_free()
-	player_mana_zone.arrange_mana_orbs_in_circle(Vector2(60,75),30)
+	emit_signal("mana_changed",self)
+func mana_match_visual(pl):
+	if pl == self:
+		TurnManager.debug.text += "Seting mana visuals for "+ player_name +" \n"
+		for color in player_orbs.keys():
+			while len(player_orbs[color]) > mana_pool[color] :
+				var  node = player_orbs[color][-1]
+				if is_instance_valid(node):
+					player_orbs[color].erase(node)
+					node.queue_free()
+		player_mana_zone.arrange_mana_orbs_in_circle(Vector2(60,75),30)
 
 # --- Gameplay Flags ---
 

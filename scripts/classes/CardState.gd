@@ -4,6 +4,7 @@ class_name CardState
 # --- Core immutable data (copied from database) ---
 var card_data = {}
 var card_name: String
+var range
 var mana_cost = {}
 var mana_creation = {}
 var is_creature: bool
@@ -28,6 +29,11 @@ var controller : Player
 func can_attack(turn: int) -> bool:
 	return card_location == le.field and not has_summoning_sickness
 
+func get_board_range(di:Dictionary):
+	print(range)
+	for r in range:
+		pass
+	pass 
 func can_be_attacked() -> bool:
 	return card_location == le.field
 
