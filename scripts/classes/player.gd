@@ -133,14 +133,16 @@ func mana_match_visual(pl):
 
 # --- Public Methods ---
 
-func draw_card():
-	if library.is_empty():
-		print("%s has no cards to draw and loses (decked out)!" % player_name)
-		return  # Or lose the game
-	var card = library.pop_back()
-	hand.append(card)
+func draw():
+	var card := preload("res://scenes/Card.tscn").instantiate()
+	var random_card = TurnManager.game_manager.card_database[randi() % TurnManager.game_manager.card_database.size()]
+	card.setup(random_card,is_human,self)
+	card.state.card_location = CardState.le.hand
+	card.state.controller = self
+	player_hand.add_child(card)
+	TurnManager.game_manager.draw_card(card, deck.position, player_hand.position)
 	print("%s draws %s" % [player_name, card.name])
-
+	did_draw = true
 
 
 func take_damage(amount: int):

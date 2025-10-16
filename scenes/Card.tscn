@@ -106,7 +106,7 @@ shader_parameter/corner_scale = 0.348
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_arkvt"]
 shader = ExtResource("22_m58xb")
-shader_parameter/Enable_Effects = true
+shader_parameter/Enable_Effects = false
 shader_parameter/Line_Smoothness = 0.045
 shader_parameter/Line_Width = 0.2
 shader_parameter/Brightness = 3.0
@@ -116,11 +116,11 @@ shader_parameter/Speed = 0.7
 shader_parameter/Position = 0.0
 shader_parameter/Position_Min = 0.25
 shader_parameter/Position_Max = 0.5
-shader_parameter/Alpha = 0.105
-shader_parameter/Border_Color = Vector4(1, 1, 0, 1)
+shader_parameter/Alpha = 1.0
+shader_parameter/Border_Color = Vector4(1, 1, 1, 1)
 shader_parameter/Border_Width = 0.02
 shader_parameter/Border_Feather = 0.01
-shader_parameter/Border_Alpha = 0.42
+shader_parameter/Border_Alpha = 0.7
 shader_parameter/Border_Fade_Inwards = true
 shader_parameter/Enable_Border = true
 
@@ -506,10 +506,11 @@ layout_mode = 0
 offset_right = 200.0
 offset_bottom = 255.0
 mouse_filter = 1
-color = Color(1, 0.921569, 0, 0.984314)
+color = Color(1, 0.921569, 0, 0.258824)
 
 [node name="TrailParticles" type="GPUParticles2D" parent="."]
 position = Vector2(100, 125)
+emitting = false
 amount = 300
 process_material = SubResource("ParticleProcessMaterial_bxdqp")
 texture = SubResource("NoiseTexture2D_30epp")

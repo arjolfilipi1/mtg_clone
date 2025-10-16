@@ -198,7 +198,7 @@ func _process(_delta: float) -> void:
 		if target_overlay.material is ShaderMaterial:
 			target_overlay.show()
 			target_overlay.material.set_shader_parameter('Enable_Effects', true)
-			target_overlay.material.set_shader_parameter('Border_Color', Vector4(1,1,0,1))
+			target_overlay.material.set_shader_parameter('Border_Color', Vector4(1,1,0,0.5))
 	elif TurnManager.targeting == null:
 		target_overlay.hide()
 		target_overlay.material.set_shader_parameter('Enable_Effects', false)

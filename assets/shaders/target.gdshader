@@ -100,7 +100,7 @@ void fragment() {
     }
 
     // Apply alpha uniform
-    final_color.a *= Alpha;
+    final_color.a *= 0.0;
 	if (Enable_Effects) {
     COLOR = final_color;}
 }

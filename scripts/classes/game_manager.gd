@@ -153,15 +153,9 @@ func _process(_delta: float) -> void:
 	if TurnManager.current_phase == TurnManager.TurnEnum.MANA_SELECT:
 		TurnManager.is_selecting_mana = true
 	if TurnManager.current_phase == TurnManager.TurnEnum.DRAW and current_player.did_draw == false:
-		var card := preload("res://scenes/Card.tscn").instantiate()
-		var random_card = card_database[randi() % card_database.size()]
-		card.setup(random_card,current_player.is_human,current_player)
-		card.state.card_location = CardState.le.hand
-		card.state.controller = current_player
-		current_player.player_hand.add_child(card)
-		draw_card(card, current_player.deck.position, current_player.player_hand.position)
+		
 		TurnManager.debug.text += current_player.player_name+" drawing \n"
-		current_player.did_draw = true
+		current_player.draw()
 	if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and TurnManager.priority:
 		$"../ButtonContainer/EndTurnButton".disabled = false
 	else:
