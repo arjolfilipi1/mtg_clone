@@ -3,8 +3,7 @@ extends Button
 var rng = RandomNumberGenerator.new()
 
 func pressed() -> void:
-	
-	burnCard(rng.randf_range(0.0, 360.0))
+	print(card.state.get_board_range(TurnManager.board_slots))
 func burnCard(direction):
 	var svb = card.visual.subvp
 	if svb.material and svb.material is ShaderMaterial:

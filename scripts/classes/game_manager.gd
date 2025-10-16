@@ -135,7 +135,7 @@ func _process(_delta: float) -> void:
 	
 	#debug putton size
 	if TurnManager.highlighted:
-		sp.text = "e: h" + str(len(player2.hand)) +"b"+ str(player2.battlefield)
+		sp.text = TurnManager.targeting.name if TurnManager.targeting else str(TurnManager.targeting)
 		sl.text = "e: h" + str(len(player1.hand)) +"b"+ str(player1.battlefield)
 	if TurnManager.priority:
 		current_player = player1
@@ -166,7 +166,7 @@ func _process(_delta: float) -> void:
 		$"../ButtonContainer/EndTurnButton".disabled = false
 	else:
 		$"../ButtonContainer/EndTurnButton".disabled = true
-	if TurnManager.current_phase ==TurnManager.TurnEnum.ATTACK and TurnManager.priority:
+	if TurnManager.current_phase == TurnManager.TurnEnum.ATTACK and TurnManager.priority:
 		$"../ButtonContainer/Cancel attack".disabled = false
 	else:
 		$"../ButtonContainer/Cancel attack".disabled = true
@@ -174,9 +174,11 @@ func _process(_delta: float) -> void:
 	turn.text = TurnManager.TurnEnum.keys()[ TurnManager.current_phase]
 	high.text = TurnManager.highlighted.state.card_name+ str(snappedf( TurnManager.highlighted.size.x,0.01)) if TurnManager.highlighted else "No focus"
 func _on_cancel_attack_pressed() -> void:
-	TurnManager.targeting.movement.targeting_arrow.is_targeting = false
-	TurnManager.targeting.movement.targeting_arrow.complete_targeting()
-	TurnManager.targeting.board_pos.reset_higlight()
+	if not TurnManager.targeting == null:
+		print("TurnManager.targeting",TurnManager.targeting)
+		TurnManager.targeting.movement.targeting_arrow.is_targeting = false
+		TurnManager.targeting.movement.targeting_arrow.complete_targeting()
+		
 	TurnManager.reset_highlited()
 	#TurnManager.targeting = null
 	TurnManager.current_phase = TurnManager.TurnEnum.MAIN

@@ -67,7 +67,7 @@ func reset_highlited():
 func end_turn():
 	turn += 1
 	current_phase = TurnEnum.DRAW
-	priority = false
+	priority = !priority
 	#is_selecting_mana = true
 	#print(turn)
 func _pass_priority():

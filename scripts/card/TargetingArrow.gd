@@ -4,11 +4,10 @@ class_name TargetingArrow
 extends Line2D
 var card :Card
 # Emitted whenever the object spawns a targeting arrow.
-signal initiated_targeting
 # Emitted whenever the object has selected a target.
-signal target_selected(target)
+
 # Emitted whenever the target arrow hovers over a valid target.
-signal potential_target_found(target)
+
 # We use this to track multiple potential target objects
 # when our owner_card is about to target them.
 var _potential_targets := []
@@ -43,10 +42,9 @@ func _process(_delta: float) -> void:
 func initiate_targeting() -> void:
 	is_targeting = true
 	TurnManager.targeting = card
-	print("initiate_targeting")
 	$ArrowHead.visible = true
 	$ArrowHead/Area2D.monitoring = true
-	emit_signal("initiated_targeting")
+
 
 
 # Will end the targeting process.
@@ -64,7 +62,9 @@ func complete_targeting() -> void:
 			tc.emit_signal("card_targeted", tc, "card_targeted",
 					{"targeting_source": owner_object})
 		target_object = tc
-	emit_signal("target_selected",target_object)
+	if TurnManager.targeting:
+		TurnManager.targeting.board_pos.reset_higlight()
+	TurnManager.targeting = null
 	is_targeting = false
 	clear_points()
 	$ArrowHead.visible = false
@@ -124,11 +124,9 @@ func _draw_targeting_arrow() -> void:
 	middle_point.y -= raise_height
 	
 	# Calculate direction vectors for smooth curves
-	var start_to_end_dir = (end_point - start_point).normalized()
-	var perpendicular = Vector2(-start_to_end_dir.y, start_to_end_dir.x)
+	#var start_to_end_dir = (end_point - start_point).normalized()
 	
 	# Control point offsets for smooth curve
-	var control_distance = start_point.distance_to(end_point) * 0.3
 	curve.add_point(start_point, Vector2(0,0), centerpos.direction_to(get_viewport().size/2) * 75)
 	curve.add_point(end_point, centerpos.direction_to(get_viewport().size/2) * 75, Vector2(0,0))
 	

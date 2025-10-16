@@ -829,13 +829,17 @@ text = "high
 
 [node name="pos" type="Label" parent="debug2"]
 layout_mode = 2
+mouse_filter = 1
 text = "pos
 "
+text_overrun_behavior = 1
 
 [node name="selected" type="Label" parent="debug2"]
 layout_mode = 2
+mouse_filter = 1
 text = "selected
 "
+text_overrun_behavior = 1
 
 [node name="ConfirmOverlay" type="CanvasLayer" parent="."]
 script = ExtResource("47_oseo6")

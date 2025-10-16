@@ -23,9 +23,9 @@ func attack_target():
 				for r in ranges :
 					var parts = r.split(".")
 					if slot.name == str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) ):
-						for card:Card in slot.card_list:
-							card.visual.valid_target = true
-							affected.append(card)
+						for c:Card in slot.card_list:
+							c.visual.valid_target = true
+							affected.append(c)
 
 	card.board_pos.color_range(false)
 func on_click(event):
@@ -56,7 +56,7 @@ func on_click(event):
 	pass # Replace with function body.
 func attack_card():
 	
-	card.visual.attack.start_slam_attack()
+	card.visual.attack.start_slam_attack(TurnManager.targeting,card)
 func check_drop_area():
 	var mouse_pos = card.get_global_mouse_position()
 	var space_state = card.get_world_2d().direct_space_state
@@ -72,7 +72,7 @@ func check_drop_area():
 	for hit in result:
 		var collider = hit.collider
 		if collider is Area2D and collider.is_in_group("player_slots"):
-			card.board_pos =  collider
+			
 			print("Dropped on Area2D:", collider.name)
 			play_card_to_board(collider,collider.scew_dict[collider.name])
 			return
@@ -92,13 +92,15 @@ func animate_scale(target_scale: Vector2) -> void:
 	if highlightTween:
 		highlightTween.kill() # stop existing tweens
 	highlightTween = create_tween()
-	var track := highlightTween.parallel().tween_property(card, "scale", target_scale, 0.8).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	var _track := highlightTween.parallel().tween_property(card, "scale", target_scale, 0.8).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 
 	
 	# Calculate how much the card will expand and adjust position
 	
 
 func play_card_to_board(area:Node,rot = 0):
+	card.board_pos =  area
+	card.state.pos = area.name
 	TurnManager.dragging = null
 	TurnManager.reset_highlited()
 	card.state.controller.hand.erase(card)

@@ -43,7 +43,7 @@ func setup(data,players_card,_controller):
 	if state.controller.is_human:
 		state.face_up = true
 	state.card_name = card_data['name']
-	state.range = card_data['range']
+	state.card_range = card_data['range']
 	state.power = card_data['power']
 	state.toughness = card_data['toughness']
 	state.mana_cost = card_data['mana_cost']

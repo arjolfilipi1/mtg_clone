@@ -26,9 +26,11 @@ func _ready() -> void:
 	if trail_particles:
 		trail_particles.emitting = false
 
-func start_slam_attack(direction: Vector2 = Vector2.RIGHT, custom_distance: float = 0.0) -> void:
+func start_slam_attack(attacker:Card, defender:Card, direction: Vector2 = Vector2.RIGHT) -> void:
 	TurnManager.waiting_for_input = true
-	card= TurnManager.targeting
+	TurnManager._pass_priority()
+	target = target if not defender else defender
+	card= TurnManager.targeting if not attacker else attacker
 	card.movement.targeting_arrow.complete_targeting()
 	print("attacked"+card.state.card_name +" defender "+target.state.card_name)
 	original_position = card.position
@@ -51,6 +53,7 @@ func start_slam_attack(direction: Vector2 = Vector2.RIGHT, custom_distance: floa
 		# Use gravity or initial velocity instead of direction
 		if trail_particles.process_material is ParticleProcessMaterial:
 			# Set gravity to oppose movement direction
+			trail_particles.emitting = true
 			trail_particles.process_material.gravity = Vector3(direction.x * -100, direction.y * -100, 0)
 			
 			# OR set initial velocity
@@ -153,14 +156,13 @@ func _on_attack_complete() -> void:
 func _create_impact_effects() -> void:
 	# Impact particles
 	if has_node("ImpactParticles"):
-		var trail_particles = $"../../TrailParticles"
 		var red_color = Color.RED
 		trail_particles.process_material.color = red_color
 		
 		# Optional: Configure for trail effect
 		trail_particles.process_material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
 		trail_particles.process_material.spread = 10.0
-		trail_particles.amount = 50
+		trail_particles.amount = 300
 		trail_particles.lifetime = 0.5
 	
 	# Sound
