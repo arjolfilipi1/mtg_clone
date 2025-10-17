@@ -28,6 +28,13 @@ var controller : Player
 var real:bool = true
 var effect:Effect_class
 var active_buffs:Array = []
+
+func effect_targets():
+	if not effect:
+		return false
+	
+	pass
+
 # --- Gameplay logic ---
 func can_attack(_turn: int) -> Array:
 	var res:Array[Card] =[]
@@ -94,12 +101,19 @@ func take_damage(amount:int,_source:Card):
 		emit_signal("deleted",self)
 	if real:
 		emit_signal("pt_changed",self)
-		
+
+func _remove_expired_buffs():
+	print("REMOVING")
+	pass
+
 func add_temp_buff(power_to_add:int,toughness_to_add:int,duration:String):
 	self.toughness += toughness_to_add
 	self.power += power_to_add
 	var buff = {"power":power_to_add,"toughness":toughness_to_add,"duration":duration}
+	active_buffs.append(buff)
 	if real:
+		if duration == "until_end_of_turn":
+			TurnManager.end_of_turn.connect(_remove_expired_buffs,CONNECT_ONE_SHOT)
 		emit_signal("pt_changed",self)
 func can_be_payed() -> bool:
 	var mana_pool = controller.mana_pool

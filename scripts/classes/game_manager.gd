@@ -145,7 +145,7 @@ func _process(_delta: float) -> void:
 	
 	#debug putton size
 	if TurnManager.highlighted:
-		sp.text = str( TurnManager.highlighted.state.power )
+		sp.text = str( TurnManager.highlighted.state.effect )
 		sl.text = str( TurnManager.highlighted.state.power )
 	if TurnManager.priority:
 		current_player = player1

@@ -139,7 +139,7 @@
 },
 		"type": "Spell",
 		"effect": {
-	"spec": "buff target_creature +3/+3 until_end_of_turn",
+	"spec": "buff all_creatures +3/+3 until_end_of_turn",
 	"target_spec": "target_creature",
 	"trigger_spec": "on_play"
   },
