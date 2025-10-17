@@ -100,26 +100,19 @@ func animate_scale(target_scale: Vector2) -> void:
 
 func play_card_to_board(area:Node,rot = 0):
 	card.board_pos =  area
-	card.state.pos = area.name
 	TurnManager.dragging = null
 	TurnManager.reset_highlited()
-	card.state.controller.hand.erase(card)
-	card.state.controller.battlefield.append(card)
-	card.state.controller.board.reset_higlight()
-	card.state.face_up = true
+	card.state.play_to_board(area.name,TurnManager.game_manager.gamestate,card)
 	card.get_parent().remove_child(card)
 	area.get_parent().add_child(card)
 	var tween := get_tree().create_tween()
 	tween.parallel().tween_property(card, "position", area.pos, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tween.parallel().tween_property(card, "scale", card.normal_scale, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tween.parallel().tween_property(card, "rotation_degrees", rot, 0.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	card.state.card_location = CardState.le.field
 	#await tween.finished
 	area.card_list.append(card)
-	card.state.controller.pay_for_card(card)
 	card.state.controller.player_hand.reset()
 	TurnManager.priority = false if TurnManager.priority else true
-	card.state.summoned_on_turn = TurnManager.turn
 	pass
 
 func move_to_mana_zone():

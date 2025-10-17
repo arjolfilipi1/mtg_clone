@@ -25,32 +25,13 @@ var current_player : Player
 var cm:CombatManager
 var gamestate:GameState
 
-func store_gamestate()->GameState:
-	if gamestate:
-		gamestate.player_hand=[]
-		gamestate.enemy_hand=[]
-		gamestate.player_mana=[]
-		gamestate.enemy_mana=[]
-		gamestate.board = gamestate.board_e
-		for pl:Player in [player1,player2]:
-			for c:Card in pl.hand:
-				if pl.is_human:
-					gamestate.player_hand.append(c.state)
-				else:
-					gamestate.enemy_hand.append(c.state)
-			for c:Card in pl.mana:
-				print(pl.is_human,c.state.card_name)
-				if pl.is_human:
-					gamestate.player_mana.append(c.state)
-				else:
-					gamestate.enemy_mana.append(c.state)
-			for c:Card in pl.battlefield:
-				gamestate.board[c.state.pos].append(c.state)
+func store_gamestate():
+	print(gamestate.player_hand,"ph")
+	print(gamestate.player_hand,"pm")
+	print(gamestate.enemy_hand,"eh")
+	print(gamestate.enemy_mana,"em")
+	print(gamestate.board)
 
-		print(gamestate.enemy_hand,"eh")
-		print(gamestate.enemy_mana,"em")
-		print(gamestate.board)
-	return gamestate
 func _ready():
 	spawn_players()
 	gamestate = GameState.new()

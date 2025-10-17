@@ -68,7 +68,23 @@ func clone() -> CardState:
 
 func get_power():
 	return card_data.get("power", 0)
-
+func play_to_board(area_name:String,game:GameState,card:Card=null):
+	pos = area_name
+	if card:
+		controller.hand.erase(card)
+		controller.battlefield.append(card)
+		summoned_on_turn = TurnManager.turn
+	controller.board.reset_higlight()
+	if card_location == CardState.le.hand:
+		if player_controled:
+			game.player_hand.erase(self)
+		else:
+			game.enemy_hand.erase(self)
+	card_location = CardState.le.field
+	controller.pay_for_card(card)
+	face_up = true
+	game.board[pos].append(self)
+	
 func get_toughness():
 	return card_data.get("toughness", 0)
 #checks if player can play the card
@@ -82,6 +98,7 @@ func take_damage(amount:int,_source:Card):
 func add_temp_buff(power_to_add:int,toughness_to_add:int,duration:String):
 	self.toughness += toughness_to_add
 	self.power += power_to_add
+	var buff = {"power":power_to_add,"toughness":toughness_to_add,"duration":duration}
 	if real:
 		emit_signal("pt_changed",self)
 func can_be_payed() -> bool:

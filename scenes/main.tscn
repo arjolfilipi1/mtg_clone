@@ -1,4 +1,4 @@
-[gd_scene load_steps=65 format=3 uid="uid://ciikqwfm6mbci"]
+[gd_scene load_steps=66 format=3 uid="uid://ciikqwfm6mbci"]
 
 [ext_resource type="Script" path="res://scripts/classes/game_manager.gd" id="1_qqfnl"]
 [ext_resource type="Script" path="res://scripts/board/fan.gd" id="2_x817q"]
@@ -32,6 +32,7 @@
 [ext_resource type="Texture2D" uid="uid://fo701wo8u4be" path="res://assets/field/6-4.png" id="19_686g0"]
 [ext_resource type="Texture2D" uid="uid://bdpbeqyn8p5j0" path="res://assets/field/6-5.png" id="20_102rg"]
 [ext_resource type="Texture2D" uid="uid://dgqvhgxljej0p" path="res://assets/field/1-1.png" id="23_h42om"]
+[ext_resource type="Texture2D" uid="uid://1geni5ab4t2b" path="res://assets/field/field-Model.png" id="23_rvavm"]
 [ext_resource type="Texture2D" uid="uid://dyn3cqo7ohl8l" path="res://assets/field/1-2.png" id="24_jcqp2"]
 [ext_resource type="Texture2D" uid="uid://udtfgaitpfhb" path="res://assets/field/1-3.png" id="25_f3t5r"]
 [ext_resource type="Texture2D" uid="uid://ctvb0i3kyu72g" path="res://assets/field/1-4.png" id="26_3km4t"]
@@ -467,21 +468,10 @@ position = Vector2(360, 299)
 scale = Vector2(1, 1.088)
 texture = ExtResource("4_jnk5p")
 
-[node name="OverlayEffect" type="ColorRect" parent="PlayerBoard/sprite"]
+[node name="OverlayEffect" type="Sprite2D" parent="PlayerBoard/sprite"]
+show_behind_parent = true
 material = SubResource("ShaderMaterial_o7myf")
-anchors_preset = -1
-anchor_left = 0.056
-anchor_top = 0.0187273
-anchor_right = 0.990044
-anchor_bottom = 1.0
-offset_left = -476.624
-offset_top = -236.24
-offset_right = -457.0
-offset_bottom = -221.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-color = Color(1, 1, 0, 0.172549)
+texture = ExtResource("23_rvavm")
 metadata/_edit_use_anchors_ = true
 
 [node name="EnemyBoard" type="Control" parent="."]
