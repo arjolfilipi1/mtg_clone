@@ -1,6 +1,7 @@
 extends Resource
 class_name CardState
-
+signal pt_changed(Card)
+signal deleted(Card)
 # --- Core immutable data (copied from database) ---
 var card_data = {}
 var card_name: String
@@ -25,6 +26,8 @@ var summoned_on_turn: int = 0
 var face_up: bool = false
 var controller : Player
 var real:bool = true
+var effect:Effect_class
+var active_buffs:Array = []
 # --- Gameplay logic ---
 func can_attack(_turn: int) -> Array:
 	var res:Array[Card] =[]
@@ -69,7 +72,18 @@ func get_power():
 func get_toughness():
 	return card_data.get("toughness", 0)
 #checks if player can play the card
-
+func take_damage(amount:int,_source:Card):
+	self.toughness = max(self.toughness - amount , 0)
+	if self.toughness ==0:
+		emit_signal("deleted",self)
+	if real:
+		emit_signal("pt_changed",self)
+		
+func add_temp_buff(power_to_add:int,toughness_to_add:int,duration:String):
+	self.toughness += toughness_to_add
+	self.power += power_to_add
+	if real:
+		emit_signal("pt_changed",self)
 func can_be_payed() -> bool:
 	var mana_pool = controller.mana_pool
 	var pool = mana_pool.duplicate()

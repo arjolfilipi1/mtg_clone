@@ -1,5 +1,5 @@
 extends Node
-class_name EffectParser
+class_name Effect_Parser
 
 func parse_spec(spec:String)->Dictionary:
 	spec = spec.strip_edges()

@@ -31,24 +31,25 @@ func _ready() -> void:
 			unique_material = mat.duplicate()
 			sprite.material = unique_material
 	subvp.material.set_shader_parameter("destroy", false)
-	pass # Replace with function body.
+	card.state.pt_changed.connect(update_pt)
 
-func update_pt()->void:
-	var style = StyleBoxFlat.new()
-	power_panel.text = str(card.state.power)
-	if card.state.card_data['power'] > card.state.power:
-		power_panel.add_theme_color_override("font_color", Color.RED)
-	if card.state.card_data['power'] < card.state.power:
-		style.bg_color = Color(0, 0, 1) # blue color
-		power_panel.add_theme_color_override("font_color", Color.BLUE)
-	health_panel.text = str(card.state.toughness)
-	if card.state.card_data['toughness'] > card.state.toughness:
-		health_panel.add_theme_color_override("font_color", Color.RED)
-	if card.state.card_data['toughness'] < card.state.toughness:
-		health_panel.add_theme_color_override("font_color", Color.BLUE)
-	if card.state.toughness == 0:
-		var rng = RandomNumberGenerator.new()
-		burnCard(rng.randf_range(0.0, 360.0))
+	pass # Replace with function body.
+	
+func update_pt(c:CardState)->void:
+	if c == card.state:
+		var style = StyleBoxFlat.new()
+		power_panel.text = str(card.state.power)
+		if card.state.card_data['power'] > card.state.power:
+			power_panel.add_theme_color_override("font_color", Color.RED)
+		if card.state.card_data['power'] < card.state.power:
+			style.bg_color = Color(0, 0, 1) # blue color
+			power_panel.add_theme_color_override("font_color", Color.BLUE)
+		health_panel.text = str(card.state.toughness)
+		if card.state.card_data['toughness'] > card.state.toughness:
+			health_panel.add_theme_color_override("font_color", Color.RED)
+		if card.state.card_data['toughness'] < card.state.toughness:
+			health_panel.add_theme_color_override("font_color", Color.BLUE)
+
 	pass
 	
 func set_background_color():
@@ -158,7 +159,9 @@ func _on_mouse_entered():
 		card.z_index = card.card_index + 10
 		card.movement.animate_scale(card.hover_scale)
 
-func burnCard(direction):
+func burnCard(_state:CardState):
+	var rng = RandomNumberGenerator.new()
+	var direction := rng.randf_range(0.0, 360.0)
 	TurnManager.waiting_for_input = true
 	if subvp.material and subvp.material is ShaderMaterial:
 		subvp.material.set_shader_parameter("destroy", true)

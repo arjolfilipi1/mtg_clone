@@ -12,6 +12,7 @@
 	"black": 0
 },
 		"type": "Creature",
+		"effect":"",
 		"background": "red",
 		"power": 40,
 		"image": "fireElemental.jpg",
@@ -32,6 +33,7 @@
 	"black": 0
 },
 		"type": "Creature",
+		"effect":"",
 		"background": "blue",
 		"power": 20,
 		"image": "waterSprite.jpg",
@@ -52,6 +54,7 @@
 	"black": 0
 },
 		"type": "Creature",
+		"effect":"",
 		"background": "earth",
 		"power": 10,
 		"image": "Earthgolem.jpg",
@@ -72,6 +75,7 @@
 	"black": 0
 },
 		"type": "Creature",
+		"effect":"",
 		"background": "green",
 		"power": 20,
 		"image": "windCrow.jpg",
@@ -92,6 +96,7 @@
 	"black": 1
 },
 		"type": "Creature",
+		"effect":"",
 		"background": "black",
 		"power": 30,
 		"image": "skeleton.jpg",
@@ -112,6 +117,7 @@
 	"black": 1
 },
 		"type": "Creature",
+		"effect":"",
 		"background": "white",
 		"power": 10,
 		"image": "catwizard.jpg",
@@ -132,6 +138,11 @@
 	"black": 0
 },
 		"type": "Spell",
+		"effect": {
+	"spec": "buff target_creature +3/+3 until_end_of_turn",
+	"target_spec": "target_creature",
+	"trigger_spec": "on_play"
+  },
 		"background": "white",
 		"power": 0,
 		"image": "healingPotion.jpg",

@@ -23,11 +23,40 @@ var last_card_drawn:Card
 var is_player_turn = true
 var current_player : Player
 var cm:CombatManager
+var gamestate:GameState
 
+func store_gamestate()->GameState:
+	if gamestate:
+		gamestate.player_hand=[]
+		gamestate.enemy_hand=[]
+		gamestate.player_mana=[]
+		gamestate.enemy_mana=[]
+		gamestate.board = gamestate.board_e
+		for pl:Player in [player1,player2]:
+			for c:Card in pl.hand:
+				if pl.is_human:
+					gamestate.player_hand.append(c.state)
+				else:
+					gamestate.enemy_hand.append(c.state)
+			for c:Card in pl.mana:
+				print(pl.is_human,c.state.card_name)
+				if pl.is_human:
+					gamestate.player_mana.append(c.state)
+				else:
+					gamestate.enemy_mana.append(c.state)
+			for c:Card in pl.battlefield:
+				gamestate.board[c.state.pos].append(c.state)
+
+		print(gamestate.enemy_hand,"eh")
+		print(gamestate.enemy_mana,"em")
+		print(gamestate.board)
+	return gamestate
 func _ready():
 	spawn_players()
+	gamestate = GameState.new()
 	load_cards()
 	start_game()
+	
 	for c in enemy_board.get_children():
 		if c.is_in_group("enemy_slots"):
 			TurnManager.board_slots[c.name] = c
@@ -135,8 +164,8 @@ func _process(_delta: float) -> void:
 	
 	#debug putton size
 	if TurnManager.highlighted:
-		sp.text = TurnManager.targeting.name if TurnManager.targeting else str(TurnManager.targeting)
-		sl.text = "e: h" + str(len(player1.hand)) +"b"+ str(player1.battlefield)
+		sp.text = str( TurnManager.highlighted.state.power )
+		sl.text = str( TurnManager.highlighted.state.power )
 	if TurnManager.priority:
 		current_player = player1
 		$"../PlayerBoard/sprite/OverlayEffect".visible = true

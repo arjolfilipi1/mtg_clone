@@ -1,4 +1,5 @@
 extends Node
+signal end_of_turn
 var orb_list = []
 var turn = 1
 var players: Array[Player] = []
@@ -61,6 +62,14 @@ enum TargetKindEnum  {
 	EFFECT
 }
 var Target_kind : TargetKindEnum
+var stack = []
+
+func push_to_stack(effect: Effect_class, ctx: Dictionary):
+	stack.append({"effect": effect, "context": ctx})
+func resolve_stack():
+	while stack.size() > 0:
+		var top = stack.pop_back()
+		EffectRunner.apply_effect(top.effect, top.context)
 func reset_highlited():
 	for node:Area2D in highlighted_slots:
 		node.og_color = Vector4(0,0,0,0)
@@ -68,6 +77,7 @@ func end_turn():
 	turn += 1
 	current_phase = TurnEnum.DRAW
 	priority = !priority
+	emit_signal("end_of_turn")
 	#is_selecting_mana = true
 	#print(turn)
 func _pass_priority():

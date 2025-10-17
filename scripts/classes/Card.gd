@@ -50,14 +50,22 @@ func setup(data,players_card,_controller):
 	visual.set_background_color()
 	state.is_creature = card_data['type'] == "Creature"
 	state.mana_creation = card_data['Mana_creation']
+	var effect_spec = card_data['effect']
+	if effect_spec:
+		var e = Effect_class.new()
+		e.spec = effect_spec.spec
+		e.target_spec = card_data.effect.target_spec
+		state.effect = e
 	var new_texture = load("res://assets/art/" + data['image'])
 	visual.set_card_art(new_texture)
 
 #destroy card in game
 func send_to_grave():
-	TurnManager.waiting_for_input = true
+	TurnManager.waiting_for_input = false
+	if state.card_location == 2:
+		state.controller.battlefield.erase(self)
 	state.card_location = state.le.grave
-	state.controller.battlefield.erase(self)
+	
 	if board_pos:
 		board_pos.card_list.erase(self)
 	if TurnManager.highlighted == self:
@@ -76,7 +84,7 @@ func _ready():
 	visual.add_mana_symbols()
 	visual.set_range()
 	scale = normal_scale
-
+	state.deleted.connect(visual.burnCard)
 #sends signal to the visual node
 func _on_mouse_entered():
 	visual._on_mouse_entered()
