@@ -5,6 +5,7 @@ var executors = {}
 func _ready():
 	register("draw",_draw)
 	register("damage",_damage)
+	register("buff", _buff)
 func register(keyword, func_ref):
 	executors[keyword] = func_ref
 func _draw(ctx):
@@ -13,3 +14,10 @@ func _draw(ctx):
 func _damage(ctx):
 	var target = ctx.targets[0]
 	target.state.take_damage(ctx.params.amount,ctx.source)
+func _buff(ctx):
+	
+
+	var t:CardState = ctx.targets[0]
+	var params = ctx.params
+	print("player "+ctx["controller"].player_name +" buffet creature " +t.card_name)
+	t.add_temp_buff(ctx.params.power, ctx.params.toughtness, ctx.params.duration)

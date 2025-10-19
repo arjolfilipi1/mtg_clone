@@ -26,15 +26,12 @@ var cm:CombatManager
 var gamestate:GameState
 
 func store_gamestate():
-	print(gamestate.player_hand,"ph")
-	print(gamestate.player_hand,"pm")
-	print(gamestate.enemy_hand,"eh")
-	print(gamestate.enemy_mana,"em")
-	print(gamestate.board)
-
+	pass
+	
 func _ready():
-	spawn_players()
+	TurnManager.game_manager = self
 	gamestate = GameState.new()
+	spawn_players()
 	load_cards()
 	start_game()
 	
@@ -48,7 +45,7 @@ func _ready():
 	cm = CombatManager.new()
 	# Connect overlay signals
 
-	TurnManager.game_manager = self
+	
 func request_confirmation(action_message: String, on_confirm_callback: Callable) -> void:
 	# Store the callback for later execution
 	TurnManager.waiting_for_input = true
@@ -99,13 +96,13 @@ func start_game():
 	TurnManager.current_phase = TurnManager.TurnEnum.DRAW
 	TurnManager.debug = debug
 	for i in range(5):
-		initial_draw_card(player1)
-		initial_draw_card(player2,false)
+		initial_draw_card(player1,i+2)
+		initial_draw_card(player2,i+1,false)
 	#while player_hand.drawTween.is_running:
 		#pass
 	TurnManager.start_turn()
-func initial_draw_card(_player:Player,player = true):
-	var random_card = card_database[randi() % card_database.size()]
+func initial_draw_card(_player:Player,card_id,player = true):
+	var random_card = card_database[card_id]
 	var card = preload("res://scenes/Card.tscn").instantiate()
 	card.setup(random_card,player,_player)
 	card.state.card_location = card.state.le.hand
@@ -145,8 +142,9 @@ func _process(_delta: float) -> void:
 	
 	#debug putton size
 	if TurnManager.highlighted:
-		sp.text = str( TurnManager.highlighted.state.effect )
-		sl.text = str( TurnManager.highlighted.state.power )
+		pass
+		#sp.text = str( TurnManager.highlighted.state.effect )
+		#sl.text = str( TurnManager.highlighted.state.power )
 	if TurnManager.priority:
 		current_player = player1
 		$"../PlayerBoard/sprite/OverlayEffect".visible = true
@@ -179,7 +177,6 @@ func _process(_delta: float) -> void:
 	high.text = TurnManager.highlighted.state.card_name+ str(snappedf( TurnManager.highlighted.size.x,0.01)) if TurnManager.highlighted else "No focus"
 func _on_cancel_attack_pressed() -> void:
 	if not TurnManager.targeting == null:
-		print("TurnManager.targeting",TurnManager.targeting)
 		TurnManager.targeting.movement.targeting_arrow.is_targeting = false
 		TurnManager.targeting.movement.targeting_arrow.complete_targeting()
 		

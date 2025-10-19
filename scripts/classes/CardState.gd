@@ -29,15 +29,44 @@ var real:bool = true
 var effect:Effect_class
 var active_buffs:Array = []
 
-func effect_targets():
+func destroy_card():
+	if card_location == 2:
+		controller.battlefield.erase(self)
+	card_location = le.grave
+	pos = ""
+	emit_signal("deleted",self)
+	print(card_name +" was destoyed")
+func effect_targets(gs:GameState):
+	var res :Array = []
 	if not effect:
 		return false
-	
-	pass
+	for key in gs.board.keys():
+		for arr in gs.board[key]:
+			if not arr == null:
+				if effect.target_spec == "target_creature":
+					res.append(arr)
+				pass
+	return res
+func apply_effect():
 
+	if effect:
+		var game = TurnManager
+
+		var ctx = {
+		"game": game.game_manager.gamestate,
+		"controller": controller,
+		"source": self,
+		"targets": effect_targets(game.game_manager.gamestate)
+	}
+
+		EffectRunner.apply_effect(effect,ctx)
+		destroy_card()
 # --- Gameplay logic ---
 func can_attack(_turn: int) -> Array:
+	
 	var res:Array[Card] =[]
+	if  not is_creature:
+		return res
 	if card_location == le.field and not has_summoning_sickness:
 		#add fake dictionary for ai calcs
 		var di = TurnManager.board_slots if real else {}
@@ -76,36 +105,51 @@ func clone() -> CardState:
 func get_power():
 	return card_data.get("power", 0)
 func play_to_board(area_name:String,game:GameState,card:Card=null):
-	pos = area_name
-	if card:
-		controller.hand.erase(card)
-		controller.battlefield.append(card)
-		summoned_on_turn = TurnManager.turn
-	controller.board.reset_higlight()
-	if card_location == CardState.le.hand:
-		if player_controled:
-			game.player_hand.erase(self)
-		else:
-			game.enemy_hand.erase(self)
-	card_location = CardState.le.field
-	controller.pay_for_card(card)
-	face_up = true
-	game.board[pos].append(self)
-	
+	if is_creature:
+		pos = area_name
+		if card:
+			controller.hand.erase(card)
+			controller.battlefield.append(card)
+			summoned_on_turn = TurnManager.turn
+		controller.board.reset_higlight()
+		if card_location == CardState.le.hand:
+			if player_controled:
+				game.player_hand.erase(self)
+			else:
+				game.enemy_hand.erase(self)
+		card_location = CardState.le.field
+		controller.pay_for_card(card)
+		face_up = true
+		game.board[pos].append(self)
+	elif effect :
+		print("playing card to board with effect" + effect.spec)
+		if effect.trigger_spec == "on_play":
+			apply_effect()
 func get_toughness():
 	return card_data.get("toughness", 0)
 #checks if player can play the card
 func take_damage(amount:int,_source:Card):
 	self.toughness = max(self.toughness - amount , 0)
 	if self.toughness ==0:
+		destroy_card()
 		emit_signal("deleted",self)
 	if real:
 		emit_signal("pt_changed",self)
 
 func _remove_expired_buffs():
-	print("REMOVING")
-	pass
-
+	active_buffs = active_buffs.filter(func(b): return b.duration != "until_end_of_turn")
+	_recalculate_stats()
+	
+func _recalculate_stats():
+	var total_power = card_data.get("power", 0)
+	var total_toughness =  card_data.get("toughness", 0)
+	for b in active_buffs:
+		total_power += b.power
+		total_toughness += b.toughness
+	power = total_power
+	toughness = total_toughness
+	emit_signal("pt_changed",self)
+	
 func add_temp_buff(power_to_add:int,toughness_to_add:int,duration:String):
 	self.toughness += toughness_to_add
 	self.power += power_to_add
@@ -115,7 +159,7 @@ func add_temp_buff(power_to_add:int,toughness_to_add:int,duration:String):
 		if duration == "until_end_of_turn":
 			TurnManager.end_of_turn.connect(_remove_expired_buffs,CONNECT_ONE_SHOT)
 		emit_signal("pt_changed",self)
-func can_be_payed() -> bool:
+func can_be_payed(game:GameState) -> bool:
 	var mana_pool = controller.mana_pool
 	var pool = mana_pool.duplicate()
 	for color in mana_cost.keys():
@@ -156,4 +200,6 @@ func can_be_payed() -> bool:
 	if is_creature:
 		return true
 	else:
-		return false
+		if effect_targets(game):
+			return true 
+	return false

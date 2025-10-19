@@ -61,7 +61,7 @@ func check_drop_area():
 	var mouse_pos = card.get_global_mouse_position()
 	var space_state = card.get_world_2d().direct_space_state
 	var parameters = PhysicsPointQueryParameters2D.new()
-	if not card.state.can_be_payed():
+	if not card.state.can_be_payed(TurnManager.game_manager.gamestate):
 		return false
 	parameters.position= mouse_pos
 	parameters.collide_with_areas = true
