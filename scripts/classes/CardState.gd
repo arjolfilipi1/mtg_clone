@@ -26,7 +26,7 @@ var summoned_on_turn: int = 0
 var face_up: bool = false
 var controller : Player
 var real:bool = true
-var effect:Effect_class
+var effects:Array[Effect_class] = []
 var active_buffs:Array = []
 
 func destroy_card(game:GameState):
@@ -44,18 +44,22 @@ func destroy_card(game:GameState):
 	pos = ""
 	emit_signal("deleted",self)
 	print(card_name +" was destoyed")
-func effect_targets(gs:GameState):
-	var res :Array = []
-	if not effect:
-		return false
+	
+func effect_targets(gs:GameState, eff:Effect_class):
+	var res:Array = []
+	if not eff:
+		return []
 	for key in gs.board.keys():
 		for arr in gs.board[key]:
-			if not arr == null:
-				if effect.target_spec == "target_creature":
-					res.append(arr)
-				pass
+			if arr == null:
+				continue
+			if eff.target_spec == "target_creature":
+				res.append(arr)
+			# You can expand this with other targeting logic:
+			# if eff.target_spec == "target_enemy_creature":
+			# if eff.target_spec == "target_player":
 	return res
-func apply_effect():
+func apply_effect(effect:Effect_class):
 
 	if effect:
 		var game = TurnManager
@@ -64,12 +68,21 @@ func apply_effect():
 		"game": game.game_manager.gamestate,
 		"controller": controller,
 		"source": self,
-		"targets": effect_targets(game.game_manager.gamestate)
+		"targets": effect_targets(game.game_manager.gamestate,effect)
 	}
 
 		EffectRunner.apply_effect(effect,ctx)
-
-		destroy_card(game.game_manager.gamestate)
+		if card_type == "Spell":
+			destroy_card(game.game_manager.gamestate)
+func can_activate_effect(game:GameState) ->Array[Effect_class]:
+	var res :Array[Effect_class] = []
+	if effects:
+		for eff in effects:
+			if eff.trigger_spec == "selected_on_hand" :
+				print(can_be_payed(game,eff.mana_cost))
+				if card_location == le.hand and can_be_payed(game,eff.mana_cost):
+					res.append(eff)
+	return res
 # --- Gameplay logic ---
 func can_attack(_turn: int) -> Array:
 	
@@ -111,6 +124,9 @@ func clone() -> CardState:
 		new_state.set(name, get(name))
 	return new_state
 
+func on_summon():
+	pass
+
 func get_power():
 	return card_data.get("power", 0)
 func play_to_board(area_name:String,game:GameState,card:Card=null):
@@ -131,10 +147,13 @@ func play_to_board(area_name:String,game:GameState,card:Card=null):
 		controller.pay_for_card(card)
 		face_up = true
 		game.board[pos].append(self)
-	elif effect :
-		print("playing card to board with effect" + effect.spec)
-		if effect.trigger_spec == "on_play":
-			apply_effect()
+		on_summon()
+	elif effects.size() > 0:
+		for eff in effects:
+			if eff and eff.trigger_spec == "on_play":
+				print("Playing card with on_play effect: ", eff.spec)
+				apply_effect(eff)
+				break  # If all are meant to resolve at once, remove this line
 func get_toughness():
 	return card_data.get("toughness", 0)
 #checks if player can play the card
@@ -167,10 +186,11 @@ func add_temp_buff(power_to_add:int,toughness_to_add:int,duration:String):
 	active_buffs.append(buff)
 	if real:
 		if duration == "until_end_of_turn":
-			TurnManager.end_of_turn.connect(_remove_expired_buffs,CONNECT_ONE_SHOT)
+			if not TurnManager.end_of_turn.is_connected(_remove_expired_buffs):
+				TurnManager.end_of_turn.connect(_remove_expired_buffs, CONNECT_ONE_SHOT)
 		emit_signal("pt_changed",self)
 func to_mana(game:GameState):
-	
+
 	if controller.is_human:
 		game.player_hand.erase(self)
 		game.player_mana.append(self)
@@ -178,11 +198,11 @@ func to_mana(game:GameState):
 		game.enemy_hand.erase(self)
 		game.enemy_mana.append(self)
 	card_location = CardState.le.mana
-func can_be_payed(game:GameState) -> bool:
+func can_be_payed(game:GameState,cost) -> bool:
 	var mana_pool = controller.mana_pool
 	var pool = mana_pool.duplicate()
-	for color in mana_cost.keys():
-		var required = mana_cost[color]
+	for color in cost.keys():
+		var required = cost[color]
 		var available = pool.get(color, 0)
 		
 		if available >= required:
@@ -215,10 +235,4 @@ func can_be_payed(game:GameState) -> bool:
 				to_spend -= usable
 				if to_spend == 0:
 					break
-	#not finished calc for spells
-	if is_creature:
-		return true
-	else:
-		if effect_targets(game):
-			return true 
-	return false
+	return true

@@ -3,16 +3,16 @@
 		"id":00001,
 		"name": "Fire Elemental",
 		"mana_cost": {
-	"generic": 1,
-	"red": 1,
-	"blue": 0,
-	"green": 0,
-	"earth": 0,
-	"white": 0,
-	"black": 0
-},
+					"generic": 1,
+					"red": 1,
+					"blue": 0,
+					"green": 0,
+					"earth": 0,
+					"white": 0,
+					"black": 0
+					},
 		"type": "Creature",
-		"effect":"",
+		"effects":"",
 		"background": "red",
 		"power": 40,
 		"image": "fireElemental.jpg",
@@ -20,20 +20,20 @@
 		"Mana_creation": "['red','red']",
 		"range":["1.0","2.0","2.1","2.-1"]
 	},
-	{
+{
 		"id":00002,
 		"name": "Water Sprite",
 		"mana_cost": {
-	"generic": 0,
-	"red": 0,
-	"blue": 1,
-	"green": 0,
-	"earth": 0,
-	"white": 0,
-	"black": 0
-},
+					"generic": 0,
+					"red": 0,
+					"blue": 1,
+					"green": 0,
+					"earth": 0,
+					"white": 0,
+					"black": 0
+				},
 		"type": "Creature",
-		"effect":"",
+		"effects":"",
 		"background": "blue",
 		"power": 20,
 		"image": "waterSprite.jpg",
@@ -54,7 +54,7 @@
 	"black": 0
 },
 		"type": "Creature",
-		"effect":"",
+		"effects":"",
 		"background": "earth",
 		"power": 10,
 		"image": "Earthgolem.jpg",
@@ -75,7 +75,7 @@
 	"black": 0
 },
 		"type": "Creature",
-		"effect":"",
+		"effects":"",
 		"background": "green",
 		"power": 20,
 		"image": "windCrow.jpg",
@@ -96,7 +96,7 @@
 	"black": 1
 },
 		"type": "Creature",
-		"effect":"",
+		"effects":"",
 		"background": "black",
 		"power": 30,
 		"image": "skeleton.jpg",
@@ -117,13 +117,14 @@
 	"black": 1
 },
 		"type": "Creature",
-		"effect": {
+		"effects": [{
 	"spec": "buff all_creatures +3/+3 until_end_of_turn",
 	"target_spec": "target_creature",
-	"trigger_spec": "on_play",
+	"trigger_spec": "selected_on_hand",
 	"mandatory":false,
-	"targets":true
-  },
+	"targets":true,
+	"mana_cost": ""
+  }],
 		"background": "white",
 		"power": 10,
 		"image": "catwizard.jpg",
@@ -144,13 +145,14 @@
 	"black": 0
 },
 		"type": "Spell",
-		"effect": {
+		"effects": [{
 	"spec": "buff all_creatures +3/+3 until_end_of_turn",
 	"target_spec": "target_creature",
 	"trigger_spec": "on_play",
 	"mandatory":false,
-	"targets":true
-  },
+	"targets":true,
+	"mana_cost": ""
+  }],
 		"background": "white",
 		"power": 0,
 		"image": "healingPotion.jpg",

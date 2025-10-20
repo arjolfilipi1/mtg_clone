@@ -147,8 +147,8 @@ func _process(_delta: float) -> void:
 	
 	#debug putton size
 	if TurnManager.highlighted:
-		pass
-		sp.text = "ph:"+str( len(gamestate.player_hand ))+"pm:"+str( len(gamestate.player_mana )) + "pg:"+str( len(gamestate.player_grave ))
+
+		sp.text = str(TurnManager.targeting)
 		sl.text = "eh:"+str( len(gamestate.enemy_hand ))+"em:"+str( len(gamestate.enemy_mana )) + "eg:"+str( len(gamestate.enemy_grave ))
 	if TurnManager.priority:
 		current_player = player1
@@ -181,9 +181,9 @@ func _process(_delta: float) -> void:
 	turn.text = TurnManager.TurnEnum.keys()[ TurnManager.current_phase]
 	high.text = TurnManager.highlighted.state.card_name+ str(snappedf( TurnManager.highlighted.size.x,0.01)) if TurnManager.highlighted else "No focus"
 func _on_cancel_attack_pressed() -> void:
-
-	TurnManager.targeting.movement.targeting_arrow.is_targeting = false
-	TurnManager.targeting.movement.targeting_arrow.complete_targeting()
+	if TurnManager.targeting:
+		TurnManager.targeting.movement.targeting_arrow.is_targeting = false
+		TurnManager.targeting.movement.targeting_arrow.complete_targeting()
 		
 	TurnManager.reset_highlited()
 	#TurnManager.targeting = null

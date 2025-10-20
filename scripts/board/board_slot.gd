@@ -52,7 +52,7 @@ func check_mouse():
 func accepts_card(_card: Control,game:GameState) -> bool:
 	# Add logic for rules, e.g., mana cost, etc.
 	#return is_hovered
-	if _card.state.controller.board != self.get_parent() or _card.state.can_be_payed(game) == false:
+	if _card.state.controller.board != self.get_parent() or _card.state.can_be_payed(game,_card.state.mana_cost) == false:
 		return false
 	if not card_list:
 		return true
@@ -87,7 +87,7 @@ func color_range(dragging = true):
 func highlight_range() -> void:
 	if TurnManager.dragging:
 		if TurnManager.dragging.state.is_creature:
-			if TurnManager.dragging.state.can_be_payed(TurnManager.game_manager.gamestate):
+			if TurnManager.dragging.state.can_be_payed(TurnManager.game_manager.gamestate,TurnManager.dragging.state.mana_cost):
 				color_range()
 func _process(_delta: float) -> void:
 
