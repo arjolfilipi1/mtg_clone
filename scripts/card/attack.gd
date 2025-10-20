@@ -148,7 +148,7 @@ func _on_attack_complete() -> void:
 	card.position = original_position
 	card.scale = original_scale
 	
-	TurnManager.game_manager.cm.execute_attack(card,target)
+	TurnManager.game_manager.cm.execute_attack(card,target,TurnManager.game_manager.gamestate)
 	can_attack = true
 	
 	attack_finished.emit()

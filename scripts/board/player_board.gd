@@ -21,9 +21,9 @@ func _ready() -> void:
 func reset_higlight():
 	for slot in board_slots:
 		slot.reset_higlight()
-func check_card(card):
+func check_card(card,game:GameState):
 	for slot in board_slots:
-		if slot.accepts_card(card):
+		if slot.accepts_card(card,game):
 			slot.set_color(Vector4(0,1,0,0.75))
 			#slot.og_color(Vector4(0,1,0,0.75))
 		else:

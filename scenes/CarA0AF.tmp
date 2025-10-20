@@ -495,26 +495,10 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.686275, 0.686275, 0.686275, 0.811765)
 
-[node name="activate" type="Button" parent="ButtonsContainer"]
-custom_minimum_size = Vector2(80, 80)
+[node name="Button" type="Button" parent="ButtonsContainer"]
 layout_mode = 2
-text = "Activate"
+text = "test"
 script = ExtResource("23_xadkh")
-
-[node name="ColorRect" type="ColorRect" parent="ButtonsContainer/activate"]
-z_index = -1
-material = SubResource("ShaderMaterial_23tgi")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -5.0
-offset_top = -6.0
-offset_right = 5.0
-offset_bottom = 4.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.686275, 0.686275, 0.686275, 0.811765)
 
 [node name="target" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_arkvt")
@@ -542,5 +526,4 @@ texture = SubResource("NoiseTexture2D_30epp")
 [connection signal="mouse_entered" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_mouse_exited"]
 [connection signal="visibility_changed" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_visibility_changed"]
-[connection signal="button_down" from="ButtonsContainer/activate" to="ButtonsContainer/activate" method="pressed"]
-[connection signal="visibility_changed" from="ButtonsContainer/activate/ColorRect" to="ButtonsContainer/attack" method="_on_visibility_changed"]
+[connection signal="button_down" from="ButtonsContainer/Button" to="ButtonsContainer/Button" method="pressed"]

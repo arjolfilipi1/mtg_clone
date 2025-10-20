@@ -136,13 +136,13 @@ func enemy_play_card():
 	var area = null
 	
 	for card in pl.player_hand.get_children():
-		if card.state.can_be_payed() and not card_played:
+		if card.state.can_be_payed(TurnManager.game_manager.gamestate) and not card_played:
 			var area_list = pl.board.get_children()
 			area_list.shuffle()
 			for all_area in area_list:
 				if all_area.is_in_group("enemy_slots"):
 
-					if all_area.accepts_card(card):
+					if all_area.accepts_card(card,TurnManager.game_manager.gamestate):
 						area = all_area
 						break
 			if area:

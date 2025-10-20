@@ -35,7 +35,7 @@ var mana_pool: Dictionary = {
 	"white": 0,
 	"black": 0
 }  # e.g., { "G": 1, "R": 2 }
-var is_active: bool = false
+
 var is_human: bool = false
 var priority: bool = false
 var did_draw: bool = false

@@ -11,4 +11,5 @@ func apply_effect(effect: Effect_class, ctx: Dictionary):
 		push_error("Unknown effect: %s" % parsed.action)
 		return
 	ctx.params = parsed.params
+	print("running effect: ",ctx.params,ctx )
 	executor.call(ctx)

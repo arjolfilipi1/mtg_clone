@@ -46,6 +46,7 @@ func setup(data,players_card,_controller):
 	state.card_range = card_data['range']
 	state.power = card_data['power']
 	state.toughness = card_data['toughness']
+	state.card_type = card_data['type']
 	state.mana_cost = card_data['mana_cost']
 	visual.set_background_color()
 	state.is_creature = card_data['type'] == "Creature"
@@ -55,6 +56,9 @@ func setup(data,players_card,_controller):
 		var e = Effect_class.new()
 		e.spec = effect_spec.spec
 		e.target_spec = card_data.effect.target_spec
+		e.trigger_spec = card_data.effect.trigger_spec
+		e.mandatory = card_data.effect.mandatory
+		e.targets = card_data.effect.targets
 		state.effect = e
 	var new_texture = load("res://assets/art/" + data['image'])
 	visual.set_card_art(new_texture)
@@ -62,10 +66,8 @@ func setup(data,players_card,_controller):
 #destroy card in game
 func send_to_grave():
 	TurnManager.waiting_for_input = false
-	if state.card_location == 2:
-		state.controller.battlefield.erase(self)
-	state.card_location = state.le.grave
-	
+	if get_parent():
+		get_parent().remove_child(self)
 	if board_pos:
 		board_pos.card_list.erase(self)
 	if TurnManager.highlighted == self:

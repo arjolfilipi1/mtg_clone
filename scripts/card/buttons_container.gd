@@ -1,6 +1,7 @@
 extends HBoxContainer
 @onready var card:Card = $".."
 @onready var attack:TextureButton = $attack
+@onready var activate:Button = $activate
 var original_pos: Vector2
 func _ready() -> void:
 	visible = false

@@ -11,6 +11,7 @@ func parse_spec(spec:String)->Dictionary:
 		return {}
 	var kw = parts[0]
 	var params = {}
+	
 	if kw =="draw":
 		params["n"] = int(parts[1]) if parts.size > 1 else 1
 	elif kw =="damage":

@@ -22,7 +22,7 @@ var enemy_mana_count = {
 	"white": 0,
 	"black": 0}
 var is_selecting_mana = false
-var dragging: Node
+var dragging: Card
 var targeting: Card
 var player_mana_card_nr = 0
 var enemy_mana_card_nr = 0
@@ -79,7 +79,6 @@ func end_turn():
 	priority = !priority
 	emit_signal("end_of_turn")
 	#is_selecting_mana = true
-	#print(turn)
 func _pass_priority():
 	priority = !priority
 func start_turn():

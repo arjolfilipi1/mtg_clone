@@ -41,14 +41,18 @@ func update_pt(c:CardState)->void:
 		power_panel.text = str(card.state.power)
 		if card.state.card_data['power'] > card.state.power:
 			power_panel.add_theme_color_override("font_color", Color.RED)
-		if card.state.card_data['power'] < card.state.power:
+		elif card.state.card_data['power'] < card.state.power:
 			style.bg_color = Color(0, 0, 1) # blue color
 			power_panel.add_theme_color_override("font_color", Color.BLUE)
+		else:
+			power_panel.add_theme_color_override("font_color", Color.BLACK)
 		health_panel.text = str(card.state.toughness)
 		if card.state.card_data['toughness'] > card.state.toughness:
 			health_panel.add_theme_color_override("font_color", Color.RED)
-		if card.state.card_data['toughness'] < card.state.toughness:
+		elif card.state.card_data['toughness'] < card.state.toughness:
 			health_panel.add_theme_color_override("font_color", Color.BLUE)
+		else:
+			health_panel.add_theme_color_override("font_color", Color.BLACK)
 
 	pass
 	
@@ -148,8 +152,8 @@ func scale_sprite_preserving_center(sprite: Sprite2D, frame_size: Vector2 = Vect
 func set_drag_visuals(is_dragging: bool):
 	subvp.material.set_shader_parameter("grayscale_amount",  1.0 if is_dragging else 0.0)
 	subvp.material.set_shader_parameter("alpha_override", 0.5 if is_dragging else 1.0)
-	if card.state.can_be_payed() and is_dragging:
-		card.state.controller.board.check_card(card)
+	if card.state.can_be_payed(TurnManager.game_manager.gamestate) and is_dragging:
+		card.state.controller.board.check_card(card,TurnManager.game_manager.gamestate)
 
 func _on_mouse_entered():
 	card.card_index = card.z_index
@@ -191,7 +195,7 @@ func _process(_delta: float) -> void:
 			
 		pass
 	if card.state.player_controled  and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
-		if card.state.can_be_payed() and card.state.card_location==CardState.le.hand:
+		if card.state.can_be_payed(TurnManager.game_manager.gamestate) and card.state.card_location==CardState.le.hand:
 			if Playable.material is ShaderMaterial:
 				Playable.material.set_shader_parameter("is_glowing", true)
 		else:
