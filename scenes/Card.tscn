@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=44 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/classes/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/playable.gdshader" id="1_6a0q4"]
@@ -103,6 +103,17 @@ shader_parameter/hover_ratio = 0.427
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_23tgi"]
 shader = ExtResource("6_r5pbg")
 shader_parameter/corner_scale = 0.348
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yw0vi"]
+shader = ExtResource("18_8tvem")
+shader_parameter/base_color = Color(0.8, 1, 0.1, 1)
+shader_parameter/glow_color = Color(0.9, 0, 0.05, 1)
+shader_parameter/glow_intensity = 0.8
+shader_parameter/hover_glow_boost = 1.5
+shader_parameter/pulse_speed = 3.0
+shader_parameter/pulse_amount = 0.1
+shader_parameter/white_threshold = 0.9
+shader_parameter/hover_ratio = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_arkvt"]
 shader = ExtResource("22_m58xb")
@@ -466,6 +477,7 @@ offset_bottom = -287.0
 grow_horizontal = 2
 grow_vertical = 0
 pivot_offset = Vector2(100, 100)
+theme_override_constants/separation = 50
 alignment = 1
 script = ExtResource("18_j83j1")
 
@@ -495,9 +507,10 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.686275, 0.686275, 0.686275, 0.811765)
 
-[node name="Button" type="Button" parent="ButtonsContainer"]
+[node name="activate" type="Button" parent="ButtonsContainer"]
+material = SubResource("ShaderMaterial_yw0vi")
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-text = "test"
 script = ExtResource("23_xadkh")
 
 [node name="target" type="ColorRect" parent="."]
@@ -526,4 +539,7 @@ texture = SubResource("NoiseTexture2D_30epp")
 [connection signal="mouse_entered" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_mouse_exited"]
 [connection signal="visibility_changed" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_visibility_changed"]
-[connection signal="button_down" from="ButtonsContainer/Button" to="ButtonsContainer/Button" method="pressed"]
+[connection signal="button_down" from="ButtonsContainer/activate" to="ButtonsContainer/activate" method="pressed"]
+[connection signal="gui_input" from="ButtonsContainer/activate" to="ButtonsContainer/activate" method="_on_gui_input"]
+[connection signal="mouse_entered" from="ButtonsContainer/activate" to="ButtonsContainer/activate" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="ButtonsContainer/activate" to="ButtonsContainer/activate" method="_on_mouse_exited"]

@@ -26,6 +26,8 @@ var cm:CombatManager
 var gamestate:GameState
 
 func store_gamestate():
+	print(gamestate.player_hand+gamestate.player_mana+gamestate.player_grave)
+	print(gamestate.enemy_hand+gamestate.enemy_mana+gamestate.enemy_grave)
 	pass
 	
 func _ready():
@@ -71,10 +73,10 @@ func spawn_players():
 	player1 = Player.new("You",player_mana_zone,player_hand,player_board,player_deck)
 	player2 = Player.new("Enemy",enemy_mana_zone,enemy_hand,enemy_board,enemy_deck)
 	
-	player1.is_active = true
+	#player1.is_active = true
 	player1.is_human = true  # You can define this in Player.gd
 
-	player2.is_active = false
+	#player2.is_active = false
 	player2.is_human = false
 	enemy_ai.pl = player2
 	TurnManager.players = [player1,player2]
@@ -106,7 +108,10 @@ func initial_draw_card(_player:Player,card_id,player = true):
 	var card = preload("res://scenes/Card.tscn").instantiate()
 	card.setup(random_card,player,_player)
 	card.state.card_location = card.state.le.hand
-	_player.hand.append(card)
+	if _player.is_human:
+		gamestate.player_hand.append(card.state)
+	else:
+		gamestate.enemy_hand.append(card.state)
 	_player.player_hand.add_child(card)
 	_player.player_hand.initial_draw(initialPosition)
 
@@ -142,9 +147,9 @@ func _process(_delta: float) -> void:
 	
 	#debug putton size
 	if TurnManager.highlighted:
-		pass
-		#sp.text = str( TurnManager.highlighted.state.effect )
-		#sl.text = str( TurnManager.highlighted.state.power )
+
+		sp.text = str(TurnManager.targeting)
+		sl.text = "eh:"+str( len(gamestate.enemy_hand ))+"em:"+str( len(gamestate.enemy_mana )) + "eg:"+str( len(gamestate.enemy_grave ))
 	if TurnManager.priority:
 		current_player = player1
 		$"../PlayerBoard/sprite/OverlayEffect".visible = true
@@ -176,7 +181,7 @@ func _process(_delta: float) -> void:
 	turn.text = TurnManager.TurnEnum.keys()[ TurnManager.current_phase]
 	high.text = TurnManager.highlighted.state.card_name+ str(snappedf( TurnManager.highlighted.size.x,0.01)) if TurnManager.highlighted else "No focus"
 func _on_cancel_attack_pressed() -> void:
-	if not TurnManager.targeting == null:
+	if TurnManager.targeting:
 		TurnManager.targeting.movement.targeting_arrow.is_targeting = false
 		TurnManager.targeting.movement.targeting_arrow.complete_targeting()
 		

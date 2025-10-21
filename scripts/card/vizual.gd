@@ -152,7 +152,7 @@ func scale_sprite_preserving_center(sprite: Sprite2D, frame_size: Vector2 = Vect
 func set_drag_visuals(is_dragging: bool):
 	subvp.material.set_shader_parameter("grayscale_amount",  1.0 if is_dragging else 0.0)
 	subvp.material.set_shader_parameter("alpha_override", 0.5 if is_dragging else 1.0)
-	if card.state.can_be_payed(TurnManager.game_manager.gamestate) and is_dragging:
+	if card.state.can_be_payed(TurnManager.game_manager.gamestate,card.state.mana_cost) and is_dragging:
 		card.state.controller.board.check_card(card,TurnManager.game_manager.gamestate)
 
 func _on_mouse_entered():
@@ -195,7 +195,7 @@ func _process(_delta: float) -> void:
 			
 		pass
 	if card.state.player_controled  and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
-		if card.state.can_be_payed(TurnManager.game_manager.gamestate) and card.state.card_location==CardState.le.hand:
+		if card.state.can_be_payed(TurnManager.game_manager.gamestate,card.state.mana_cost) and card.state.card_location==CardState.le.hand and (card.state.is_creature or card.state.can_activate_effect):
 			if Playable.material is ShaderMaterial:
 				Playable.material.set_shader_parameter("is_glowing", true)
 		else:

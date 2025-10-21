@@ -61,7 +61,7 @@ func check_drop_area():
 	var mouse_pos = card.get_global_mouse_position()
 	var space_state = card.get_world_2d().direct_space_state
 	var parameters = PhysicsPointQueryParameters2D.new()
-	if not card.state.can_be_payed(TurnManager.game_manager.gamestate):
+	if not card.state.can_be_payed(TurnManager.game_manager.gamestate,card.state.mana_cost):
 		return false
 	parameters.position= mouse_pos
 	parameters.collide_with_areas = true
@@ -133,7 +133,8 @@ func move_to_mana_zone():
 	
 	var start_pos = card.global_position
 	var target_pos = card.state.controller.player_mana_zone.global_position + Vector2(randf() * 10, 0) + mana_offset  # random offset so cards don't stack perfectly
-	card.state.card_location = CardState.le.mana
+	card.state.to_mana(TurnManager.game_manager.gamestate)
+	
 	card.get_parent().remove_child(card)
 	card.state.controller.player_mana_zone.add_child(card)
 	card.z_index = mana_index

@@ -5,4 +5,7 @@ class_name Effect_class
 @export var type:String = "instand"
 @export var target_spec:String = ""
 @export var trigger_spec:String = ""
+@export var mandatory:bool = false
+@export var targets:bool = false
+@export var mana_cost:Dictionary = {}
 @export var duration:String = "instant"

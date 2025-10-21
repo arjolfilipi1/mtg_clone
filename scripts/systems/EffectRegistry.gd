@@ -16,7 +16,9 @@ func _damage(ctx):
 	target.state.take_damage(ctx.params.amount,ctx.source)
 func _buff(ctx):
 	
-
+	if len(ctx.targets) == 0:
+		print("No targets found")
+		return null
 	var t:CardState = ctx.targets[0]
 	var params = ctx.params
 	print("player "+ctx["controller"].player_name +" buffet creature " +t.card_name)
