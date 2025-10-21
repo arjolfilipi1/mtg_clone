@@ -29,6 +29,33 @@ var real:bool = true
 var effects:Array[Effect_class] = []
 var active_buffs:Array = []
 
+func setup(data):
+	card_data = data
+	if controller.is_human:
+		face_up = true
+	card_name = card_data['name']
+	card_range = card_data['range']
+	power = card_data['power']
+	toughness = card_data['toughness']
+	card_type = card_data['type']
+	mana_cost = card_data['mana_cost']
+	is_creature = card_data['type'] == "Creature"
+	mana_creation = card_data['Mana_creation']
+	var effects_spec = card_data['effects']
+	if effects_spec:
+		for effect_spec in effects_spec:
+			var e = Effect_class.new()
+			e.spec = effect_spec.spec
+			e.target_spec = effect_spec.target_spec
+			e.trigger_spec = effect_spec.trigger_spec
+			e.mandatory = effect_spec.mandatory
+			e.targets = effect_spec.targets
+			if effect_spec.mana_cost:
+				e.mana_cost = effect_spec.mana_cost
+			else:
+				e.mana_cost = {}
+			effects.append(e)
+
 func destroy_card(game:GameState):
 	if card_location == 1:
 		if controller.is_human:
@@ -39,6 +66,10 @@ func destroy_card(game:GameState):
 			game.enemy_grave.append(self)
 	elif card_location == 2:
 		game.board[pos].erase(self)
+		if controller.is_human:
+			game.player_grave.append(self)
+		else:
+			game.enemy_grave.append(self)
 	card_location = le.grave
 	
 	pos = ""
@@ -49,12 +80,22 @@ func effect_targets(gs:GameState, eff:Effect_class):
 	var res:Array = []
 	if not eff:
 		return []
-	for key in gs.board.keys():
-		for arr in gs.board[key]:
-			if arr == null:
-				continue
-			if eff.target_spec == "target_creature":
-				res.append(arr)
+	if eff.target_spec in ["target_creature","target_all_creature","target_card","target_spell","target_enemy_creature","target_player_creature"]:
+		for key in gs.board.keys():
+			for arr in gs.board[key]:
+				if arr == null:
+					continue
+				for card in arr:
+					if eff.target_spec in ["target_creature","target_all_creature"] and card.is_creature:
+						res.append(card)
+					elif eff.target_spec == "target_card":
+						res.append(card)
+					elif eff.target_spec in ["target_spell"] and card.is_creature == false:
+						res.append(card)
+					elif eff.target_spec in ["target_enemy_creature"] and card.is_creature and card.controller.is_human != controller.is_human:
+						res.append(card)
+					elif eff.target_spec in ["target_player_creature"] and card.is_creature and card.controller.is_human == controller.is_human:
+						res.append(card)
 			# You can expand this with other targeting logic:
 			# if eff.target_spec == "target_enemy_creature":
 			# if eff.target_spec == "target_player":
@@ -94,7 +135,7 @@ func can_attack(_turn: int) -> Array:
 		var di = TurnManager.board_slots if real else {}
 		for slot:Area2D in get_board_range(di):
 			if len( slot.card_list ) > 0:
-				if slot.card_list[0].state.can_be_attacked():
+				if slot.card_list[0].can_be_attacked():
 					res.append(slot.card_list[0])
 				
 	return res
@@ -117,12 +158,6 @@ func get_board_range(di:Dictionary):
 func can_be_attacked() -> bool:
 	return card_location == le.field
 
-func clone() -> CardState:
-	var new_state = CardState.new()
-	for property in get_property_list():
-		var name = property.name
-		new_state.set(name, get(name))
-	return new_state
 
 func on_summon():
 	pass
@@ -138,12 +173,12 @@ func play_to_board(area_name:String,game:GameState,card:Card=null):
 			game.enemy_hand.erase(card.state)
 		summoned_on_turn = game.turn
 		controller.board.reset_higlight()
-		if card_location == CardState.le.hand:
+		if card_location == le.hand:
 			if player_controled:
 				game.player_hand.erase(self)
 			else:
 				game.enemy_hand.erase(self)
-		card_location = CardState.le.field
+		card_location = le.field
 		controller.pay_for_card(card)
 		face_up = true
 		game.board[pos].append(self)
@@ -197,7 +232,7 @@ func to_mana(game:GameState):
 	else:
 		game.enemy_hand.erase(self)
 		game.enemy_mana.append(self)
-	card_location = CardState.le.mana
+	card_location = le.mana
 func can_be_payed(game:GameState,cost) -> bool:
 	var mana_pool = controller.mana_pool
 	var pool = mana_pool.duplicate()

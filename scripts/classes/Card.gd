@@ -36,35 +36,11 @@ func setup(data,players_card,_controller):
 	state= CardState.new()
 	visual = $vizual
 	visual.card = self
-	state.player_controled = players_card
-	card_data = data
-	state.card_data = card_data
 	state.controller = _controller
-	if state.controller.is_human:
-		state.face_up = true
-	state.card_name = card_data['name']
-	state.card_range = card_data['range']
-	state.power = card_data['power']
-	state.toughness = card_data['toughness']
-	state.card_type = card_data['type']
-	state.mana_cost = card_data['mana_cost']
+	state.player_controled = true if state.controller.is_human else false
+	card_data = data
+	state.setup(data)
 	visual.set_background_color()
-	state.is_creature = card_data['type'] == "Creature"
-	state.mana_creation = card_data['Mana_creation']
-	var effects_spec = card_data['effects']
-	if effects_spec:
-		for effect_spec in effects_spec:
-			var e = Effect_class.new()
-			e.spec = effect_spec.spec
-			e.target_spec = effect_spec.target_spec
-			e.trigger_spec = effect_spec.trigger_spec
-			e.mandatory = effect_spec.mandatory
-			e.targets = effect_spec.targets
-			if effect_spec.mana_cost:
-				e.mana_cost = effect_spec.mana_cost
-			else:
-				e.mana_cost = {}
-			state.effects.append(e)
 	var new_texture = load("res://assets/art/" + data['image'])
 	visual.set_card_art(new_texture)
 
