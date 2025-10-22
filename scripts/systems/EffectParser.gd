@@ -7,15 +7,16 @@ func parse_spec(spec:String)->Dictionary:
 		var result = JSON.parse_string(spec)
 		return result if typeof(result) == TYPE_DICTIONARY else {}
 	var parts = spec.split(" ")
+	print(spec, parts)
 	if parts.size() == 0:
 		return {}
 	var kw = parts[0]
 	var params = {}
 	
 	if kw =="draw":
-		params["n"] = int(parts[1]) if parts.size > 1 else 1
+		params["n"] = int(parts[1]) if parts.size() > 1 else 1
 	elif kw =="damage":
-		params["ammount"] = int(parts[2]) if parts.size > 2 else int(parts[1])
+		params["ammount"] = int(parts[2]) if parts.size() > 2 else int(parts[1])
 	elif kw =="buff":
 		var buff_str = parts[2]
 		var nums = buff_str.lstrip("+").split("/")

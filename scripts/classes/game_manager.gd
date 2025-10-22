@@ -39,7 +39,8 @@ func _ready():
 	spawn_players()
 	load_cards()
 	start_game()
-	
+	TurnManager.end_phase.connect(gamestate.end_phase_triggers)
+	TurnManager.end_of_turn.connect(gamestate.on_turn_end_triggers)
 	for c in enemy_board.get_children():
 		if c.is_in_group("enemy_slots"):
 			TurnManager.board_slots[c.name] = c

@@ -145,9 +145,18 @@
 	"type": "Creature",
 	"effects": [
 	  {
-		"spec": "buff self +10/0 instant",
+		"spec": "buff self +100/0 instant",
 		"target_spec": "self",
-		"trigger_spec": "on_play",
+		"trigger_spec": "on_end_phase",
+		"mandatory": false,
+		"targets": true,
+		"mana_cost": "",
+		"once_per_turn":"soft"
+	  },
+	{
+		"spec": "damage 3",
+		"target_spec": "self",
+		"trigger_spec": "on_turn_end",
 		"mandatory": false,
 		"targets": true,
 		"mana_cost": "",

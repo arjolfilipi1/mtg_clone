@@ -109,7 +109,7 @@ func apply_effect(effect:Effect_class):
 
 	if effect:
 		var game = TurnManager
-
+		print(typeof(self)," type")
 		var ctx = {
 		"game": game.game_manager.gamestate,
 		"controller": controller,
@@ -163,6 +163,19 @@ func get_board_range(di:Dictionary):
 func can_be_attacked() -> bool:
 	return card_location == le.field
 
+func on_end_phase_trigger():
+	if effects.size() > 0:
+		for eff in effects:
+			if eff and eff.trigger_spec == "on_end_phase":
+				print("Playing card with on_play effect: ", eff.spec)
+				apply_effect(eff)
+
+func on_turn_end_trigger():
+	if effects.size() > 0:
+		for eff in effects:
+			if eff and eff.trigger_spec == "on_turn_end":
+				print("Playing card with on_play effect: ", eff.spec)
+				apply_effect(eff)
 
 func on_summon():
 	pass
@@ -194,11 +207,11 @@ func play_to_board(area_name:String,game:GameState,card:Card=null):
 			if eff and eff.trigger_spec == "on_play":
 				print("Playing card with on_play effect: ", eff.spec)
 				apply_effect(eff)
-				break  # If all are meant to resolve at once, remove this line
+
 func get_toughness():
 	return card_data.get("toughness", 0)
 #checks if player can play the card
-func take_damage(amount:int,_source:Card,game:GameState):
+func take_damage(amount:int,_source:CardState,game:GameState):
 	self.toughness = max(self.toughness - amount , 0)
 	if self.toughness ==0:
 		destroy_card(game)

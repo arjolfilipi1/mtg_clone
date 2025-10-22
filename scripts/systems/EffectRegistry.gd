@@ -13,12 +13,12 @@ func _draw(ctx):
 		ctx.controler.draw()
 func _damage(ctx):
 	var target = ctx.targets[0]
-	target.state.take_damage(ctx.params.amount,ctx.source)
+	target.take_damage(ctx.params.ammount, ctx.source ,ctx.game)
 func _buff(ctx):
-	
 	if len(ctx.targets) == 0:
 		print("No targets found")
 		return null
+	var source = ctx.source
 	var t:CardState = ctx.targets[0]
 	var params = ctx.params
 	print("player "+ctx["controller"].player_name +" buffet creature " +t.card_name)

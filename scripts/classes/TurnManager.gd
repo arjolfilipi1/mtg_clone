@@ -1,5 +1,6 @@
 extends Node
 signal end_of_turn
+signal end_phase
 var orb_list = []
 var turn = 1
 var players: Array[Player] = []
@@ -74,9 +75,12 @@ func reset_highlited():
 	for node:Area2D in highlighted_slots:
 		node.og_color = Vector4(0,0,0,0)
 func end_turn():
+	print("end_phase")
+	emit_signal("end_phase")
 	turn += 1
 	current_phase = TurnEnum.DRAW
 	priority = !priority
+	print("end_of_turn")
 	emit_signal("end_of_turn")
 	#is_selecting_mana = true
 func _pass_priority():
