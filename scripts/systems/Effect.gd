@@ -1,6 +1,7 @@
 extends Resource
 class_name Effect_class
 
+
 @export var spec:String
 @export var type:String = "instand"
 @export var target_spec:String = ""
@@ -9,3 +10,4 @@ class_name Effect_class
 @export var targets:bool = false
 @export var mana_cost:Dictionary = {}
 @export var duration:String = "instant"
+@export var once_per_turn:String = "soft"

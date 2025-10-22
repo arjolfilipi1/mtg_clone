@@ -5,12 +5,9 @@ signal mana_changed(Player)
 # --- Gameplay State ---
 var player_name: String = ""
 var life_total: int = 20
-var hand = []
-var creatures = []  # Creatures on battlefield
-var mana = []
-var battlefield = []
-var graveyard = []
-var library = []
+
+
+
 var mana_selected = false
 var mana_created = false
 var player_mana_zone : Node = null
@@ -136,7 +133,7 @@ func mana_match_visual(pl):
 func draw():
 	var card := preload("res://scenes/Card.tscn").instantiate()
 	var random_card = TurnManager.game_manager.card_database[randi() % TurnManager.game_manager.card_database.size()]
-	card.setup(random_card,is_human,self)
+	card.setup(random_card,self)
 	card.state.card_location = CardState.le.hand
 	card.state.controller = self
 	player_hand.add_child(card)
@@ -160,6 +157,3 @@ func pass_priority():
 	priority = false
 	emit_signal("priority_passed")
 	print("%s passes priority." % player_name)
-
-func get_attackable_creatures() -> Array:
-	return creatures.filter(func(c): return c.can_attack and not c.tapped and not c.has_summoning_sickness)

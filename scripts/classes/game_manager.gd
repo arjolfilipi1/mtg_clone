@@ -106,7 +106,7 @@ func start_game():
 func initial_draw_card(_player:Player,card_id,player = true):
 	var random_card = card_database[card_id]
 	var card = preload("res://scenes/Card.tscn").instantiate()
-	card.setup(random_card,player,_player)
+	card.setup(random_card,_player)
 	card.state.card_location = card.state.le.hand
 	if _player.is_human:
 		gamestate.player_hand.append(card.state)

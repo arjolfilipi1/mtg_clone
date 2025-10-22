@@ -38,7 +38,7 @@ func _process(_delta: float) -> void:
 func _attack_pressed(event: InputEvent) -> void:
 	if event is InputEventMouseButton: 
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and card.state.can_attack(TurnManager.turn):
+			if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and card.state.can_attack(TurnManager.game_manager.gamestate):
 				TurnManager.current_phase = TurnManager.TurnEnum.ATTACK
 				card.movement.attack_target()
 

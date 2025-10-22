@@ -213,7 +213,7 @@ func _process(_delta: float) -> void:
 		buttons.visible = true
 		#buttons.mouse_filter = Control.MOUSE_FILTER_PASS
 		cd = 1
-		if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and card.state.can_attack(TurnManager.turn) and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
+		if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and card.state.can_attack(TurnManager.game_manager.gamestate) and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
 			attack_button.visible = true
 		else:
 			attack_button.visible = false

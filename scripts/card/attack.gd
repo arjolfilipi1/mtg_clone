@@ -26,7 +26,9 @@ func _ready() -> void:
 	if trail_particles:
 		trail_particles.emitting = false
 
-func start_slam_attack(attacker:Card, defender:Card, direction: Vector2 = Vector2.RIGHT) -> void:
+func start_slam_attack(attacker, defender, direction: Vector2 = Vector2.RIGHT) -> void:
+	attacker = attacker if attacker is Card else attacker.card_node
+	defender = defender if defender is Card else defender.card_node
 	TurnManager.waiting_for_input = true
 	TurnManager._pass_priority()
 	target = target if not defender else defender

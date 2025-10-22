@@ -102,6 +102,7 @@ func play_card_to_board(area:Node,rot = 0):
 	card.board_pos =  area
 	TurnManager.dragging = null
 	TurnManager.reset_highlited()
+	print("dropped "+ card.state.card_name+ " on area "+ area.name)
 	card.state.play_to_board(area.name,TurnManager.game_manager.gamestate,card)
 	card.get_parent().remove_child(card)
 	area.get_parent().add_child(card)
@@ -163,8 +164,7 @@ func _after_mana_move():
 	
 	#await get_tree().create_timer(0.3).timeout  # Small delay
 	TurnManager.finish_mana_selection()
-	card.state.controller.hand.erase(card)
-	card.state.controller.mana.append(card)
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	targeting_arrow = _TARGETING_SCENE.instantiate()

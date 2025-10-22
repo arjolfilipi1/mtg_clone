@@ -22,6 +22,10 @@ EffectParser="*res://scripts/systems/EffectParser.gd"
 EffectRunner="*res://scripts/systems/EffectRunner.gd"
 EffectRegistry="*res://scripts/systems/EffectRegistry.gd"
 
+[debug]
+
+gdscript/warnings/unused_signal=0
+
 [global_group]
 
 card=""

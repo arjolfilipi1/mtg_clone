@@ -1,7 +1,9 @@
 extends Resource
 class_name CardState
-signal pt_changed(Card)
-signal deleted(Card)
+signal pt_changed(CardState)
+signal deleted(CardState)
+signal activated_effect(Effect_class)
+signal attack_signal(attacker:CardState, defender:CardState)
 # --- Core immutable data (copied from database) ---
 var card_data = {}
 var card_name: String
@@ -28,7 +30,9 @@ var controller : Player
 var real:bool = true
 var effects:Array[Effect_class] = []
 var active_buffs:Array = []
-
+var card_node:Card
+func attack(attacker:CardState, defender:CardState):
+	emit_signal("attack_signal",attacker,defender)
 func setup(data):
 	card_data = data
 	if controller.is_human:
@@ -77,14 +81,15 @@ func destroy_card(game:GameState):
 	print(card_name +" was destoyed")
 	
 func effect_targets(gs:GameState, eff:Effect_class):
+	if eff.target_spec == "self":
+		return [self]
 	var res:Array = []
 	if not eff:
 		return []
 	if eff.target_spec in ["target_creature","target_all_creature","target_card","target_spell","target_enemy_creature","target_player_creature"]:
 		for key in gs.board.keys():
-			for arr in gs.board[key]:
-				if arr == null:
-					continue
+			var arr = gs.board[key]
+			if len(arr) > 0:
 				for card in arr:
 					if eff.target_spec in ["target_creature","target_all_creature"] and card.is_creature:
 						res.append(card)
@@ -125,18 +130,18 @@ func can_activate_effect(game:GameState) ->Array[Effect_class]:
 					res.append(eff)
 	return res
 # --- Gameplay logic ---
-func can_attack(_turn: int) -> Array:
+func can_attack(game:GameState) -> Array:
 	
-	var res:Array[Card] =[]
+	var res:Array[CardState] =[]
 	if  not is_creature:
 		return res
 	if card_location == le.field and not has_summoning_sickness:
 		#add fake dictionary for ai calcs
-		var di = TurnManager.board_slots if real else {}
-		for slot:Area2D in get_board_range(di):
-			if len( slot.card_list ) > 0:
-				if slot.card_list[0].can_be_attacked():
-					res.append(slot.card_list[0])
+		var di =  game.board
+		for slot in get_board_range(di):
+			if len( slot ) > 0:
+				if slot[0].can_be_attacked():
+					res.append(slot[0])
 				
 	return res
 func get_board_range(di:Dictionary):
@@ -183,7 +188,8 @@ func play_to_board(area_name:String,game:GameState,card:Card=null):
 		face_up = true
 		game.board[pos].append(self)
 		on_summon()
-	elif effects.size() > 0:
+	if effects.size() > 0:
+		print("has effect")
 		for eff in effects:
 			if eff and eff.trigger_spec == "on_play":
 				print("Playing card with on_play effect: ", eff.spec)

@@ -7,8 +7,8 @@ var thinking := false
 var game_state
 var pl : Player
 var difficulty = 1
-var attacker:Card
-var defender:Card
+var attacker:CardState
+var defender:CardState
 func evaluate_mana_value(produced: Mana, need: Mana) -> int:
 	var score := 0
 	for color in ["red", "blue", "green", "earth", "white", "black"]:
@@ -103,12 +103,17 @@ func eval_board():
 	var score = 0
 	return score
 func can_attack():
-	for card:Card in pl.battlefield:
-		var targets:Array[Card] = card.state.can_attack(TurnManager.turn)
-		if targets:
-			attacker = card
-			defender = targets[0]
-			TurnManager.current_phase = TurnManager.TurnEnum.ATTACK
+	for key in TurnManager.game_manager.gamestate.board:
+		var arr = TurnManager.game_manager.gamestate.board[key]
+		if len(arr) > 0:
+			for card in arr:
+				var targets:Array[CardState] = card.can_attack(TurnManager.game_manager.gamestate)
+				if targets:
+					attacker = card
+					defender = targets[0]
+					TurnManager.current_phase = TurnManager.TurnEnum.ATTACK
+					
+	
 func _process(_delta):
 	if TurnManager.is_selecting_mana and not pl.mana_selected:
 		print("enemy playing mana")
@@ -124,7 +129,7 @@ func _process(_delta):
 			TurnManager.debug.text += "Enemy is playing card to field \n"
 			enemy_play_card()
 		elif TurnManager.current_phase==TurnManager.TurnEnum.ATTACK:
-			attacker.visual.attack.start_slam_attack(attacker,defender)
+			attacker.attack(attacker,defender)
 			attacker = null
 			defender = null
 

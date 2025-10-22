@@ -42,7 +42,3 @@ func _process(_delta:float) -> void:
 			visible = true
 		else:
 			visible = false
-
-
-func _on_gui_input(event: InputEvent) -> void:
-	pass # Replace with function body.

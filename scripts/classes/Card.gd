@@ -32,11 +32,12 @@ var mana_tween: Tween
 
 
 #initial setup of the card, called by the game_manager script
-func setup(data,players_card,_controller):
+func setup(data,_controller):
 	state= CardState.new()
 	visual = $vizual
 	visual.card = self
 	state.controller = _controller
+	state.card_node = self
 	state.player_controled = true if state.controller.is_human else false
 	card_data = data
 	state.setup(data)
@@ -68,6 +69,7 @@ func _ready():
 	visual.set_range()
 	scale = normal_scale
 	state.deleted.connect(visual.burnCard)
+	state.attack_signal.connect(visual.attack.start_slam_attack)
 #sends signal to the visual node
 func _on_mouse_entered():
 	visual._on_mouse_entered()
