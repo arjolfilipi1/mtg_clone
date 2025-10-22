@@ -130,16 +130,22 @@ func mana_match_visual(pl):
 
 # --- Public Methods ---
 
-func draw():
+func draw(game:GameState,for_turn:bool = true):
 	var card := preload("res://scenes/Card.tscn").instantiate()
-	var random_card = TurnManager.game_manager.card_database[randi() % TurnManager.game_manager.card_database.size()]
+	var card_id = game.player_deck.pop_at(0) if is_human else game.enemy_deck.pop_at(0)
+	if card_id == null:
+		print("%s has lost the game!" % player_name)
+		return null
+	var random_card = TurnManager.game_manager.card_database[card_id]
 	card.setup(random_card,self)
 	card.state.card_location = CardState.le.hand
 	card.state.controller = self
+	game.player_hand.append(card.state)
 	player_hand.add_child(card)
 	TurnManager.game_manager.draw_card(card, deck.position, player_hand.position)
 	print("%s draws %s" % [player_name, card.name])
-	did_draw = true
+	if for_turn:
+		did_draw = true
 
 
 func take_damage(amount: int):

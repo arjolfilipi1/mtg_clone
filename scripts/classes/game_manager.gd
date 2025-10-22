@@ -25,6 +25,9 @@ var current_player : Player
 var cm:CombatManager
 var gamestate:GameState
 
+var player_deck_init:Array[int] = [2,3,4,5,6,0,1,5]
+var enemy_deck_init:Array[int] = [0,1,2,3,4,5,6,3]
+
 func store_gamestate():
 	print(gamestate.player_hand+gamestate.player_mana+gamestate.player_grave)
 	print(gamestate.enemy_hand+gamestate.enemy_mana+gamestate.enemy_grave)
@@ -98,8 +101,12 @@ func start_game():
 	TurnManager.current_phase = TurnManager.TurnEnum.DRAW
 	TurnManager.debug = debug
 	for i in range(5):
-		initial_draw_card(player1,i+2)
-		initial_draw_card(player2,i+1,false)
+		var card_id = player_deck_init.pop_at(0)
+		initial_draw_card(player1,card_id)
+		card_id = enemy_deck_init.pop_at(0)
+		initial_draw_card(player2,card_id)
+	gamestate.player_deck = player_deck_init
+	gamestate.enemy_deck = enemy_deck_init
 	#while player_hand.drawTween.is_running:
 		#pass
 	TurnManager.start_turn()
@@ -148,8 +155,9 @@ func _process(_delta: float) -> void:
 	#debug putton size
 	if TurnManager.highlighted:
 
-		sp.text = str(TurnManager.targeting)
-		sl.text = "eh:"+str( len(gamestate.enemy_hand ))+"em:"+str( len(gamestate.enemy_mana )) + "eg:"+str( len(gamestate.enemy_grave ))
+		sp.text = str(gamestate.player_deck )
+		sl.text = str(gamestate.enemy_deck )
+		#sl.text = "eh:"+str( len(gamestate.enemy_hand ))+"em:"+str( len(gamestate.enemy_mana )) + "eg:"+str( len(gamestate.enemy_grave ))
 	if TurnManager.priority:
 		current_player = player1
 		$"../PlayerBoard/sprite/OverlayEffect".visible = true
@@ -168,7 +176,7 @@ func _process(_delta: float) -> void:
 	if TurnManager.current_phase == TurnManager.TurnEnum.DRAW and current_player.did_draw == false:
 		
 		TurnManager.debug.text += current_player.player_name+" drawing \n"
-		current_player.draw()
+		current_player.draw(gamestate)
 	if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and TurnManager.priority:
 		$"../ButtonContainer/EndTurnButton".disabled = false
 	else:

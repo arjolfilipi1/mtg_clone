@@ -106,12 +106,13 @@ func can_attack():
 	for key in TurnManager.game_manager.gamestate.board:
 		var arr = TurnManager.game_manager.gamestate.board[key]
 		if len(arr) > 0:
-			for card in arr:
-				var targets:Array[CardState] = card.can_attack(TurnManager.game_manager.gamestate)
-				if targets:
-					attacker = card
-					defender = targets[0]
-					TurnManager.current_phase = TurnManager.TurnEnum.ATTACK
+			for card:CardState in arr:
+				if card.controller.is_human == false:
+					var targets:Array[CardState] = card.can_attack(TurnManager.game_manager.gamestate)
+					if targets:
+						attacker = card
+						defender = targets[0]
+						TurnManager.current_phase = TurnManager.TurnEnum.ATTACK
 					
 	
 func _process(_delta):

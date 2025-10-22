@@ -4,6 +4,9 @@ class_name GameState
 var player_hand:Array[CardState]
 var enemy_hand:Array[CardState]
 
+var player_deck:Array[int] = []
+var enemy_deck:Array[int] = []
+
 var player_grave:Array[CardState]
 var enemy_grave:Array[CardState]
 
