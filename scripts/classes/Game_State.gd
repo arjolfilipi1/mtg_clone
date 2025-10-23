@@ -53,7 +53,9 @@ func get_all_cards()->Array[CardState]:
 
 func on_turn_end_triggers():
 	for card in get_all_cards():
-		card.on_turn_end_trigger()
+		await card.on_turn_end_trigger()
+	return null
 func end_phase_triggers():
 	for card in get_all_cards():
 		await card.on_end_phase_trigger()
+	return null

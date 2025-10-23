@@ -56,6 +56,7 @@ func send_to_grave():
 	if TurnManager.highlighted == self:
 		TurnManager.highlighted = null
 	queue_free()
+
 #highlight card
 func hilight_on():
 	movement.highlighted = true
@@ -71,6 +72,7 @@ func _ready():
 	scale = normal_scale
 	state.deleted.connect(visual.burnCard)
 	state.attack_signal.connect(visual.attack.start_slam_attack)
+
 #sends signal to the visual node
 func _on_mouse_entered():
 	
@@ -84,7 +86,7 @@ func _on_mouse_exited():
 	
 
 
-
+#send data to movement for drag etc and signals if the card is selected
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT :

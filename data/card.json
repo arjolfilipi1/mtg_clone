@@ -157,7 +157,7 @@
 	{
 		"spec": "damage 3",
 		"target_spec": "target_creature",
-		"trigger_spec": "on_turn_end",
+		"trigger_spec": "on_turn_end_on_field",
 		"target_count":1,
 		"mandatory": false,
 		"targets": true,
@@ -196,7 +196,7 @@
 		"spec": "buff all_creatures +3/+3 until_end_of_turn",
 		"target_spec": "target_creature",
 		"trigger_spec": "on_play",
-		"target_count":1,
+		"target_count":2,
 		"mandatory": false,
 		"targets": true,
 		"mana_cost": "",

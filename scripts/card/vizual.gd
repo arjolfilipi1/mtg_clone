@@ -13,6 +13,8 @@ extends Node
 @onready var m_container = $"../SubViewportContainer/SubViewport/ManaCostContainer"
 var valid_target := false
 var selected_target := false
+@onready var tar:Sprite2D= $"../tar"
+@onready var sel:Sprite2D= $"../sel"
 var b_index:int
 var cd:float = 0.0
 @onready var attack = $attack
@@ -20,6 +22,8 @@ var cd:float = 0.0
 	
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	tar.visible =false
+	sel.visible = false
 	b_index = buttons.z_index
 	name_panel.text = card.state.card_name
 	health_panel.text = str(card.state.toughness)
