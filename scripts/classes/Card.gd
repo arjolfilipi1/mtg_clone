@@ -2,6 +2,7 @@ extends Control
 class_name Card
 #z_index when highlighted
 var card_index = 10
+signal pressed(Node)
 #data of the card
 #store data from card database
 var card_data = {}
@@ -72,6 +73,7 @@ func _ready():
 	state.attack_signal.connect(visual.attack.start_slam_attack)
 #sends signal to the visual node
 func _on_mouse_entered():
+	
 	visual._on_mouse_entered()
 
 func _on_mouse_exited():
@@ -84,6 +86,10 @@ func _on_mouse_exited():
 
 
 func _on_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT :
+			if  event.pressed:
+				pressed.emit()
 	movement.on_click(event)
 
 

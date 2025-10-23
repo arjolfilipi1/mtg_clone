@@ -7,7 +7,7 @@
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="3_fl2mh"]
 [ext_resource type="Script" path="res://scripts/card/shadow.gd" id="4_txeqe"]
 [ext_resource type="Shader" path="res://assets/shaders/gray.gdshader" id="5_7keh7"]
-[ext_resource type="Texture2D" uid="uid://c7h6u0fwqhhwl" path="res://assets/Organizata..PNG" id="5_tdvel"]
+[ext_resource type="Texture2D" uid="uid://c7h6u0fwqhhwl" path="res://assets/back.png" id="5_tdvel"]
 [ext_resource type="Shader" path="res://assets/shaders/cardBackbround.gdshader" id="6_3qgkq"]
 [ext_resource type="Shader" path="res://assets/shaders/rounded.gdshader" id="6_r5pbg"]
 [ext_resource type="Texture2D" uid="uid://cv6u4ndetmqm7" path="res://assets/MultiNoiseTexture2D.svg" id="7_qve8i"]
@@ -65,7 +65,7 @@ width = 200
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_frwft"]
 shader = ExtResource("6_r5pbg")
-shader_parameter/corner_scale = 0.0
+shader_parameter/corner_scale = 0.1
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_tm1c7"]
 shader = ExtResource("6_3qgkq")
@@ -160,15 +160,14 @@ color_ramp = SubResource("Gradient_a573u")
 material = SubResource("ShaderMaterial_cd0ai")
 custom_minimum_size = Vector2(200, 250)
 layout_mode = 3
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -576.0
-offset_top = -324.0
-offset_right = -376.0
-offset_bottom = -74.0
+anchor_left = 0.087
+anchor_top = 0.193
+anchor_right = 0.087
+anchor_bottom = 0.193
+offset_left = -100.224
+offset_top = -125.064
+offset_right = 99.776
+offset_bottom = 124.936
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(100, 125)
@@ -439,6 +438,7 @@ mouse_filter = 1
 color = Color(1, 1, 0.607843, 1)
 
 [node name="Summoning_sickness" type="ColorRect" parent="."]
+visible = false
 material = SubResource("ShaderMaterial_mwuqd")
 layout_mode = 0
 offset_top = -1.0
@@ -531,6 +531,7 @@ texture = SubResource("NoiseTexture2D_30epp")
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="pressed" from="." to="." method="_on_pressed"]
 [connection signal="mouse_entered" from="ButtonsContainer" to="ButtonsContainer" method="_on_mouse_entered"]
 [connection signal="gui_input" from="ButtonsContainer/attack" to="ButtonsContainer/attack" method="_attack_pressed"]
 [connection signal="mouse_entered" from="ButtonsContainer/attack" to="ButtonsContainer/attack" method="_on_mouse_entered"]

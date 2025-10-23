@@ -7,7 +7,7 @@
 [ext_resource type="Script" path="res://scripts/board/enemy_ai.gd" id="4_lgu2c"]
 [ext_resource type="Shader" path="res://assets/shaders/fire.gdshader" id="5_m13by"]
 [ext_resource type="Shader" path="res://assets/shaders/slot.gdshader" id="6_4gsu0"]
-[ext_resource type="Texture2D" uid="uid://c7h6u0fwqhhwl" path="res://assets/Organizata..PNG" id="6_7l7re"]
+[ext_resource type="Texture2D" uid="uid://c7h6u0fwqhhwl" path="res://assets/back.png" id="6_7l7re"]
 [ext_resource type="Script" path="res://scripts/board/player_board.gd" id="6_yttyj"]
 [ext_resource type="Script" path="res://scripts/board/board_slot.gd" id="7_kgt4o"]
 [ext_resource type="Texture2D" uid="uid://csgphbivagpqj" path="res://assets/efield.png" id="7_wtrlh"]

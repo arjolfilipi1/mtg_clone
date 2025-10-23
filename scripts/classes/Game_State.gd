@@ -56,4 +56,4 @@ func on_turn_end_triggers():
 		card.on_turn_end_trigger()
 func end_phase_triggers():
 	for card in get_all_cards():
-		card.on_end_phase_trigger()
+		await card.on_end_phase_trigger()

@@ -6,7 +6,7 @@ signal mana_changed(Player)
 var player_name: String = ""
 var life_total: int = 20
 
-
+signal target_chosen(targets:Array)
 
 var mana_selected = false
 var mana_created = false
@@ -129,7 +129,22 @@ func mana_match_visual(pl):
 # --- Gameplay Flags ---
 
 # --- Public Methods ---
-
+func request_target_selection(possible_targets:Array, target_count:int):
+	# UI mode: highlight selectable cards, wait for player to pick
+	if is_human:
+		var selector = TargetSelector.new()
+		player_hand.add_child(selector)
+		print(possible_targets,"possible targets")
+		selector.start_selection(possible_targets, target_count)
+		var selected_targets:Array = await selector.completed 
+		
+		return selector.selected_targets  # This node will emit "completed" when done
+	else:
+		var res = []
+		while  len(res) < target_count:
+			var rand = possible_targets.pop_at( randi() % possible_targets.size())
+			res.append(rand)
+		return res
 func draw(game:GameState,for_turn:bool = true):
 	var card := preload("res://scenes/Card.tscn").instantiate()
 	var card_id = game.player_deck.pop_at(0) if is_human else game.enemy_deck.pop_at(0)

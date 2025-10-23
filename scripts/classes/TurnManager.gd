@@ -76,12 +76,15 @@ func reset_highlited():
 		node.og_color = Vector4(0,0,0,0)
 func end_turn():
 	print("end_phase")
-	emit_signal("end_phase")
+	await  game_manager.gamestate.end_phase_triggers()
+	
+	emit_signal("end_of_turn")
+	await  game_manager.gamestate.on_turn_end_triggers()
 	turn += 1
 	current_phase = TurnEnum.DRAW
 	priority = !priority
 	print("end_of_turn")
-	emit_signal("end_of_turn")
+	
 	#is_selecting_mana = true
 func _pass_priority():
 	priority = !priority

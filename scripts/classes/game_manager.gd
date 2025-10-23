@@ -156,7 +156,7 @@ func _process(_delta: float) -> void:
 	#debug putton size
 	if TurnManager.highlighted:
 
-		sp.text = str(gamestate.player_deck )
+		sp.text = "vt" + str(TurnManager.highlighted.visual.valid_target )
 		sl.text = str(gamestate.enemy_deck )
 		#sl.text = "eh:"+str( len(gamestate.enemy_hand ))+"em:"+str( len(gamestate.enemy_mana )) + "eg:"+str( len(gamestate.enemy_grave ))
 	if TurnManager.priority:

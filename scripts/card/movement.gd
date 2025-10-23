@@ -31,11 +31,13 @@ func attack_target():
 func on_click(event):
 
 	if event is InputEventMouseButton: 
+		var s:CardState = card.state
 		if event.button_index == MOUSE_BUTTON_LEFT :
-			if card.state.player_controled and TurnManager.is_selecting_mana and  not card.state.controller.mana_selected and card.state.card_location == CardState.le.hand and event.pressed:  # New global flag
+			#card.pressed.emit()
+			if s.player_controled and TurnManager.is_selecting_mana and not TurnManager.waiting_for_input and  not s.controller.mana_selected and s.card_location == CardState.le.hand and event.pressed:  # New global flag
 				move_to_mana_zone()
 
-			if card.state.player_controled and TurnManager.current_phase == TurnManager.TurnEnum.MAIN  and card.state.card_location == CardState.le.hand:
+			if s.player_controled and TurnManager.current_phase == TurnManager.TurnEnum.MAIN and not TurnManager.waiting_for_input  and s.card_location == CardState.le.hand:
 				if event.pressed:
 					TurnManager.dragging = card
 					card.dragging = true
@@ -45,7 +47,7 @@ func on_click(event):
 				else:
 					print("released card")
 					check_and_return_to_hand()
-			if TurnManager.targeting and card.visual.valid_target and TurnManager.current_phase == TurnManager.TurnEnum.ATTACK  and card.state.card_location == CardState.le.field and  event.pressed:
+			if TurnManager.targeting and card.visual.valid_target and TurnManager.current_phase == TurnManager.TurnEnum.ATTACK  and s.card_location == CardState.le.field and  event.pressed:
 				TurnManager.targeting.movement.pending_target = card
 				TurnManager.game_manager.request_confirmation("Attack "+card.state.card_name+"?",attack_card)
 				pass
@@ -103,7 +105,7 @@ func play_card_to_board(area:Node,rot = 0):
 	TurnManager.dragging = null
 	TurnManager.reset_highlited()
 	print("dropped "+ card.state.card_name+ " on area "+ area.name)
-	card.state.play_to_board(area.name,TurnManager.game_manager.gamestate,card)
+	await card.state.play_to_board(area.name,TurnManager.game_manager.gamestate,card)
 	card.get_parent().remove_child(card)
 	area.get_parent().add_child(card)
 	var tween := get_tree().create_tween()

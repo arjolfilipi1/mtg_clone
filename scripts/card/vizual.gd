@@ -12,6 +12,7 @@ extends Node
 @onready var power_panel:= $"../SubViewportContainer/SubViewport/Panel/Power"
 @onready var m_container = $"../SubViewportContainer/SubViewport/ManaCostContainer"
 var valid_target := false
+var selected_target := false
 var b_index:int
 var cd:float = 0.0
 @onready var attack = $attack
@@ -76,16 +77,17 @@ func set_background_color():
 		if card.state.mana_cost[color] and color != "generic":
 			color_list.append(color)
 	var multi_color = len(color_list)
-	if color_list[0] :
-		bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[0]])
-		bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
-	if  multi_color > 1:
-		bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[1]])
-		bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
-	if  multi_color > 2 :
-		bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[2]])
-		bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
-	pass
+	if  multi_color:
+		if color_list[0] :
+			bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[0]])
+			bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
+		if  multi_color > 1:
+			bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[1]])
+			bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
+		if  multi_color > 2 :
+			bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[2]])
+			bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
+		pass
 
 func set_range():
 	var grid = $"../SubViewportContainer/SubViewport/CenterContainer/grid"
@@ -188,7 +190,8 @@ func _process(_delta: float) -> void:
 		buttons.z_index = b_index + 10
 	
 	if Summoning_sickness.material is ShaderMaterial:
-			Summoning_sickness.material.set_shader_parameter("ss", card.state.summoned_on_turn == TurnManager.turn)
+			pass
+			#Summoning_sickness.material.set_shader_parameter("ss", card.state.summoned_on_turn == TurnManager.turn)
 	if card.state.face_up:
 		if Flip_animator.current_state == Flip_animator.CardSide.BACK_VISIBLE:
 			Flip_animator.flip_to_front()
@@ -201,12 +204,17 @@ func _process(_delta: float) -> void:
 		else:
 			if Playable.material is ShaderMaterial:
 				Playable.material.set_shader_parameter("is_glowing", false)
-	if valid_target:
+	if selected_target:
+		if target_overlay.material is ShaderMaterial:
+			target_overlay.show()
+			target_overlay.material.set_shader_parameter('Enable_Effects', true)
+			target_overlay.material.set_shader_parameter('Border_Color', Vector4(0.1,1,0.1,0.5))
+	elif valid_target:
 		if target_overlay.material is ShaderMaterial:
 			target_overlay.show()
 			target_overlay.material.set_shader_parameter('Enable_Effects', true)
 			target_overlay.material.set_shader_parameter('Border_Color', Vector4(1,1,0,0.5))
-	elif TurnManager.targeting == null:
+	elif not selected_target and not valid_target:
 		target_overlay.hide()
 		target_overlay.material.set_shader_parameter('Enable_Effects', false)
 	if card.movement.highlighted and card.state.controller.is_human:

@@ -13,7 +13,8 @@ func _draw(ctx):
 		ctx.controler.draw()
 func _damage(ctx):
 	var target = ctx.targets[0]
-	target.take_damage(ctx.params.ammount, ctx.source ,ctx.game)
+	for t in target:
+		target.take_damage(ctx.params.ammount, ctx.source ,ctx.game)
 func _buff(ctx):
 	if len(ctx.targets) == 0:
 		print("No targets found")

@@ -50,6 +50,7 @@ func setup(data):
 		for effect_spec in effects_spec:
 			var e = Effect_class.new()
 			e.spec = effect_spec.spec
+			e.target_count = effect_spec.target_count
 			e.target_spec = effect_spec.target_spec
 			e.trigger_spec = effect_spec.trigger_spec
 			e.mandatory = effect_spec.mandatory
@@ -106,18 +107,27 @@ func effect_targets(gs:GameState, eff:Effect_class):
 			# if eff.target_spec == "target_player":
 	return res
 func apply_effect(effect:Effect_class):
-
+	if real:
+		TurnManager.waiting_for_input = true
 	if effect:
 		var game = TurnManager
-		print(typeof(self)," type")
 		var ctx = {
 		"game": game.game_manager.gamestate,
 		"controller": controller,
 		"source": self,
 		"targets": effect_targets(game.game_manager.gamestate,effect)
 	}
-
-		EffectRunner.apply_effect(effect,ctx)
+		if effect.targets and effect.target_spec not in ["self","none"] and len(ctx.targets) > effect.target_count:
+		# Pause and ask the player to choose
+			var possible_targets = ctx.targets
+			var chosen_targets = await controller.request_target_selection(possible_targets, effect.target_count)
+			print(chosen_targets,"ct")
+			if not chosen_targets or chosen_targets.is_empty():
+				print("Effect canceled - no targets chosen")
+				return
+			ctx.targets = chosen_targets
+		await EffectRunner.apply_effect(effect,ctx)
+		TurnManager.waiting_for_input = false
 		if card_type == "Spell":
 			destroy_card(game.game_manager.gamestate)
 func can_activate_effect(game:GameState) ->Array[Effect_class]:
@@ -167,14 +177,14 @@ func on_end_phase_trigger():
 	if effects.size() > 0:
 		for eff in effects:
 			if eff and eff.trigger_spec == "on_end_phase":
-				print("Playing card with on_play effect: ", eff.spec)
+				print("Playing card with on_end_phase effect: ", eff.spec)
 				apply_effect(eff)
 
 func on_turn_end_trigger():
 	if effects.size() > 0:
 		for eff in effects:
 			if eff and eff.trigger_spec == "on_turn_end":
-				print("Playing card with on_play effect: ", eff.spec)
+				print("Playing card with on_turn_end effect: ", eff.spec)
 				apply_effect(eff)
 
 func on_summon():
@@ -206,8 +216,8 @@ func play_to_board(area_name:String,game:GameState,card:Card=null):
 		for eff in effects:
 			if eff and eff.trigger_spec == "on_play":
 				print("Playing card with on_play effect: ", eff.spec)
-				apply_effect(eff)
-
+				await apply_effect(eff)
+	return true
 func get_toughness():
 	return card_data.get("toughness", 0)
 #checks if player can play the card
