@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://bwx7svabthek7"]
+
+[ext_resource type="Script" path="res://scripts/prev/CardListViewer.gd" id="1_eybyu"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_higb5"]
+line_spacing = 45.0
+font_size = 45
+
+[node name="CardListViewer" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_eybyu")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 810.0
+offset_bottom = 422.0
+color = Color(0.372549, 0.372549, 0.372549, 0.588235)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(800, 50)
+layout_mode = 2
+text = "Title"
+label_settings = SubResource("LabelSettings_higb5")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CardGrid" type="GridContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(800, 300)
+layout_mode = 2
+
+[node name="Close" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Close"

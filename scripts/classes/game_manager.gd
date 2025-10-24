@@ -29,6 +29,7 @@ var player_deck_init:Array[int] = [2,3,4,5,6,0,1,5]
 var enemy_deck_init:Array[int] = [0,1,2,3,4,5,6,3]
 
 func store_gamestate():
+	$"../CardListViewer".show_cards(gamestate.player_mana, "Mana")
 	print(gamestate.player_hand+gamestate.player_mana+gamestate.player_grave)
 	print(gamestate.enemy_hand+gamestate.enemy_mana+gamestate.enemy_grave)
 	pass

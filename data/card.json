@@ -67,7 +67,7 @@
 	"effects": "",
 	"background": "earth",
 	"power": 10,
-	"image": "Earthgolem.jpg",
+	"image": "Earthgolem.png",
 	"toughness": 50,
 	"Mana_creation": "['earth','earth']",
 	"range": [

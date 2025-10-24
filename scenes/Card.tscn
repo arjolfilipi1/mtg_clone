@@ -11,7 +11,7 @@
 [ext_resource type="Shader" path="res://assets/shaders/card/cardBackbround.gdshader" id="6_3qgkq"]
 [ext_resource type="Shader" path="res://assets/shaders/rounded.gdshader" id="6_r5pbg"]
 [ext_resource type="Texture2D" uid="uid://cv6u4ndetmqm7" path="res://assets/MultiNoiseTexture2D.svg" id="7_qve8i"]
-[ext_resource type="Texture2D" uid="uid://pnacnp87bydg" path="res://assets/art/Earthgolem.jpg" id="9_xnj1b"]
+[ext_resource type="Texture2D" uid="uid://disyt6iugrent" path="res://assets/art/Earthgolem.png" id="9_xnj1b"]
 [ext_resource type="Script" path="res://scripts/card/flip_animator.gd" id="12_leg65"]
 [ext_resource type="Texture2D" uid="uid://bg3gaujkvq44d" path="res://assets/symbol/red.png" id="12_nmeia"]
 [ext_resource type="Texture2D" uid="uid://dhl14vtpkwk3w" path="res://assets/grid.png" id="14_44mby"]
@@ -267,7 +267,6 @@ position = Vector2(100, 127)
 texture = ExtResource("3_2g06r")
 
 [node name="art" type="Sprite2D" parent="SubViewportContainer/SubViewport/Panel/front"]
-visible = false
 position = Vector2(100, 127)
 texture = ExtResource("9_xnj1b")
 region_rect = Rect2(0, 0, 474, 620)
