@@ -70,16 +70,17 @@ func push_to_stack(effect: Effect_class, ctx: Dictionary):
 func resolve_stack():
 	while stack.size() > 0:
 		var top = stack.pop_back()
-		EffectRunner.apply_effect(top.effect, top.context)
+		await EffectRunner.apply_effect(top.effect, top.context)
 func reset_highlited():
 	for node:Area2D in highlighted_slots:
 		node.og_color = Vector4(0,0,0,0)
 func end_turn():
 	print("end_phase")
 	await  game_manager.gamestate.end_phase_triggers()
-	
 	emit_signal("end_of_turn")
+	
 	await  game_manager.gamestate.on_turn_end_triggers()
+	
 	turn += 1
 	current_phase = TurnEnum.DRAW
 	priority = !priority
@@ -101,6 +102,7 @@ func finish_mana_creation():
 func finish_draw():
 	var i = 0
 	for pl in players:
+		pl.player_hand.reset()
 		if pl.did_draw:
 			i +=1
 	if i == len(players):
@@ -108,6 +110,8 @@ func finish_draw():
 			pl.did_draw = false
 		current_phase = TurnEnum.MANA_SELECT
 	_pass_priority()
+	
+
 func finish_mana_selection():
 	var i = 0
 	for pl in players:
@@ -121,11 +125,3 @@ func finish_mana_selection():
 		print("finish mana select")
 	else:
 		return null
-
-func cost_to_list(raw_list_string):
-		# Convert single quotes to double quotes (JSON uses double quotes)
-	raw_list_string = raw_list_string.replace("'", '"')
-
-	# Parse the string into an actual array
-	var result = JSON.parse_string(raw_list_string)
-	return result

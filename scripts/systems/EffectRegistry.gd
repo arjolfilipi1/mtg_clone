@@ -10,17 +10,18 @@ func register(keyword, func_ref):
 	executors[keyword] = func_ref
 func _draw(ctx):
 	for i in range(ctx.params.get("n",1)):
-		ctx.controler.draw()
+		await ctx.controller.draw()
 func _damage(ctx):
-	var target = ctx.targets[0]
+	var target = ctx.targets
 	for t in target:
-		target.take_damage(ctx.params.ammount, ctx.source ,ctx.game)
+		await t.take_damage(ctx.params.amount , ctx.source ,ctx.game)
 func _buff(ctx):
 	if len(ctx.targets) == 0:
 		print("No targets found")
 		return null
 	var source = ctx.source
-	var t:CardState = ctx.targets[0]
+	var tar:Array = ctx.targets
 	var params = ctx.params
-	print("player "+ctx["controller"].player_name +" buffet creature " +t.card_name)
-	t.add_temp_buff(ctx.params.power, ctx.params.toughtness, ctx.params.duration)
+	for t in tar:
+		print("player "+ctx["controller"].player_name +" buffet creature " +t.card_name)
+		await t.add_temp_buff(ctx.params.power, ctx.params.toughness, ctx.params.duration)

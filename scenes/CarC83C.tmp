@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=44 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/classes/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/playable.gdshader" id="1_6a0q4"]
@@ -25,9 +25,6 @@
 [ext_resource type="Texture2D" uid="uid://v0u8tnqylcg0" path="res://assets/attackh.png" id="21_h2m4k"]
 [ext_resource type="Shader" path="res://assets/shaders/target.gdshader" id="22_m58xb"]
 [ext_resource type="Script" path="res://scripts/test.gd" id="23_xadkh"]
-[ext_resource type="Shader" path="res://assets/shaders/outline.gdshader" id="26_g4vjj"]
-[ext_resource type="Texture2D" uid="uid://cjxcykcq7mcfv" path="res://tar.png" id="27_7bcrs"]
-[ext_resource type="Texture2D" uid="uid://o866i4nie6d8" path="res://sel.png" id="28_k3r52"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cd0ai"]
 shader = ExtResource("6_r5pbg")
@@ -158,36 +155,6 @@ colors = PackedColorArray(1, 0.137255, 0, 1, 1, 0, 0.101961, 1)
 width = 1
 height = 1
 color_ramp = SubResource("Gradient_a573u")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_3unsl"]
-shader = ExtResource("26_g4vjj")
-shader_parameter/border_width = 0.02
-shader_parameter/blur = 0.01
-shader_parameter/corner_radius = 0.15
-shader_parameter/dash_length = 0.1
-shader_parameter/dash_gap = 0.05
-shader_parameter/speed = 0.1
-shader_parameter/border_color = Color(1, 1, 0, 0.380392)
-shader_parameter/streak_intensity = 0.415
-shader_parameter/streak_width = 0.5
-shader_parameter/streak_speed = 1.0
-shader_parameter/streak_count = 4
-shader_parameter/streak_color = Color(0.976471, 1, 0, 0.631373)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_m58fo"]
-shader = ExtResource("26_g4vjj")
-shader_parameter/border_width = 0.02
-shader_parameter/blur = 0.01
-shader_parameter/corner_radius = 0.15
-shader_parameter/dash_length = 0.1
-shader_parameter/dash_gap = 0.05
-shader_parameter/speed = 0.1
-shader_parameter/border_color = Color(1, 1, 1, 1)
-shader_parameter/streak_intensity = 0.4
-shader_parameter/streak_width = 0.5
-shader_parameter/streak_speed = 1.0
-shader_parameter/streak_count = 4
-shader_parameter/streak_color = Color(0.5, 0.8, 1, 1)
 
 [node name="control" type="Control" groups=["card"]]
 material = SubResource("ShaderMaterial_cd0ai")
@@ -560,19 +527,6 @@ emitting = false
 amount = 300
 process_material = SubResource("ParticleProcessMaterial_bxdqp")
 texture = SubResource("NoiseTexture2D_30epp")
-
-[node name="tar" type="Sprite2D" parent="."]
-material = SubResource("ShaderMaterial_3unsl")
-position = Vector2(100, 126.5)
-scale = Vector2(0.284091, 0.288788)
-texture = ExtResource("27_7bcrs")
-
-[node name="sel" type="Sprite2D" parent="."]
-visible = false
-material = SubResource("ShaderMaterial_m58fo")
-position = Vector2(100, 126.5)
-scale = Vector2(0.284091, 0.288788)
-texture = ExtResource("28_k3r52")
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="vizual" method="_on_mouse_entered"]

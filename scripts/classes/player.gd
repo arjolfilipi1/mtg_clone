@@ -50,6 +50,14 @@ func _init(_pn,_pmz,_ph,_b,_d):
 	deck = _d
 	mana_changed.connect(mana_match_visual)
 	pass
+func cost_to_list(raw_list_string):
+		# Convert single quotes to double quotes (JSON uses double quotes)
+	raw_list_string = raw_list_string.replace("'", '"')
+
+	# Parse the string into an actual array
+	var result = JSON.parse_string(raw_list_string)
+	return result
+
 func reset_mana():
 	TurnManager.debug.text += "reseting mana \n"
 	mana_pool = {
@@ -73,8 +81,8 @@ func create_mana():
 	for child in player_mana_zone.get_children():
 		if child is Sprite2D:
 			continue
-		if child.is_card:
-			var list = TurnManager.cost_to_list(child.state.mana_creation)
+		if child.is_in_group("card"):
+			var list = cost_to_list(child.state.mana_creation)
 			for l in list:
 				mana_pool[l] += 1
 				var orb = player_mana_zone.spawn_mana_orb(l,Vector2(100,125),player_mana_zone)

@@ -21,18 +21,24 @@ enum le {
 deck,hand,field,grave,mana
 }
 var card_location: le = le.deck # hand, field, grave, mana, etc
+#board position name, 6x5 grid 
 var pos:String
 var tapped: bool = false
 var has_summoning_sickness: bool = false
 var summoned_on_turn: int = 0
 var face_up: bool = false
 var controller : Player
+#real card for the game, not real used for enemy ai 
 var real:bool = true
 var effects:Array[Effect_class] = []
 var active_buffs:Array = []
 var card_node:Card
+
+#signal that the card is attacking
 func attack(attacker:CardState, defender:CardState):
 	emit_signal("attack_signal",attacker,defender)
+
+#setup and store data from the json database
 func setup(data):
 	card_data = data
 	if controller.is_human:
@@ -62,25 +68,26 @@ func setup(data):
 			effects.append(e)
 
 func destroy_card(game:GameState):
-	if card_location == 1:
+	if card_location == le.hand:
 		if controller.is_human:
 			game.player_hand.erase(self)
 			game.player_grave.append(self)
 		else:
 			game.enemy_hand.erase(self)
 			game.enemy_grave.append(self)
-	elif card_location == 2:
+	elif card_location == le.field:
 		game.board[pos].erase(self)
-		if controller.is_human:
-			game.player_grave.append(self)
-		else:
-			game.enemy_grave.append(self)
+	if controller.is_human:
+		game.player_grave.append(self)
+	else:
+		game.enemy_grave.append(self)
 	card_location = le.grave
 	
 	pos = ""
 	emit_signal("deleted",self)
 	print(card_name +" was destoyed")
 	
+#function to get effect targets
 func effect_targets(gs:GameState, eff:Effect_class):
 	if eff.target_spec == "self":
 		return [self]
@@ -102,10 +109,10 @@ func effect_targets(gs:GameState, eff:Effect_class):
 						res.append(card)
 					elif eff.target_spec in ["target_player_creature"] and card.is_creature and card.controller.is_human == controller.is_human:
 						res.append(card)
-			# You can expand this with other targeting logic:
-			# if eff.target_spec == "target_enemy_creature":
-			# if eff.target_spec == "target_player":
+
 	return res
+
+#runs the effect
 func apply_effect(effect:Effect_class):
 	if real:
 		TurnManager.waiting_for_input = true
@@ -130,6 +137,8 @@ func apply_effect(effect:Effect_class):
 		TurnManager.waiting_for_input = false
 		if card_type == "Spell":
 			destroy_card(game.game_manager.gamestate)
+
+#check if effect can be activated, will be added to later
 func can_activate_effect(game:GameState) ->Array[Effect_class]:
 	var res :Array[Effect_class] = []
 	if effects:
@@ -150,10 +159,12 @@ func can_attack(game:GameState) -> Array:
 		var di =  game.board
 		for slot in get_board_range(di):
 			if len( slot ) > 0:
-				if slot[0].can_be_attacked():
+				if slot[0].can_be_attacked() and slot[0].controller != controller:
 					res.append(slot[0])
 				
 	return res
+
+#cards hace a range expressed as a list of values "1.0" etc
 func get_board_range(di:Dictionary):
 	var res = []
 	if not pos:
@@ -170,6 +181,7 @@ func get_board_range(di:Dictionary):
 			res.append(di[name])
 		
 	return res
+
 func can_be_attacked() -> bool:
 	return card_location == le.field
 
@@ -179,19 +191,24 @@ func on_end_phase_trigger():
 			if eff and eff.trigger_spec == "on_end_phase":
 				print("Playing card with on_end_phase effect: ", eff.spec)
 				apply_effect(eff)
-
+			elif eff and eff.trigger_spec == "on_end_phase_on_field" and card_location == le.field:
+				print("Playing card with on_end_phase effect: ", eff.spec)
+				await apply_effect(eff)
 func on_turn_end_trigger():
 	if effects.size() > 0:
 		for eff in effects:
-			if eff and eff.trigger_spec == "on_turn_end":
-				print("Playing card with on_turn_end effect: ", eff.spec)
-				apply_effect(eff)
+			if eff and eff.trigger_spec == "on_turn_end_on_field" and card_location == le.field:
+				print("Playing "+ card_name +" with on_turn_end effect: ", eff.spec)
+				await apply_effect(eff)
+	return null
+
 
 func on_summon():
 	pass
 
 func get_power():
 	return card_data.get("power", 0)
+
 func play_to_board(area_name:String,game:GameState,card:Card=null):
 	if is_creature:
 		pos = area_name
@@ -218,9 +235,11 @@ func play_to_board(area_name:String,game:GameState,card:Card=null):
 				print("Playing card with on_play effect: ", eff.spec)
 				await apply_effect(eff)
 	return true
+
 func get_toughness():
 	return card_data.get("toughness", 0)
-#checks if player can play the card
+
+
 func take_damage(amount:int,_source:CardState,game:GameState):
 	self.toughness = max(self.toughness - amount , 0)
 	if self.toughness ==0:
@@ -253,6 +272,8 @@ func add_temp_buff(power_to_add:int,toughness_to_add:int,duration:String):
 			if not TurnManager.end_of_turn.is_connected(_remove_expired_buffs):
 				TurnManager.end_of_turn.connect(_remove_expired_buffs, CONNECT_ONE_SHOT)
 		emit_signal("pt_changed",self)
+
+#send card to mana zone, we are using card as resource 
 func to_mana(game:GameState):
 
 	if controller.is_human:
@@ -262,6 +283,8 @@ func to_mana(game:GameState):
 		game.enemy_hand.erase(self)
 		game.enemy_mana.append(self)
 	card_location = le.mana
+
+#checks if player can play the card
 func can_be_payed(game:GameState,cost) -> bool:
 	var mana_pool = controller.mana_pool
 	var pool = mana_pool.duplicate()

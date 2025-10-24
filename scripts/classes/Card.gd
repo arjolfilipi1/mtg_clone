@@ -12,20 +12,17 @@ var board_pos:Area2D = null
 #if fase up for visual
 #if is dragging
 var dragging = false
-var position_before_drag: Vector2
-var rotation_before_drag
 #stores offset during movement
 var offset: Vector2 = Vector2.ZERO 
 	
 var hover_scale = Vector2(1.2, 1.2)  # scale when hovered
 var normal_scale = Vector2(1.0, 1.0)
 var duration:float = 0.2  # seconds for the highlight tween
-var highlightTween: Tween
 
 #if any of the cildren is highlighted
 var parts_highlighted:= false
-var is_card = true
-var mana_tween: Tween
+
+
 #nodes to handle visual and movement(also clicking
 @onready var visual : Node = $vizual
 @onready var movement: Node =  $movement
@@ -56,13 +53,9 @@ func send_to_grave():
 	if TurnManager.highlighted == self:
 		TurnManager.highlighted = null
 	queue_free()
-#highlight card
-func hilight_on():
-	movement.highlighted = true
-	self._on_mouse_entered()
+
+
 	
-func hilight_off():
-	self._on_mouse_exited()
 
 func _ready():
 	await get_tree().process_frame
@@ -71,20 +64,15 @@ func _ready():
 	scale = normal_scale
 	state.deleted.connect(visual.burnCard)
 	state.attack_signal.connect(visual.attack.start_slam_attack)
-#sends signal to the visual node
-func _on_mouse_entered():
-	
-	visual._on_mouse_entered()
 
-func _on_mouse_exited():
-	if not parts_highlighted:
-		movement.highlighted = false
-	
-	self.z_index = card_index
+
 	
 
 
+	
 
+
+#send data to movement for drag etc and signals if the card is selected
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT :
@@ -106,7 +94,7 @@ func _process(_delta: float) -> void:
 		#has_summoning_sickness = true
 	else:
 		state.has_summoning_sickness = false
-	if (movement.highlighted and  state.card_location == state.le.hand) or (movement.highlighted and  state.card_location == state.le.field) :
+	if movement.highlighted and  (state.card_location == state.le.hand or   state.card_location == state.le.field) :
 		z_index = card_index + 10
 	elif TurnManager.highlighted != self:
 		self.z_index = card_index

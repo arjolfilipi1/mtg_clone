@@ -15,14 +15,15 @@ func _on_mouse_entered():
 		TurnManager.highlighted = card
 		card.parts_highlighted = true
 		material.set_shader_parameter("hover_ratio", 0.3)
-		card.hilight_on()
+		card.movement.highlighted = true
+		card.visual._on_mouse_entered()
 
 func _on_mouse_exited():
 	
 	if visible:
 		material.set_shader_parameter("hover_ratio", 0.0)
 		pass
-		#card.hilight_off()
+
 func _on_visibility_changed():
 	# Only process input when visible
 	self.get_parent().mouse_filter = MOUSE_FILTER_IGNORE if not visible else MOUSE_FILTER_PASS

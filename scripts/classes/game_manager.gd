@@ -138,12 +138,15 @@ func draw_card(card: Card, from_pos: Vector2, to_pos: Vector2, duration: float =
 	tween.tween_property(card, "global_position", to_pos, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tween.tween_property(card, "rotation", 0.0, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tween.tween_property(card, "scale", Vector2.ONE, duration).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-
+	
 	# Wait for tween to finish before reparenting
 	await tween.finished
 	# Convert global position to new parent's local coordinates
 	TurnManager.finish_draw()
 	card.state.controller.player_hand.reset()
+
+
+	
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
