@@ -1,25 +1,45 @@
 extends Node
+#parent node
 @onready var card:Card = $".."
+#attach button
 @onready var attack_button = $"../ButtonsContainer/attack"
+#tooltip container
 @onready var buttons = $"../ButtonsContainer"
+#color to indicate that card can be attacked
 @onready var target_overlay:ColorRect =$"../target"
+#subviewport to hold the card image, made so that shaders can be applied individualy
 @onready var subvp:= $"../SubViewportContainer"
+#color to show that creature has ss
 @onready var Summoning_sickness:= $"../Summoning_sickness"
+#node that holds the logic so that card can flip over
 @onready var Flip_animator:= $"../Flip_animator"
+#color to show that card in hand can be played
 @onready var Playable:= $"../Playable"
 @onready var name_panel:= $"../SubViewportContainer/SubViewport/Panel/Name"
 @onready var health_panel:= $"../SubViewportContainer/SubViewport/Panel/Health"
 @onready var power_panel:= $"../SubViewportContainer/SubViewport/Panel/Power"
 @onready var m_container = $"../SubViewportContainer/SubViewport/ManaCostContainer"
+#logic for selection by player
 var valid_target := false
 var selected_target := false
 @onready var tar:Sprite2D= $"../tar"
 @onready var sel:Sprite2D= $"../sel"
+#index of the tooltip
 var b_index:int
+#highlight time for the buttons 
 var cd:float = 0.0
-@onready var attack = $attack
 
-	
+#node that has the attack animation logic
+@onready var attack = $attack
+const _MANA_COLORS = {
+	"generic": Color(0.7, 0.7, 0.7),
+	"white": Color(1, 1, 1),
+	"black": Color(0.4, 0.4, 0.4),
+	"green": Color(0.1, 0.8, 0.1),
+	"blue": Color(0.1, 0.6, 1),
+	"red": Color(1, 0.2, 0.2),
+	"earth": Color(0.6, 0.4, 0.2)}
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	tar.visible =false
@@ -38,8 +58,9 @@ func _ready() -> void:
 	subvp.material.set_shader_parameter("destroy", false)
 	card.state.pt_changed.connect(update_pt)
 
-	pass # Replace with function body.
-	
+	pass
+
+#updates the power/toughtness visual
 func update_pt(c:CardState)->void:
 	if c == card.state:
 		var style = StyleBoxFlat.new()
@@ -60,17 +81,11 @@ func update_pt(c:CardState)->void:
 			health_panel.add_theme_color_override("font_color", Color.BLACK)
 
 	pass
-	
+
+#sets the card background
 func set_background_color():
 	#ShaderMaterial
-	const _MANA_COLORS = {
-	"generic": Color(0.7, 0.7, 0.7),
-	"white": Color(1, 1, 1),
-	"black": Color(0.4, 0.4, 0.4),
-	"green": Color(0.1, 0.8, 0.1),
-	"blue": Color(0.1, 0.6, 1),
-	"red": Color(1, 0.2, 0.2),
-	"earth": Color(0.6, 0.4, 0.2)}
+	
 	var card_sprite: Sprite2D = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
 
 # Duplicate the material (shallow copy still shares the shader, which is fine)
@@ -86,13 +101,13 @@ func set_background_color():
 			bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[0]])
 			bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
 		if  multi_color > 1:
-			bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[1]])
-			bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
+			bg_unique_material.set_shader_parameter("mana_color2" ,_MANA_COLORS[color_list[1]])
+			bg_unique_material.set_shader_parameter("weight2" ,1.0/multi_color)
 		if  multi_color > 2 :
-			bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[2]])
-			bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
+			bg_unique_material.set_shader_parameter("mana_color3" ,_MANA_COLORS[color_list[2]])
+			bg_unique_material.set_shader_parameter("weight3" ,1.0/multi_color)
 		pass
-
+#each card has range, the card has a little square that it is shown when the card can attack that range
 func set_range():
 	var grid = $"../SubViewportContainer/SubViewport/CenterContainer/grid"
 	if card.state.is_creature:
@@ -101,9 +116,12 @@ func set_range():
 			t.show()
 	else:
 		grid.hide()
+#sets the card art
 func set_card_art(texture: Texture2D):
 	$"../SubViewportContainer/SubViewport/Panel/front/art".texture = texture
 	scale_sprite_preserving_center($"../SubViewportContainer/SubViewport/Panel/front/art")
+
+#sets the card mana symbols for the cost
 func add_mana_symbols():
 	if m_container:
 		for child in m_container.get_children():
@@ -141,6 +159,8 @@ func add_mana_symbols():
 				symbol.position.y = 0  # Center vertically
 				m_container.add_child(symbol)
 				current_x += symbol_size.x
+
+#scales the card art
 func scale_sprite_preserving_center(sprite: Sprite2D, frame_size: Vector2 = Vector2(160, 140), fill: bool = false) -> void:
 	if sprite.texture == null:
 		return
@@ -168,7 +188,13 @@ func _on_mouse_entered():
 		TurnManager.highlighted = card
 		card.z_index = card.card_index + 10
 		card.movement.animate_scale(card.hover_scale)
+func _on_mouse_exited():
+	if not card.parts_highlighted:
+		card.movement.highlighted = false
+	
+	card.z_index = card.card_index
 
+#burn effect when card is destroyed
 func burnCard(_state:CardState):
 	var rng = RandomNumberGenerator.new()
 	var direction := rng.randf_range(0.0, 360.0)
@@ -180,10 +206,11 @@ func burnCard(_state:CardState):
 		# set burning direction in degrees
 		subvp.material.set_shader_parameter("direction", direction)
 		# use tweens to animate the progress value
-		tween.tween_method(up, -1.5, 1.5, 1.0)
+		tween.tween_method(burn_update, -1.5, 1.5, 1.0)
 		tween.tween_callback(card.send_to_grave)
-
-func up(value: float):
+		await tween.finished
+#
+func burn_update(value: float):
 	if subvp.material:
 		subvp.material.set_shader_parameter("progress", value)
 

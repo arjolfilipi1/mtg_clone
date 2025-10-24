@@ -68,19 +68,19 @@ func setup(data):
 			effects.append(e)
 
 func destroy_card(game:GameState):
-	if card_location == 1:
+	if card_location == le.hand:
 		if controller.is_human:
 			game.player_hand.erase(self)
 			game.player_grave.append(self)
 		else:
 			game.enemy_hand.erase(self)
 			game.enemy_grave.append(self)
-	elif card_location == 2:
+	elif card_location == le.field:
 		game.board[pos].erase(self)
-		if controller.is_human:
-			game.player_grave.append(self)
-		else:
-			game.enemy_grave.append(self)
+	if controller.is_human:
+		game.player_grave.append(self)
+	else:
+		game.enemy_grave.append(self)
 	card_location = le.grave
 	
 	pos = ""
@@ -193,7 +193,7 @@ func on_end_phase_trigger():
 				apply_effect(eff)
 			elif eff and eff.trigger_spec == "on_end_phase_on_field" and card_location == le.field:
 				print("Playing card with on_end_phase effect: ", eff.spec)
-				apply_effect(eff)
+				await apply_effect(eff)
 func on_turn_end_trigger():
 	if effects.size() > 0:
 		for eff in effects:

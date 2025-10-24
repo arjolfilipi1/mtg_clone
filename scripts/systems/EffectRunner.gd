@@ -14,4 +14,4 @@ func apply_effect(effect: Effect_class, ctx: Dictionary):
 		return
 	ctx.params = parsed.params
 	print("running effect: ",ctx.params,ctx )
-	executor.call(ctx)
+	await executor.call(ctx)

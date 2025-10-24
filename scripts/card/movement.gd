@@ -1,13 +1,20 @@
 extends Node2D
+#parent
 @onready var card:Card = $".."
+#if is highlighted
 var highlighted = false
 var mana_tween
 var highlightTween: Tween
+#arrow for attack targeting
 var targeting_arrow
 const _TARGETING_SCENE_FILE = "res://scenes/TargetingArrow.tscn"
 const _TARGETING_SCENE = preload(_TARGETING_SCENE_FILE)
+#stores cards that had the visuals changed (colored yellow to show that they are valid targets
+# so that we can reset the visual
 var affected: Array[Card]
 var pending_target:Card
+
+#attack visuals
 func attack_target():
 	if card.is_ancestor_of(targeting_arrow):
 		pass
@@ -28,6 +35,8 @@ func attack_target():
 							affected.append(c)
 
 	card.board_pos.color_range(false)
+
+
 func on_click(event):
 
 	if event is InputEventMouseButton: 
@@ -55,10 +64,12 @@ func on_click(event):
 	elif event is InputEventMouseMotion and card.dragging and card.state.card_location ==CardState.le.hand:
 		card.global_position = get_global_mouse_position() - card.offset
 		rotation = 0
-	pass # Replace with function body.
+	pass
+#calls the attack animation
 func attack_card():
 	
 	card.visual.attack.start_slam_attack(TurnManager.targeting,card)
+#check if the drop area can accept the card
 func check_drop_area():
 	var mouse_pos = card.get_global_mouse_position()
 	var space_state = card.get_world_2d().direct_space_state
@@ -81,6 +92,7 @@ func check_drop_area():
 	card.dragging = false
 	card.state.controller.player_hand.reset()
 
+#dragging
 func check_and_return_to_hand():
 	card.state.controller.board.reset_higlight()
 	TurnManager.reset_highlited()
@@ -90,22 +102,25 @@ func check_and_return_to_hand():
 	card.visual.set_drag_visuals(card.dragging)
 	check_drop_area()
 	card.state.controller.player_hand.reset()
+	
+#scales the card up when mouse enters, down when not in focus
 func animate_scale(target_scale: Vector2) -> void:
-	if highlightTween:
-		highlightTween.kill() # stop existing tweens
-	highlightTween = create_tween()
+	if highlightTween :
+		if is_instance_valid(highlightTween) :
+			highlightTween.kill() # stop existing tweens
+	highlightTween = get_tree().create_tween()
 	var _track := highlightTween.parallel().tween_property(card, "scale", target_scale, 0.8).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 
 	
-	# Calculate how much the card will expand and adjust position
-	
 
+	
+#summon movement
 func play_card_to_board(area:Node,rot = 0):
 	card.board_pos =  area
 	TurnManager.dragging = null
 	TurnManager.reset_highlited()
 	print("dropped "+ card.state.card_name+ " on area "+ area.name)
-	await card.state.play_to_board(area.name,TurnManager.game_manager.gamestate,card)
+	card.state.play_to_board(area.name,TurnManager.game_manager.gamestate,card)
 	card.get_parent().remove_child(card)
 	area.get_parent().add_child(card)
 	var tween := get_tree().create_tween()
@@ -118,6 +133,7 @@ func play_card_to_board(area:Node,rot = 0):
 	TurnManager.priority = false if TurnManager.priority else true
 	pass
 
+#moves the card to the mana pile
 func move_to_mana_zone():
 	highlighted = false
 	card.state.face_up = true
@@ -144,7 +160,7 @@ func move_to_mana_zone():
 	card.global_position = start_pos
 	mana_tween = get_tree().create_tween()
 	
-	mana_tween.parallel().tween_property(card, "global_position", target_pos, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	mana_tween.parallel().tween_property(card, "position", Vector2(-40.0,-50.0), 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	if card.state.player_controled:
 		mana_tween.parallel().tween_property(card, "rotation_degrees", 0.0, 0.5).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	else:
@@ -171,13 +187,14 @@ func _after_mana_move():
 func _ready() -> void:
 	targeting_arrow = _TARGETING_SCENE.instantiate()
 	
-	pass # Replace with function body.
+	pass 
 func lower():
 	if card.z_index >= 1000:
 		card.z_index -= 1000
 func raise():
 	card.z_index += 1000
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+
+
 func _process(_delta: float) -> void:
 	if card.dragging:
 		card.global_position = card.get_global_mouse_position() - card.offset
