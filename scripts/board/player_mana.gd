@@ -1,4 +1,5 @@
 extends Control
+@onready var prev = $"../CardListViewer"
 const MANA_COLORS = {
 	"generic": Color(0.5, 0.5, 0.5),
 	"white": Color(1, 1, 1),
@@ -12,6 +13,10 @@ const MANA_COLORS = {
 var rotation_angle := 0.0
 var rotation_speed := 0.5  # Radians per second (adjust as needed)
 var orb_list
+
+func pressed(): 
+	prev.show_cards(TurnManager.gamestate.player_mana, "Mana")
+
 func spawn_mana_orb(mana_type: String, _position: Vector2,node:Node):
 	orb_list =[]
 	var orb_scene = preload("res://scenes/ManaOrb.tscn")
@@ -52,3 +57,13 @@ func _process(_delta: float) -> void:
 	if orb_list:
 		rotation_angle += rotation_speed * _delta
 		arrange_mana_orbs_in_circle(Vector2(60,75),30)  # Use your center and radius
+
+
+func _on_gui_input(event: InputEvent) -> void:
+	
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		prev.show_cards(TurnManager.game_manager.gamestate.player_mana, "Mana")
+		print("mana pressed")
+	pass # Replace with function body.
+func _area_pressed(_node: Node,event: InputEvent,  _shape_idx: int)->void:
+	_on_gui_input(event)

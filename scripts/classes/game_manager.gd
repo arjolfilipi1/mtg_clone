@@ -29,7 +29,6 @@ var player_deck_init:Array[int] = [2,3,4,5,6,0,1,5]
 var enemy_deck_init:Array[int] = [0,1,2,3,4,5,6,3]
 
 func store_gamestate():
-	$"../CardListViewer".show_cards(gamestate.player_mana, "Mana")
 	print(gamestate.player_hand+gamestate.player_mana+gamestate.player_grave)
 	print(gamestate.enemy_hand+gamestate.enemy_mana+gamestate.enemy_grave)
 	pass
@@ -160,7 +159,7 @@ func _process(_delta: float) -> void:
 	#debug putton size
 	if TurnManager.highlighted:
 
-		sp.text = "vt" + str(TurnManager.highlighted.visual.valid_target )
+		sp.text = "vt" + str(gamestate.player_mana )
 		sl.text = str(gamestate.enemy_deck )
 		#sl.text = "eh:"+str( len(gamestate.enemy_hand ))+"em:"+str( len(gamestate.enemy_mana )) + "eg:"+str( len(gamestate.enemy_grave ))
 	if TurnManager.priority:
@@ -204,4 +203,9 @@ func _on_cancel_attack_pressed() -> void:
 	pass # Replace with function body.
 func _on_end_turn_button_pressed() -> void:
 	TurnManager.end_turn()
+	pass # Replace with function body.
+
+
+func mana_on_area_2d_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	$"../CardListViewer".show_cards(gamestate.player_mana, "Mana")
 	pass # Replace with function body.

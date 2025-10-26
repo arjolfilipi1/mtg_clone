@@ -195,7 +195,7 @@
 	  {
 		"spec": "buff all_creatures +3/+3 until_end_of_turn",
 		"target_spec": "target_creature",
-		"trigger_spec": "on_play",
+		"trigger_spec": "selected_on_mana",
 		"target_count":2,
 		"mandatory": false,
 		"targets": true,

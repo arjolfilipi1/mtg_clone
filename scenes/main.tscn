@@ -748,6 +748,13 @@ scale = Vector2(0.664948, 0.664948)
 texture = ExtResource("9_qwdrg")
 centered = false
 
+[node name="Area2D" type="Area2D" parent="PlayerMana"]
+z_index = 4096
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerMana/Area2D"]
+position = Vector2(-66, 3)
+polygon = PackedVector2Array(2, -1, 1, 160, 127, 157, 129, -3)
+
 [node name="EnemyHand" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
@@ -894,10 +901,11 @@ text = "debug:"
 autowrap_mode = 2
 
 [node name="CardListViewer" parent="." instance=ExtResource("49_b040d")]
-offset_left = 1727.0
-offset_top = 70.0
-offset_right = 1727.0
-offset_bottom = 70.0
+z_index = 10
+offset_left = 225.0
+offset_top = 307.0
+offset_right = 225.0
+offset_bottom = 307.0
 scale = Vector2(0.5, 0.5)
 
 [connection signal="input_event" from="PlayerBoard/4-2" to="PlayerBoard/4-2" method="_on_input_event"]
@@ -929,6 +937,8 @@ scale = Vector2(0.5, 0.5)
 [connection signal="input_event" from="EnemyBoard/3-3" to="EnemyBoard/3-3" method="_on_input_event"]
 [connection signal="input_event" from="EnemyBoard/3-4" to="EnemyBoard/3-4" method="_on_input_event"]
 [connection signal="input_event" from="EnemyBoard/3-5" to="EnemyBoard/3-5" method="_on_input_event"]
+[connection signal="gui_input" from="PlayerMana" to="PlayerMana" method="_on_gui_input"]
+[connection signal="input_event" from="PlayerMana/Area2D" to="PlayerMana" method="_area_pressed"]
 [connection signal="pressed" from="ButtonContainer/EndTurnButton" to="GameManager" method="_on_end_turn_button_pressed"]
 [connection signal="pressed" from="ButtonContainer/Cancel attack" to="GameManager" method="_on_cancel_attack_pressed"]
 [connection signal="pressed" from="ButtonContainer/test" to="GameManager" method="store_gamestate"]
