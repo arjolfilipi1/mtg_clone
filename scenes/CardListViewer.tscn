@@ -39,6 +39,7 @@ layout_mode = 2
 [node name="CardGrid" type="GridContainer" parent="VBoxContainer/ScrollContainer"]
 custom_minimum_size = Vector2(800, 300)
 layout_mode = 2
+columns = 3
 
 [node name="ButtonBar" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2

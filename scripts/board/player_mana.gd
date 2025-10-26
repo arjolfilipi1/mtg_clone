@@ -1,5 +1,6 @@
 extends Control
 @onready var prev = $"../CardListViewer"
+@onready var label = $"../PlayerMana/Label"
 const MANA_COLORS = {
 	"generic": Color(0.5, 0.5, 0.5),
 	"white": Color(1, 1, 1),
@@ -37,7 +38,7 @@ func spawn_mana_orb(mana_type: String, _position: Vector2,node:Node):
 	return orb_instance
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	label.visible = false
 
 func arrange_mana_orbs_in_circle(center: Vector2, radius: float = 100.0):
 	var orbs = get_children().filter(func(child):return child.is_in_group("mana_orb"))
@@ -64,6 +65,14 @@ func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		prev.show_cards(TurnManager.game_manager.gamestate.player_mana, "Mana")
 		print("mana pressed")
-	pass # Replace with function body.
+
 func _area_pressed(_node: Node,event: InputEvent,  _shape_idx: int)->void:
 	_on_gui_input(event)
+
+
+func _on_area_2d_mouse_entered() -> void:
+	label.visible = true
+	print("entered")
+
+func _on_area_2d_mouse_exited() -> void:
+	label.visible = false

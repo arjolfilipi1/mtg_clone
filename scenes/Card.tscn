@@ -182,12 +182,12 @@ shader_parameter/corner_radius = 0.15
 shader_parameter/dash_length = 0.1
 shader_parameter/dash_gap = 0.05
 shader_parameter/speed = 0.1
-shader_parameter/border_color = Color(1, 1, 1, 1)
+shader_parameter/border_color = Color(0.211765, 1, 0.223529, 1)
 shader_parameter/streak_intensity = 0.4
 shader_parameter/streak_width = 0.5
 shader_parameter/streak_speed = 1.0
 shader_parameter/streak_count = 4
-shader_parameter/streak_color = Color(0.5, 0.8, 1, 1)
+shader_parameter/streak_color = Color(0.231373, 0.8, 0.203922, 0.537255)
 
 [node name="control" type="Control" groups=["card"]]
 material = SubResource("ShaderMaterial_cd0ai")
@@ -567,7 +567,6 @@ scale = Vector2(0.284091, 0.288788)
 texture = ExtResource("27_7bcrs")
 
 [node name="sel" type="Sprite2D" parent="."]
-visible = false
 material = SubResource("ShaderMaterial_m58fo")
 position = Vector2(100, 126.5)
 scale = Vector2(0.284091, 0.288788)

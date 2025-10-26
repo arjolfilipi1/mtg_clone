@@ -1,4 +1,4 @@
-[gd_scene load_steps=67 format=3 uid="uid://ciikqwfm6mbci"]
+[gd_scene load_steps=69 format=3 uid="uid://ciikqwfm6mbci"]
 
 [ext_resource type="Script" path="res://scripts/classes/game_manager.gd" id="1_qqfnl"]
 [ext_resource type="Script" path="res://scripts/board/fan.gd" id="2_x817q"]
@@ -207,6 +207,20 @@ shader_parameter/radius = 0.5
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_wgdt0"]
 shader = ExtResource("8_i1e4f")
 shader_parameter/corner_scale = 0.3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jo3vg"]
+bg_color = Color(0.6, 0.6, 0.6, 0.34902)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="Theme" id="Theme_cfhpa"]
+Label/colors/font_color = Color(0, 0, 0, 1)
+Label/colors/font_outline_color = Color(0.281187, 0.281187, 0.281187, 1)
+Label/colors/font_shadow_color = Color(0.226707, 0.226707, 0.226707, 0)
+Label/constants/outline_size = 3
+Label/styles/normal = SubResource("StyleBoxFlat_jo3vg")
 
 [sub_resource type="Theme" id="Theme_ycla5"]
 Button/colors/font_color = Color(0.0784314, 0.87451, 0.152941, 1)
@@ -741,6 +755,7 @@ offset_top = 546.0
 offset_right = 526.0
 offset_bottom = 698.0
 pivot_offset = Vector2(60, 78)
+mouse_default_cursor_shape = 8
 script = ExtResource("12_46n2y")
 
 [node name="Sprite2D" type="Sprite2D" parent="PlayerMana"]
@@ -749,11 +764,31 @@ texture = ExtResource("9_qwdrg")
 centered = false
 
 [node name="Area2D" type="Area2D" parent="PlayerMana"]
+visible = false
 z_index = 4096
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="PlayerMana/Area2D"]
-position = Vector2(-66, 3)
+position = Vector2(-1, 2)
 polygon = PackedVector2Array(2, -1, 1, 160, 127, 157, 129, -3)
+
+[node name="Label" type="Label" parent="PlayerMana"]
+z_index = 150
+z_as_relative = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.542
+anchor_top = 0.51
+anchor_right = 0.542
+anchor_bottom = 0.51
+offset_left = -63.04
+offset_top = -77.52
+offset_right = 62.96
+offset_bottom = 77.48
+theme = SubResource("Theme_cfhpa")
+text = "View cards"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true
 
 [node name="EnemyHand" type="Control" parent="."]
 layout_mode = 3
@@ -902,10 +937,10 @@ autowrap_mode = 2
 
 [node name="CardListViewer" parent="." instance=ExtResource("49_b040d")]
 z_index = 10
-offset_left = 225.0
-offset_top = 307.0
-offset_right = 225.0
-offset_bottom = 307.0
+offset_left = 3.0
+offset_top = 13.0
+offset_right = 3.0
+offset_bottom = 13.0
 scale = Vector2(0.5, 0.5)
 
 [connection signal="input_event" from="PlayerBoard/4-2" to="PlayerBoard/4-2" method="_on_input_event"]
@@ -938,7 +973,11 @@ scale = Vector2(0.5, 0.5)
 [connection signal="input_event" from="EnemyBoard/3-4" to="EnemyBoard/3-4" method="_on_input_event"]
 [connection signal="input_event" from="EnemyBoard/3-5" to="EnemyBoard/3-5" method="_on_input_event"]
 [connection signal="gui_input" from="PlayerMana" to="PlayerMana" method="_on_gui_input"]
+[connection signal="mouse_entered" from="PlayerMana" to="PlayerMana" method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="PlayerMana" to="PlayerMana" method="_on_area_2d_mouse_exited"]
 [connection signal="input_event" from="PlayerMana/Area2D" to="PlayerMana" method="_area_pressed"]
+[connection signal="mouse_entered" from="PlayerMana/Area2D" to="PlayerMana" method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="PlayerMana/Area2D" to="PlayerMana" method="_on_area_2d_mouse_exited"]
 [connection signal="pressed" from="ButtonContainer/EndTurnButton" to="GameManager" method="_on_end_turn_button_pressed"]
 [connection signal="pressed" from="ButtonContainer/Cancel attack" to="GameManager" method="_on_cancel_attack_pressed"]
 [connection signal="pressed" from="ButtonContainer/test" to="GameManager" method="store_gamestate"]

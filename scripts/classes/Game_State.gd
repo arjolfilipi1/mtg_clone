@@ -15,7 +15,7 @@ var turn: int = 1
 var player_mana:Array[CardState]
 var enemy_mana:Array[CardState]
 
-
+var stack: Array = []  # list of pending effects
 
 var board  ={
 	'1-1':[],	'1-2':[],	'1-3':[],	'1-4':[],	'1-5':[],	'2-1':[],	'2-2':[],	'2-3':[],	'2-4':[],	'2-5':[],	'3-1':[],	'3-2':[],	'3-3':[],	'3-4':[],	'3-5':[],	'4-1':[],	'4-2':[],	'4-3':[],	'4-4':[],	'4-5':[],	'5-1':[],	'5-2':[],	'5-3':[],	'5-4':[],	'5-5':[],	'6-1':[],	'6-2':[],	'6-3':[],	'6-4':[],	'6-5':[],
@@ -26,7 +26,20 @@ var board_e  ={
 
 }
 
+signal stack_changed
 
+func push_to_stack(effect_data: Dictionary):
+	stack.append(effect_data)
+	emit_signal("stack_changed")
+
+func pop_from_stack() -> Dictionary:
+	if stack.size() > 0:
+		return stack.pop_back()
+	return {}
+
+func clear_stack():
+	stack.clear()
+	
 func eval_gamestate():
 	pass
 func get_all_creatures():
