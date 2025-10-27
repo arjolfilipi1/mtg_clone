@@ -2,7 +2,7 @@ extends Control
 class_name CardPreview
 
 signal card_selected
-var card_data
+var card_data:CardState
 @onready var art:Sprite2D = $Panel/front/art
 @onready var name_label = $Panel/Name
 @onready var toughness = $Panel/Health

@@ -123,6 +123,47 @@ func pay_for_card( card) -> void:
 				if to_spend == 0:
 					break
 	emit_signal("mana_changed",self)
+
+func _request_response_human(game):
+	var ui = TurnManager.ui
+	ui.show_stack(game.stack)
+
+	# Filter cards that can respond right now (instants, traps, etc.)
+	var response_cards = []
+	for c in game.player_hand:
+		if c.effects : # "quick-play" or "instant" speed
+			for eff in c.effects:
+				if c.can_respond(game):
+					response_cards.append(c)
+
+	if response_cards.is_empty():
+		await ui.show_message("No valid responses. Passing priority...")
+		return {}
+
+	# Ask the user what to do
+	var choice = await ui.ask_choice(["Play a card", "Pass"])
+	if choice == "Pass":
+		return {}
+
+	# Ask them to pick which card to play
+	var selected_card = await ui.select_card_from(response_cards, "Select response card")
+	if selected_card == null:
+		return {}
+
+	# The effect is not resolved yet; we only push it to stack
+	return {
+		"type": "play_card",
+		"card": selected_card,
+		"controller": self
+	}
+func _request_response_ai(game):
+	return {}
+func request_response(game: GameState) -> Dictionary:
+	# Return a dictionary describing the response or `null` if none
+	if is_human:
+		return await _request_response_human(game)
+	else:
+		return _request_response_ai(game)
 func mana_match_visual(pl):
 	if pl == self:
 		TurnManager.debug.text += "Seting mana visuals for "+ player_name +" \n"

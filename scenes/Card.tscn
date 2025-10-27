@@ -193,6 +193,10 @@ shader_parameter/streak_color = Color(0.231373, 0.8, 0.203922, 0.537255)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_6lclf"]
 shader = ExtResource("30_w1es4")
+shader_parameter/speed = 2.0
+shader_parameter/transparency_threshold = 0.5
+shader_parameter/activated = true
+shader_parameter/progress = 0.0
 
 [node name="control" type="Control" groups=["card"]]
 material = SubResource("ShaderMaterial_cd0ai")
@@ -590,6 +594,7 @@ scale = Vector2(0.284091, 0.288788)
 texture = ExtResource("28_k3r52")
 
 [node name="effect" type="ColorRect" parent="."]
+visible = false
 material = SubResource("ShaderMaterial_6lclf")
 layout_mode = 0
 offset_left = -11.0

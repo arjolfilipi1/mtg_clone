@@ -12,6 +12,7 @@ class_name CardListViewer
 var card_states: Array[CardState] = []
 
 var selected_card: CardState = null
+@export var allow_selection: bool = false
 signal card_selected(card_state: CardState)
 signal card_action(action: String, card_state: CardState)
 
@@ -44,11 +45,10 @@ func _on_card_clicked(card_state: CardState):
 	card_selected.emit(card_state)
 	# highlight or indicate selection
 	for effect in selected_card.effects:
-		print(effect.trigger_spec)
 		if effect.trigger_spec == "selected_on_mana" and title_label.text == "Mana":
 			button_activate.disabled = false
 	for p in grid.get_children():
-		p.set_selected(p.card_data["card_name"] == card_state.card_name)
+		p.set_selected(p.card_data == card_state)
 
 func _on_close_pressed():
 	hide()

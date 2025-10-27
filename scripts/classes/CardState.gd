@@ -58,6 +58,7 @@ func setup(data):
 			e.spec = effect_spec.spec
 			e.target_count = effect_spec.target_count
 			e.target_spec = effect_spec.target_spec
+			e.speed = effect_spec.speed
 			e.trigger_spec = effect_spec.trigger_spec
 			e.mandatory = effect_spec.mandatory
 			e.targets = effect_spec.targets
@@ -147,6 +148,13 @@ func apply_effect(effect:Effect_class,game = TurnManager):
 		TurnManager.waiting_for_input = false
 		if card_type == "Spell" and effect.trigger_spec == "on_play":
 			destroy_card(game.game_manager.gamestate)
+
+func can_respond(game:GameState)-> bool:
+	print( game.stack[-1] )
+	for eff in effects:
+		if eff.speed > 1:
+			return true
+	return false
 
 #check if effect can be activated, will be added to later
 func can_activate_effect(game:GameState) ->Array[Effect_class]:

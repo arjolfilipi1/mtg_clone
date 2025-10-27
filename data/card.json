@@ -126,7 +126,7 @@
 		"targets": true,
 		"mana_cost": "",
 		"once_per_turn":"soft",
-		"speed":1
+		"speed":2
 	  },],
 	"background": "black",
 	"power": 30,
