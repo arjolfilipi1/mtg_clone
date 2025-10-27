@@ -16,10 +16,10 @@ func _ready() -> void:
 	$Panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	$Panel/ManaCostContainer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	$Panel/CenterContainer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-func scale_sprite_preserving_center(art: Sprite2D, frame_size: Vector2 = Vector2(160, 140), fill: bool = false) -> void:
+func scale_sprite_preserving_center(_art: Sprite2D, frame_size: Vector2 = Vector2(160, 140), fill: bool = false) -> void:
 	
 	var sprite = Sprite2D.new()
-	sprite.texture = art.texture
+	sprite.texture = _art.texture
 	if sprite.texture == null:
 		return
 

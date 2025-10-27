@@ -1,0 +1,246 @@
+[gd_scene load_steps=13 format=3 uid="uid://cbu5qnpmp57nf"]
+
+[ext_resource type="Shader" path="res://assets/shaders/rounded.gdshader" id="1_k8am2"]
+[ext_resource type="Shader" path="res://assets/shaders/card/cardBackbround.gdshader" id="2_6o6t2"]
+[ext_resource type="Texture2D" uid="uid://c36f45bcsmbqq" path="res://assets/paper-146904_1920.png" id="3_joba3"]
+[ext_resource type="Texture2D" uid="uid://disyt6iugrent" path="res://assets/art/Earthgolem.png" id="4_c6s5h"]
+[ext_resource type="Texture2D" uid="uid://bg3gaujkvq44d" path="res://assets/symbol/red.png" id="5_ib87x"]
+[ext_resource type="Texture2D" uid="uid://dhl14vtpkwk3w" path="res://assets/grid.png" id="6_tpthk"]
+[ext_resource type="Texture2D" uid="uid://mwqabb0ir18g" path="res://assets/attack.png" id="7_5yov4"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_frppa"]
+
+[sub_resource type="Gradient" id="Gradient_w538k"]
+colors = PackedColorArray(0.232317, 0.258213, 0.259555, 1, 0.54099, 0.54099, 0.54099, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ocynb"]
+gradient = SubResource("Gradient_w538k")
+width = 200
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_frwft"]
+shader = ExtResource("1_k8am2")
+shader_parameter/corner_scale = 0.1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tm1c7"]
+shader = ExtResource("2_6o6t2")
+shader_parameter/mana_color1 = Vector4(1, 1, 1, 1)
+shader_parameter/mana_color2 = Vector4(1, 1, 1, 1)
+shader_parameter/mana_color3 = Vector4(1, 1, 1, 1)
+shader_parameter/weight1 = 1.0
+shader_parameter/weight2 = 0.0
+shader_parameter/weight3 = 0.0
+
+[node name="SubViewport" type="SubViewport"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(200, 250)
+render_target_update_mode = 4
+
+[node name="Dragged" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+z_index = 1
+material = SubResource("ShaderMaterial_frppa")
+offset_right = 200.0
+offset_bottom = 250.0
+size_flags_stretch_ratio = 0.0
+texture = SubResource("GradientTexture1D_ocynb")
+
+[node name="Panel" type="Panel" parent="."]
+show_behind_parent = true
+material = SubResource("ShaderMaterial_frwft")
+custom_minimum_size = Vector2(200, 25)
+offset_right = 200.0
+offset_bottom = 25.0
+pivot_offset = Vector2(100, 125)
+
+[node name="front" type="Node2D" parent="Panel"]
+
+[node name="backgourd" type="Sprite2D" parent="Panel/front"]
+material = SubResource("ShaderMaterial_tm1c7")
+position = Vector2(100, 127)
+texture = ExtResource("3_joba3")
+
+[node name="art" type="Sprite2D" parent="Panel/front"]
+position = Vector2(100, 127)
+texture = ExtResource("4_c6s5h")
+region_rect = Rect2(0, 0, 474, 620)
+
+[node name="Name" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = 210.0
+offset_bottom = 41.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.168627)
+theme_override_font_sizes/font_size = 10
+text = "Infernal dragon Gishmilgadon"
+horizontal_alignment = 1
+
+[node name="Health" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = 215.0
+offset_right = 200.0
+offset_bottom = 247.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "DE"
+
+[node name="Power" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 215.0
+offset_right = 60.0
+offset_bottom = 247.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "PW"
+
+[node name="ManaCostContainer" type="HBoxContainer" parent="."]
+z_index = 1000
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -84.0
+offset_top = -93.0
+offset_right = -52.0
+offset_bottom = 107.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Sprite2D" type="Sprite2D" parent="ManaCostContainer"]
+texture = ExtResource("5_ib87x")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+custom_minimum_size = Vector2(50, 50)
+offset_left = 81.0
+offset_top = 205.0
+offset_right = 131.0
+offset_bottom = 255.0
+scale = Vector2(0.75, 0.75)
+
+[node name="grid" type="Sprite2D" parent="CenterContainer"]
+texture = ExtResource("6_tpthk")
+centered = false
+
+[node name="1_0" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(25, 35)
+texture = ExtResource("7_5yov4")
+
+[node name="1_1" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(35, 35)
+texture = ExtResource("7_5yov4")
+
+[node name="1_2" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(45, 35)
+texture = ExtResource("7_5yov4")
+
+[node name="1_-1" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(15, 35)
+texture = ExtResource("7_5yov4")
+
+[node name="1_-2" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(5, 35)
+texture = ExtResource("7_5yov4")
+
+[node name="0_1" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(35, 45)
+texture = ExtResource("7_5yov4")
+
+[node name="0_2" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(45, 45)
+texture = ExtResource("7_5yov4")
+
+[node name="0_-1" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(15, 45)
+texture = ExtResource("7_5yov4")
+
+[node name="0_-2" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(5, 45)
+texture = ExtResource("7_5yov4")
+
+[node name="2_0" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(25, 25)
+texture = ExtResource("7_5yov4")
+
+[node name="2_1" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(35, 25)
+texture = ExtResource("7_5yov4")
+
+[node name="2_2" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(45, 25)
+texture = ExtResource("7_5yov4")
+
+[node name="2_-1" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(15, 25)
+texture = ExtResource("7_5yov4")
+
+[node name="2_-2" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(5, 25)
+texture = ExtResource("7_5yov4")
+
+[node name="3_0" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(25, 15)
+texture = ExtResource("7_5yov4")
+
+[node name="3_1" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(35, 15)
+texture = ExtResource("7_5yov4")
+
+[node name="3_2" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(45, 15)
+texture = ExtResource("7_5yov4")
+
+[node name="3_-1" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(15, 15)
+texture = ExtResource("7_5yov4")
+
+[node name="3_-2" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(5, 15)
+texture = ExtResource("7_5yov4")
+
+[node name="4_0" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(25, 5)
+texture = ExtResource("7_5yov4")
+
+[node name="4_1" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(35, 5)
+texture = ExtResource("7_5yov4")
+
+[node name="4_2" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(45, 5)
+texture = ExtResource("7_5yov4")
+
+[node name="4_-1" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(15, 5)
+texture = ExtResource("7_5yov4")
+
+[node name="4_-2" type="Sprite2D" parent="CenterContainer/grid"]
+visible = false
+position = Vector2(5, 5)
+texture = ExtResource("7_5yov4")

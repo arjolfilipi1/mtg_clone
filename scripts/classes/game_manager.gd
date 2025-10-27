@@ -111,7 +111,7 @@ func start_game():
 	#while player_hand.drawTween.is_running:
 		#pass
 	TurnManager.start_turn()
-func initial_draw_card(_player:Player,card_id,player = true):
+func initial_draw_card(_player:Player,card_id):
 	var random_card = card_database[card_id]
 	var card = preload("res://scenes/Card.tscn").instantiate()
 	card.setup(random_card,_player)
@@ -155,7 +155,8 @@ func _input(event: InputEvent) -> void:
 
 			get_viewport().set_input_as_handled()  # Prevent other nodes from processing
 func _process(_delta: float) -> void:
-	
+	if not gamestate.stack.is_empty():
+		TurnManager.handle_stack_phase(gamestate)
 	#debug putton size
 	if TurnManager.highlighted:
 
@@ -206,6 +207,7 @@ func _on_end_turn_button_pressed() -> void:
 	pass # Replace with function body.
 
 
-func mana_on_area_2d_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
-	$"../CardListViewer".show_cards(gamestate.player_mana, "Mana")
+func mana_on_area_2d_input_event(_viewport: Node, _event: InputEvent, _shape_idx: int) -> void:
+	if _event is InputEventMouseButton and _event.pressed and _event.button_index == MOUSE_BUTTON_LEFT:
+		$"../CardListViewer".show_cards(gamestate.player_mana, "Mana")
 	pass # Replace with function body.

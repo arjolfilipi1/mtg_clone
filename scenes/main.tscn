@@ -755,7 +755,7 @@ offset_top = 546.0
 offset_right = 526.0
 offset_bottom = 698.0
 pivot_offset = Vector2(60, 78)
-mouse_default_cursor_shape = 8
+mouse_default_cursor_shape = 2
 script = ExtResource("12_46n2y")
 
 [node name="Sprite2D" type="Sprite2D" parent="PlayerMana"]

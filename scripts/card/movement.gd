@@ -138,7 +138,7 @@ func move_to_mana_zone():
 	highlighted = false
 	card.state.face_up = true
 	var mana_index = 0 
-	var mana_offset = Vector2.ZERO
+	var _mana_offset = Vector2.ZERO
 	card.state.controller.mana_selected = true
 	if card.state.player_controled:
 		TurnManager.player_mana_card_nr += 1
@@ -148,10 +148,10 @@ func move_to_mana_zone():
 		TurnManager.enemy_mana_card_nr += 1
 		mana_index = TurnManager.enemy_mana_card_nr
 		#mana_offset = Vector2(-50,-65)
-	mana_offset = Vector2.ZERO
+	_mana_offset = Vector2.ZERO
 	
 	var start_pos = card.global_position
-	var target_pos = card.state.controller.player_mana_zone.global_position + Vector2(randf() * 10, 0) + mana_offset  # random offset so cards don't stack perfectly
+	#var target_pos = card.state.controller.player_mana_zone.global_position + Vector2(randf() * 10, 0) + mana_offset  # random offset so cards don't stack perfectly
 	card.state.to_mana(TurnManager.game_manager.gamestate)
 	
 	card.get_parent().remove_child(card)

@@ -113,17 +113,20 @@ func effect_targets(gs:GameState, eff:Effect_class):
 	return res
 
 #runs the effect
-func apply_effect(effect:Effect_class):
+func apply_effect(effect:Effect_class,game = TurnManager):
 	if real:
 		TurnManager.waiting_for_input = true
 	if effect:
-		var game = TurnManager
+		var targets = effect_targets(game.game_manager.gamestate,effect)
 		var ctx = {
 		"game": game.game_manager.gamestate,
 		"controller": controller,
 		"source": self,
-		"targets": effect_targets(game.game_manager.gamestate,effect)
+		"targets": targets
 	}
+		
+		print("pushed effect to stack:"+effect.spec)
+		
 		if effect.targets and effect.target_spec not in ["self","none"] and len(ctx.targets) > effect.target_count:
 		# Pause and ask the player to choose
 			var possible_targets = ctx.targets
@@ -132,7 +135,15 @@ func apply_effect(effect:Effect_class):
 				print("Effect canceled - no targets chosen")
 				return
 			ctx.targets = chosen_targets
-		await EffectRunner.apply_effect(effect,ctx)
+		game.stack.append({
+		"effect":effect,
+		"source":self,
+		"controller":self.controller,
+		"context":ctx
+	})
+		game.game_manager.gamestate.on_card_event( Card_event.e.ON_EFFECT_ACTIVATED,self, ctx.targets)
+		
+		#await EffectRunner.apply_effect(effect,ctx)
 		TurnManager.waiting_for_input = false
 		if card_type == "Spell" and effect.trigger_spec == "on_play":
 			destroy_card(game.game_manager.gamestate)
@@ -283,7 +294,7 @@ func to_mana(game:GameState):
 	card_location = le.mana
 
 #checks if player can play the card
-func can_be_payed(game:GameState,cost) -> bool:
+func can_be_payed(_game:GameState,cost) -> bool:
 	var mana_pool = controller.mana_pool
 	var pool = mana_pool.duplicate()
 	for color in cost.keys():

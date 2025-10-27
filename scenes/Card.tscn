@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=52 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/classes/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/card/playable.gdshader" id="1_6a0q4"]
@@ -12,6 +12,7 @@
 [ext_resource type="Shader" path="res://assets/shaders/rounded.gdshader" id="6_r5pbg"]
 [ext_resource type="Texture2D" uid="uid://cv6u4ndetmqm7" path="res://assets/MultiNoiseTexture2D.svg" id="7_qve8i"]
 [ext_resource type="Texture2D" uid="uid://disyt6iugrent" path="res://assets/art/Earthgolem.png" id="9_xnj1b"]
+[ext_resource type="Texture2D" uid="uid://c0pg84bflk5ma" path="res://assets/name.png" id="11_t12ku"]
 [ext_resource type="Script" path="res://scripts/card/flip_animator.gd" id="12_leg65"]
 [ext_resource type="Texture2D" uid="uid://bg3gaujkvq44d" path="res://assets/symbol/red.png" id="12_nmeia"]
 [ext_resource type="Texture2D" uid="uid://dhl14vtpkwk3w" path="res://assets/grid.png" id="14_44mby"]
@@ -28,6 +29,7 @@
 [ext_resource type="Shader" path="res://assets/shaders/outline.gdshader" id="26_g4vjj"]
 [ext_resource type="Texture2D" uid="uid://cjxcykcq7mcfv" path="res://tar.png" id="27_7bcrs"]
 [ext_resource type="Texture2D" uid="uid://o866i4nie6d8" path="res://sel.png" id="28_k3r52"]
+[ext_resource type="Shader" path="res://assets/shaders/card/effect.gdshader" id="30_w1es4"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cd0ai"]
 shader = ExtResource("6_r5pbg")
@@ -189,6 +191,9 @@ shader_parameter/streak_speed = 1.0
 shader_parameter/streak_count = 4
 shader_parameter/streak_color = Color(0.231373, 0.8, 0.203922, 0.537255)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6lclf"]
+shader = ExtResource("30_w1es4")
+
 [node name="control" type="Control" groups=["card"]]
 material = SubResource("ShaderMaterial_cd0ai")
 custom_minimum_size = Vector2(200, 250)
@@ -267,21 +272,31 @@ position = Vector2(100, 127)
 texture = ExtResource("3_2g06r")
 
 [node name="art" type="Sprite2D" parent="SubViewportContainer/SubViewport/Panel/front"]
+visible = false
 position = Vector2(100, 127)
 texture = ExtResource("9_xnj1b")
 region_rect = Rect2(0, 0, 474, 620)
 
 [node name="Name" type="Label" parent="SubViewportContainer/SubViewport/Panel"]
+z_index = 3
 layout_mode = 0
 offset_left = 10.0
-offset_top = 5.0
-offset_right = 210.0
-offset_bottom = 41.0
+offset_top = 15.0
+offset_right = 190.0
+offset_bottom = 51.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.168627)
 theme_override_font_sizes/font_size = 10
 text = "Infernal dragon Gishmilgadon"
-horizontal_alignment = 1
+horizontal_alignment = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="SubViewportContainer/SubViewport/Panel/Name"]
+modulate = Color(1, 1, 1, 0.784314)
+self_modulate = Color(1, 1, 1, 0.784314)
+z_index = -1
+position = Vector2(90, 8)
+scale = Vector2(0.13, 0.13)
+texture = ExtResource("11_t12ku")
 
 [node name="Health" type="Label" parent="SubViewportContainer/SubViewport/Panel"]
 layout_mode = 0
@@ -561,16 +576,27 @@ process_material = SubResource("ParticleProcessMaterial_bxdqp")
 texture = SubResource("NoiseTexture2D_30epp")
 
 [node name="tar" type="Sprite2D" parent="."]
+visible = false
 material = SubResource("ShaderMaterial_3unsl")
 position = Vector2(100, 126.5)
 scale = Vector2(0.284091, 0.288788)
 texture = ExtResource("27_7bcrs")
 
 [node name="sel" type="Sprite2D" parent="."]
+visible = false
 material = SubResource("ShaderMaterial_m58fo")
 position = Vector2(100, 126.5)
 scale = Vector2(0.284091, 0.288788)
 texture = ExtResource("28_k3r52")
+
+[node name="effect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_6lclf")
+layout_mode = 0
+offset_left = -11.0
+offset_top = -10.0
+offset_right = 209.0
+offset_bottom = 260.0
+color = Color(1, 1, 1, 0.305882)
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="vizual" method="_on_mouse_entered"]

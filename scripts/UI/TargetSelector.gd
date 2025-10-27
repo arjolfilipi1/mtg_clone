@@ -49,10 +49,10 @@ func _selhighlight(cs:CardState):
 	cs.card_node.visual.sel.visible = true
 func is_empty():
 	return len(selected_targets) > 0
-func start_selection(valid_targets:Array, max_count:int = 1):
-	self.valid_targets = valid_targets
+func start_selection(_valid_targets:Array, _max_count:int = 1):
+	self.valid_targets = _valid_targets
 	print("selection started")
-	self.max_count = max_count
+	self.max_count = _max_count
 	
 	# Highlight all valid targets visually
 	for t in valid_targets:

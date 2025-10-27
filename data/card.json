@@ -117,7 +117,17 @@
 	  "black": 1
 	},
 	"type": "Creature",
-	"effects": "",
+	"effects": [{
+		"spec": "buff self +100/0 instant",
+		"target_spec": "stack",
+		"trigger_spec": "on_effect_activation",
+		"mandatory": false,
+		"target_count":1,
+		"targets": true,
+		"mana_cost": "",
+		"once_per_turn":"soft",
+		"speed":1
+	  },],
 	"background": "black",
 	"power": 30,
 	"image": "skeleton.jpg",
@@ -152,7 +162,8 @@
 		"target_count":1,
 		"targets": true,
 		"mana_cost": "",
-		"once_per_turn":"soft"
+		"once_per_turn":"soft",
+		"speed":1
 	  },
 	{
 		"spec": "damage 3",
@@ -162,7 +173,8 @@
 		"mandatory": false,
 		"targets": true,
 		"mana_cost": "",
-		"once_per_turn":"soft"
+		"once_per_turn":"soft",
+		"speed":1
 	  }
 	],
 	"background": "white",
@@ -200,7 +212,8 @@
 		"mandatory": false,
 		"targets": true,
 		"mana_cost": "",
-		"once_per_turn":"soft"
+		"once_per_turn":"soft",
+		"speed":1
 	  }
 	],
 	"background": "white",

@@ -6,6 +6,7 @@ var turn = 1
 var players: Array[Player] = []
 var debug : Label
 var game_manager:GameManager
+var players_passed: int = 0
 var player_mana_count = {
 	"generic": 0,
 	"red": 0,
@@ -111,7 +112,40 @@ func finish_draw():
 		current_phase = TurnEnum.MANA_SELECT
 	_pass_priority()
 	
+func handle_stack_phase(game: GameState):
+	if game.stack.is_empty():
+		return
 
+	print("=== STACK START ===")
+	while not game.stack.is_empty():
+		waiting_for_input = true
+
+		while waiting_for_input:
+			await handle_priority(game)
+
+		# both passed, resolve top effect
+		var top = game.pop_from_stack()
+		await EffectRunner.apply_effect(top.effect, top.context)
+	print("=== STACK END ===")
+	
+func handle_priority(game: GameState):
+	
+	print("Player " if priority else "enemy ", "has priority")
+	var player = players[0] if priority else players[1]
+	
+	# Ask player to respond (UI prompt or AI logic)
+	var response = await player.request_response(game)
+	
+	if response == null:
+		# Pass priority
+		priority = not priority
+		players_passed += 1
+		if players_passed == 2:
+			waiting_for_input = false
+	else:
+		# Player responded with a new effect → push it
+		game.push_to_stack(response)
+		priority = not priority # other player gets chance next
 func finish_mana_selection():
 	var i = 0
 	for pl in players:
