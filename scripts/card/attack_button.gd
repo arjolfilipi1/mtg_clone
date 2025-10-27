@@ -46,5 +46,5 @@ func _attack_pressed(event: InputEvent) -> void:
 func _on_color_rect_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton: 
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			print("rect click")
+
 			_attack_pressed(event)

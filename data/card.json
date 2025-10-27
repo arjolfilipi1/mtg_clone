@@ -67,7 +67,7 @@
 	"effects": "",
 	"background": "earth",
 	"power": 10,
-	"image": "Earthgolem.jpg",
+	"image": "Earthgolem.png",
 	"toughness": 50,
 	"Mana_creation": "['earth','earth']",
 	"range": [
@@ -83,7 +83,7 @@
 	"mana_cost": {
 	  "generic": 0,
 	  "red": 0,
-	  "blue": 1,
+	  "blue": 0,
 	  "green": 1,
 	  "earth": 0,
 	  "white": 0,
@@ -195,7 +195,7 @@
 	  {
 		"spec": "buff all_creatures +3/+3 until_end_of_turn",
 		"target_spec": "target_creature",
-		"trigger_spec": "on_play",
+		"trigger_spec": "selected_on_mana",
 		"target_count":2,
 		"mandatory": false,
 		"targets": true,

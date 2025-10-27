@@ -128,14 +128,13 @@ func apply_effect(effect:Effect_class):
 		# Pause and ask the player to choose
 			var possible_targets = ctx.targets
 			var chosen_targets = await controller.request_target_selection(possible_targets, effect.target_count)
-			print(chosen_targets,"ct")
 			if not chosen_targets or chosen_targets.is_empty():
 				print("Effect canceled - no targets chosen")
 				return
 			ctx.targets = chosen_targets
 		await EffectRunner.apply_effect(effect,ctx)
 		TurnManager.waiting_for_input = false
-		if card_type == "Spell":
+		if card_type == "Spell" and effect.trigger_spec == "on_play":
 			destroy_card(game.game_manager.gamestate)
 
 #check if effect can be activated, will be added to later
@@ -144,7 +143,6 @@ func can_activate_effect(game:GameState) ->Array[Effect_class]:
 	if effects:
 		for eff in effects:
 			if eff.trigger_spec == "selected_on_hand" :
-				print(can_be_payed(game,eff.mana_cost))
 				if card_location == le.hand and can_be_payed(game,eff.mana_cost):
 					res.append(eff)
 	return res
@@ -262,7 +260,7 @@ func _recalculate_stats():
 	toughness = total_toughness
 	emit_signal("pt_changed",self)
 	
-func add_temp_buff(power_to_add:int,toughness_to_add:int,duration:String):
+func add_temp_buff(power_to_add:int,toughness_to_add:int,duration:String,_source):
 	self.toughness += toughness_to_add
 	self.power += power_to_add
 	var buff = {"power":power_to_add,"toughness":toughness_to_add,"duration":duration}

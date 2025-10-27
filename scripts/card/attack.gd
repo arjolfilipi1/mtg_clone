@@ -149,7 +149,6 @@ func _on_attack_complete() -> void:
 	# Reset to exact original values
 	card.position = original_position
 	card.scale = original_scale
-	print(TurnManager.targeting,"attack")
 	TurnManager.game_manager.cm.execute_attack(card,target,TurnManager.game_manager.gamestate)
 	can_attack = true
 	

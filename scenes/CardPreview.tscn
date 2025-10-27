@@ -1,0 +1,257 @@
+[gd_scene load_steps=11 format=3 uid="uid://b7ppvk0xc287a"]
+
+[ext_resource type="Script" path="res://scripts/prev/CardPreview.gd" id="1_4k0vl"]
+[ext_resource type="Shader" path="res://assets/shaders/rounded.gdshader" id="1_8e4op"]
+[ext_resource type="Shader" path="res://assets/shaders/card/cardBackbround.gdshader" id="2_f0ian"]
+[ext_resource type="Texture2D" uid="uid://c36f45bcsmbqq" path="res://assets/paper-146904_1920.png" id="3_an8j2"]
+[ext_resource type="Texture2D" uid="uid://disyt6iugrent" path="res://assets/art/Earthgolem.png" id="4_mb30p"]
+[ext_resource type="Texture2D" uid="uid://bg3gaujkvq44d" path="res://assets/symbol/red.png" id="5_cn2cs"]
+[ext_resource type="Texture2D" uid="uid://dhl14vtpkwk3w" path="res://assets/grid.png" id="6_u65xf"]
+[ext_resource type="Texture2D" uid="uid://mwqabb0ir18g" path="res://assets/attack.png" id="7_30j88"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mdww2"]
+shader = ExtResource("1_8e4op")
+shader_parameter/corner_scale = 0.1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_147vm"]
+shader = ExtResource("2_f0ian")
+shader_parameter/mana_color1 = Vector4(1, 1, 1, 1)
+shader_parameter/mana_color2 = Vector4(1, 1, 1, 1)
+shader_parameter/mana_color3 = Vector4(1, 1, 1, 1)
+shader_parameter/weight1 = 1.0
+shader_parameter/weight2 = 0.0
+shader_parameter/weight3 = 0.0
+
+[node name="root" type="Control"]
+custom_minimum_size = Vector2(220, 270)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -932.0
+offset_bottom = -378.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_default_cursor_shape = 1
+script = ExtResource("1_4k0vl")
+
+[node name="Panel" type="Panel" parent="."]
+show_behind_parent = true
+material = SubResource("ShaderMaterial_mdww2")
+custom_minimum_size = Vector2(200, 25)
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 210.0
+offset_bottom = 35.0
+pivot_offset = Vector2(100, 125)
+mouse_filter = 1
+
+[node name="front" type="Node2D" parent="Panel"]
+
+[node name="backgourd" type="Sprite2D" parent="Panel/front"]
+material = SubResource("ShaderMaterial_147vm")
+position = Vector2(100, 127)
+texture = ExtResource("3_an8j2")
+
+[node name="art" type="Sprite2D" parent="Panel/front"]
+position = Vector2(100, 127)
+texture = ExtResource("4_mb30p")
+region_rect = Rect2(0, 0, 474, 620)
+
+[node name="Name" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 5.0
+offset_right = 210.0
+offset_bottom = 41.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.168627)
+theme_override_font_sizes/font_size = 10
+text = "Infernal dragon Gishmilgadon"
+horizontal_alignment = 1
+
+[node name="Health" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = 215.0
+offset_right = 200.0
+offset_bottom = 247.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "DE"
+
+[node name="Power" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 215.0
+offset_right = 60.0
+offset_bottom = 247.0
+mouse_filter = 1
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "PW"
+
+[node name="ManaCostContainer" type="HBoxContainer" parent="Panel"]
+z_index = 1000
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -72.0
+offset_top = 1.5
+offset_right = 30.0
+offset_bottom = 33.5
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Sprite2D" type="Sprite2D" parent="Panel/ManaCostContainer"]
+position = Vector2(-16, 32)
+texture = ExtResource("5_cn2cs")
+
+[node name="CenterContainer" type="CenterContainer" parent="Panel"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 85.0
+offset_top = 208.0
+offset_right = 135.0
+offset_bottom = 258.0
+scale = Vector2(0.75, 0.75)
+
+[node name="grid" type="Sprite2D" parent="Panel/CenterContainer"]
+texture = ExtResource("6_u65xf")
+centered = false
+
+[node name="1_0" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(25, 35)
+texture = ExtResource("7_30j88")
+
+[node name="1_1" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(35, 35)
+texture = ExtResource("7_30j88")
+
+[node name="1_2" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(45, 35)
+texture = ExtResource("7_30j88")
+
+[node name="1_-1" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(15, 35)
+texture = ExtResource("7_30j88")
+
+[node name="1_-2" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(5, 35)
+texture = ExtResource("7_30j88")
+
+[node name="0_1" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(35, 45)
+texture = ExtResource("7_30j88")
+
+[node name="0_2" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(45, 45)
+texture = ExtResource("7_30j88")
+
+[node name="0_-1" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(15, 45)
+texture = ExtResource("7_30j88")
+
+[node name="0_-2" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(5, 45)
+texture = ExtResource("7_30j88")
+
+[node name="2_0" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(25, 25)
+texture = ExtResource("7_30j88")
+
+[node name="2_1" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(35, 25)
+texture = ExtResource("7_30j88")
+
+[node name="2_2" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(45, 25)
+texture = ExtResource("7_30j88")
+
+[node name="2_-1" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(15, 25)
+texture = ExtResource("7_30j88")
+
+[node name="2_-2" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(5, 25)
+texture = ExtResource("7_30j88")
+
+[node name="3_0" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(25, 15)
+texture = ExtResource("7_30j88")
+
+[node name="3_1" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(35, 15)
+texture = ExtResource("7_30j88")
+
+[node name="3_2" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(45, 15)
+texture = ExtResource("7_30j88")
+
+[node name="3_-1" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(15, 15)
+texture = ExtResource("7_30j88")
+
+[node name="3_-2" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(5, 15)
+texture = ExtResource("7_30j88")
+
+[node name="4_0" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(25, 5)
+texture = ExtResource("7_30j88")
+
+[node name="4_1" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(35, 5)
+texture = ExtResource("7_30j88")
+
+[node name="4_2" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(45, 5)
+texture = ExtResource("7_30j88")
+
+[node name="4_-1" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(15, 5)
+texture = ExtResource("7_30j88")
+
+[node name="4_-2" type="Sprite2D" parent="Panel/CenterContainer/grid"]
+visible = false
+position = Vector2(5, 5)
+texture = ExtResource("7_30j88")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+z_index = 5
+layout_mode = 0
+offset_right = 220.0
+offset_bottom = 270.0
+color = Color(0.231373, 1, 0, 0.203922)
+
+[connection signal="gui_input" from="." to="." method="_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

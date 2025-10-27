@@ -38,13 +38,11 @@ func hide_confirm() -> void:
 
 func _on_confirm_pressed() -> void:
 	#confirmed.emit()
-	print("confirmed")
 	TurnManager.game_manager._on_overlay_confirmed()
 	hide_confirm()
 
 func _on_cancel_pressed() -> void:
 	TurnManager.game_manager._on_overlay_cancelled()
-	print("cancelled")
 	hide_confirm()
 
 func _on_focus_entered() -> void:

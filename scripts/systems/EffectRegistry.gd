@@ -24,4 +24,4 @@ func _buff(ctx):
 	var params = ctx.params
 	for t in tar:
 		print("player "+ctx["controller"].player_name +" buffet creature " +t.card_name)
-		await t.add_temp_buff(ctx.params.power, ctx.params.toughness, ctx.params.duration)
+		await t.add_temp_buff(ctx.params.power, ctx.params.toughness, ctx.params.duration,source)

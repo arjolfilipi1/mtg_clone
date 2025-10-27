@@ -17,4 +17,3 @@ func check_objects_at_position(position: Vector2):
 	print("Objects at position ", position, ":")
 	for result in results:
 		var collider = result["collider"]
-		print(" - ", collider.name, " (", collider.get_class(), ")")

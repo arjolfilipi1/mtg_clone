@@ -171,6 +171,7 @@ func move_to_mana_zone():
 	
 func _after_mana_move():
 	lower()
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	#if highlightTween:
 		#highlightTween.kill()
 	if card.state.player_controled:
