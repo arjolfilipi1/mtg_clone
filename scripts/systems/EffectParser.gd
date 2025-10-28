@@ -5,7 +5,6 @@ func parse_spec(spec:String)->Dictionary:
 	spec = spec.strip_edges()
 	
 	var parts = spec.split(" ")
-	print(spec, parts)
 	if parts.size() == 0:
 		return {}
 	var kw = parts[0]

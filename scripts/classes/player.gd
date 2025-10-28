@@ -126,10 +126,9 @@ func pay_for_card( card) -> void:
 
 func _request_response_human(game):
 	var ui = TurnManager.ui
-	ui.show_stack(game.stack)
 
 	# Filter cards that can respond right now (instants, traps, etc.)
-	var response_cards = []
+	var response_cards:Array[CardState] = []
 	for c in game.player_hand:
 		if c.effects : # "quick-play" or "instant" speed
 			for eff in c.effects:
@@ -156,7 +155,7 @@ func _request_response_human(game):
 		"card": selected_card,
 		"controller": self
 	}
-func _request_response_ai(game):
+func _request_response_ai(_game):
 	return {}
 func request_response(game: GameState) -> Dictionary:
 	# Return a dictionary describing the response or `null` if none

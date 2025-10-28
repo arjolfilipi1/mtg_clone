@@ -8,7 +8,6 @@ var card_data:CardState
 @onready var toughness = $Panel/Health
 @onready var power = $Panel/Power
 @onready var frame:ColorRect = $ColorRect
-
 var selected: bool = false
 func _ready() -> void:
 	frame.visible = false

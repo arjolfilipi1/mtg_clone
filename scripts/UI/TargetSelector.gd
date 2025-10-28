@@ -11,7 +11,7 @@ var c:int =0
 func _on_target_clicked(card):
 	var tip = "card" if card is Card else "state"
 	c+=1
-	print(card.card_node.visual.valid_target,card,valid_targets,tip,c)
+
 	
 	if card in selected_targets:
 		selected_targets.erase(card)
@@ -19,7 +19,7 @@ func _on_target_clicked(card):
 	elif card in valid_targets:
 		selected_targets.append(card)
 		_selhighlight(card)
-	print(selected_targets)
+
 	if selected_targets.size() >= max_count:
 		_finalize_selection()
 func _finalize_selection():
@@ -60,6 +60,5 @@ func start_selection(_valid_targets:Array, _max_count:int = 1):
 
 	# Connect clicks
 	for t in valid_targets:
-		print(t.card_node.visual.valid_target)
 		if t.card_node and not t.card_node.is_connected("pressed", Callable(self, "_on_target_clicked")):
 			t.card_node.pressed.connect(_on_target_clicked.bind(t))

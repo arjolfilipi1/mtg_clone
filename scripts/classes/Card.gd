@@ -64,7 +64,7 @@ func _ready():
 	scale = normal_scale
 	state.deleted.connect(visual.burnCard)
 	state.attack_signal.connect(visual.attack.start_slam_attack)
-
+	state.activated_effect.connect(visual.show_effect)
 
 	
 

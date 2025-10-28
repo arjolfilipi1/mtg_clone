@@ -5,8 +5,8 @@ class_name CardListViewer
 @onready var grid: GridContainer = $VBoxContainer/ScrollContainer/CardGrid
 @onready var button_close: Button = $VBoxContainer/ButtonBar/Btn_Close
 @onready var button_activate: Button = $VBoxContainer/ButtonBar/Btn_Activate
-
-
+@onready var panel: =$ColorRect
+@onready var vb: =$VBoxContainer
 @export var card_preview_scene: PackedScene= preload("res://scenes/CardPreview.tscn")
 
 var card_states: Array[CardState] = []
@@ -17,8 +17,8 @@ signal card_selected(card_state: CardState)
 signal card_action(action: String, card_state: CardState)
 
 func _ready():
-	button_close.pressed.connect(_on_close_pressed)
-	button_activate.pressed.connect(_on_activate_pressed)
+	button_close.button_down.connect(_on_close_pressed)
+	button_activate.button_down.connect(_on_activate_pressed)
 	button_activate.disabled = true
 	hide()  # hidden by default
 
@@ -36,7 +36,10 @@ func show_cards(cards: Array[CardState], title: String = "Cards in Graveyard"):
 		preview.setup_from_card_state(cs)
 		grid.add_child(preview)
 		preview.card_selected.connect(_on_card_clicked.bind(cs))
-
+	if allow_selection:
+		var center = get_viewport_rect().size / 2
+		panel.global_position = center
+		vb.global_position = center
 	show()
 	move_to_front()
 
@@ -61,6 +64,7 @@ func _on_activate_pressed():
 			if effect.trigger_spec == "selected_on_mana" and title_label.text == "Mana":
 				res.append(effect)
 				if len(res) == 1:
+					print("effect on "+title_label.text+" activated" )
 					selected_card.apply_effect(res[0])
 		card_action.emit("activate", selected_card)
 		hide()

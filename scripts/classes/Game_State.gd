@@ -29,12 +29,13 @@ var board_e  ={
 
 
 func push_to_stack(effect_data: Dictionary):
-	stack.append(effect_data)
-	emit_signal("stack_changed")
+	if effect_data != {}:
+		stack.append(effect_data)
+		emit_signal("stack_changed")
 
 func pop_from_stack() -> Dictionary:
 	if stack.size() > 0:
-		return stack.pop_back()
+		return stack.pop_at(-1)
 	return {}
 
 func clear_stack():
@@ -74,7 +75,7 @@ func end_phase_triggers():
 	return null
 	
 func on_card_event(event_name: int, source: CardState, target: Array):
-	print("card event "+  Card_event.e.keys()[event_name] +" declared from"+source.card_name + " @ "+str(target))
+	print("card event "+  Card_event.e.keys()[event_name] +" declared from "+source.card_name + " @ "+str(target))
 	for c in get_all_cards():
 		for eff:Effect_class in c.effects:
 			
@@ -83,7 +84,6 @@ func on_card_event(event_name: int, source: CardState, target: Array):
 					if event_name == Card_event.e.ON_ATTACK and c == source:
 						_push_trigger(eff, source, target)
 				"on_effect_activation":
-
 					if event_name == Card_event.e.ON_EFFECT_ACTIVATED :
 						_push_trigger(eff, source, target)
 				"on_death":
@@ -95,7 +95,6 @@ func on_card_event(event_name: int, source: CardState, target: Array):
 				"on_kill":
 					if event_name == Card_event.e.ON_KILL and c == source:
 						_push_trigger(eff, source, target)
-		print(stack)
 func _push_trigger(effect: Effect_class, source: CardState, targets: Array):
 	var ctx = {
 	"game": self,
@@ -103,6 +102,7 @@ func _push_trigger(effect: Effect_class, source: CardState, targets: Array):
 	"source": source,
 	"targets": targets
 	}
+	print("pushing to stack "+source.card_name+" effect:" + effect.spec)
 	stack.append({
 	"effect": effect,
 	"source": source,

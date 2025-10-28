@@ -3,6 +3,8 @@ extends Node
 @onready var card:Card = $".."
 #attach button
 @onready var attack_button = $"../ButtonsContainer/attack"
+@onready var card_sprite: Sprite2D = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
+@onready var grid = $"../SubViewportContainer/SubViewport/CenterContainer/grid"
 #tooltip container
 @onready var buttons = $"../ButtonsContainer"
 #color to indicate that card can be attacked
@@ -15,6 +17,7 @@ extends Node
 @onready var Flip_animator:= $"../Flip_animator"
 #color to show that card in hand can be played
 @onready var Playable:= $"../Playable"
+@onready var effect := $"../effect"
 @onready var name_panel:= $"../SubViewportContainer/SubViewport/Panel/Name"
 @onready var health_panel:= $"../SubViewportContainer/SubViewport/Panel/Health"
 @onready var power_panel:= $"../SubViewportContainer/SubViewport/Panel/Power"
@@ -49,7 +52,7 @@ func _ready() -> void:
 	health_panel.text = str(card.state.toughness)
 	power_panel.text = str(card.state.power)
 	var unique_material:Material 
-	var sprites = [$"../Playable",$"../SubViewportContainer",$"../Summoning_sickness",$"../Back/Sprite2D"]
+	var sprites = [Playable,subvp,Summoning_sickness,$"../Back/Sprite2D",effect]
 	for sprite in sprites:
 		var mat = sprite.material
 		if mat and mat is ShaderMaterial:
@@ -59,7 +62,10 @@ func _ready() -> void:
 	card.state.pt_changed.connect(update_pt)
 
 	pass
-
+#show effect overlay
+func show_effect():
+	if effect.material and effect.material is ShaderMaterial:
+		effect.material.set_shader_parameter("activated", true)
 #updates the power/toughtness visual
 func update_pt(c:CardState)->void:
 	if c == card.state:
@@ -86,7 +92,7 @@ func update_pt(c:CardState)->void:
 func set_background_color():
 	#ShaderMaterial
 	
-	var card_sprite: Sprite2D = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
+	card_sprite = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
 
 # Duplicate the material (shallow copy still shares the shader, which is fine)
 	var bg_unique_material := card_sprite.material.duplicate()
@@ -109,7 +115,7 @@ func set_background_color():
 		pass
 #each card has range, the card has a little square that it is shown when the card can attack that range
 func set_range():
-	var grid = $"../SubViewportContainer/SubViewport/CenterContainer/grid"
+	
 	if card.state.is_creature:
 		for s:String in card.state.card_data['range']:
 			var t = grid.get_node(s.replace(".","_"))

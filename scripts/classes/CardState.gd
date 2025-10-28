@@ -136,7 +136,7 @@ func apply_effect(effect:Effect_class,game = TurnManager):
 				print("Effect canceled - no targets chosen")
 				return
 			ctx.targets = chosen_targets
-		game.stack.append({
+		game.game_manager.gamestate.push_to_stack({
 		"effect":effect,
 		"source":self,
 		"controller":self.controller,
@@ -150,7 +150,6 @@ func apply_effect(effect:Effect_class,game = TurnManager):
 			destroy_card(game.game_manager.gamestate)
 
 func can_respond(game:GameState)-> bool:
-	print( game.stack[-1] )
 	for eff in effects:
 		if eff.speed > 1:
 			return true

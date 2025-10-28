@@ -113,8 +113,9 @@ func finish_draw():
 		current_phase = TurnEnum.MANA_SELECT
 	_pass_priority()
 	
-func handle_stack_phase(game: GameState):
-	if game.stack.is_empty():
+func handle_stack_phase():
+	var game = game_manager.gamestate
+	if len(game.stack) == 0:
 		return
 
 	print("=== STACK START ===")
@@ -123,25 +124,28 @@ func handle_stack_phase(game: GameState):
 
 		while waiting_for_input:
 			await handle_priority(game)
-
+		print("stack", game.stack.size())
 		# both passed, resolve top effect
 		var top = game.pop_from_stack()
-		await EffectRunner.apply_effect(top.effect, top.context)
+		print("top",top)
+		if top:
+			await EffectRunner.apply_effect(top.effect, top.context)
 	print("=== STACK END ===")
 	
 func handle_priority(game: GameState):
 	
-	print("Player " if priority else "enemy ", "has priority")
+	print("Player " if priority else "enemy ", "has priority:"+ str(players_passed))
 	var player = players[0] if priority else players[1]
 	
 	# Ask player to respond (UI prompt or AI logic)
 	var response = await player.request_response(game)
-	
-	if response == null:
+	print(response)
+	if response in [null,"{  }",{}]:
 		# Pass priority
 		priority = not priority
 		players_passed += 1
 		if players_passed == 2:
+			players_passed = 0
 			waiting_for_input = false
 	else:
 		# Player responded with a new effect → push it

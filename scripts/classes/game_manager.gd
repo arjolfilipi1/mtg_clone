@@ -32,10 +32,11 @@ func store_gamestate():
 	print(gamestate.player_hand+gamestate.player_mana+gamestate.player_grave)
 	print(gamestate.enemy_hand+gamestate.enemy_mana+gamestate.enemy_grave)
 	pass
-	
+
 func _ready():
 	TurnManager.game_manager = self
 	gamestate = GameState.new()
+	gamestate.stack_changed.connect(await  TurnManager.handle_stack_phase)
 	spawn_players()
 	load_cards()
 	start_game()
@@ -57,7 +58,7 @@ func request_confirmation(action_message: String, on_confirm_callback: Callable)
 	TurnManager.waiting_for_input = true
 	confirm_overlay.meta = on_confirm_callback
 	confirm_overlay.show_confirm(action_message)
-
+	
 func _on_overlay_confirmed() -> void:
 	# Execute the pending callback if it exists
 	TurnManager.waiting_for_input = false
@@ -155,8 +156,8 @@ func _input(event: InputEvent) -> void:
 
 			get_viewport().set_input_as_handled()  # Prevent other nodes from processing
 func _process(_delta: float) -> void:
-	if not gamestate.stack.is_empty():
-		TurnManager.handle_stack_phase(gamestate)
+	#if  len(gamestate.stack) > 0 :
+		#TurnManager.handle_stack_phase(gamestate)
 	#debug putton size
 	if TurnManager.highlighted:
 
