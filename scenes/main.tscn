@@ -985,3 +985,5 @@ script = ExtResource("50_rvoge")
 [connection signal="pressed" from="ButtonContainer/EndTurnButton" to="GameManager" method="_on_end_turn_button_pressed"]
 [connection signal="pressed" from="ButtonContainer/Cancel attack" to="GameManager" method="_on_cancel_attack_pressed"]
 [connection signal="pressed" from="ButtonContainer/test" to="GameManager" method="store_gamestate"]
+[connection signal="button_down" from="ConfirmOverlay/VBoxContainer/ButtonContainer/ConfirmButton" to="GameManager" method="_on_overlay_confirmed"]
+[connection signal="button_down" from="ConfirmOverlay/VBoxContainer/ButtonContainer/CancelButton" to="GameManager" method="_on_overlay_cancelled"]

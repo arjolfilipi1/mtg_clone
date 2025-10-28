@@ -136,13 +136,14 @@ func apply_effect(effect:Effect_class,game = TurnManager):
 				print("Effect canceled - no targets chosen")
 				return
 			ctx.targets = chosen_targets
+		activated_effect.emit(effect)
 		game.game_manager.gamestate.push_to_stack({
 		"effect":effect,
 		"source":self,
 		"controller":self.controller,
 		"context":ctx
 	})
-		game.game_manager.gamestate.on_card_event( Card_event.e.ON_EFFECT_ACTIVATED,self, ctx.targets)
+		await game.game_manager.gamestate.on_card_event( Card_event.e.ON_EFFECT_ACTIVATED,self, ctx.targets)
 		
 		#await EffectRunner.apply_effect(effect,ctx)
 		TurnManager.waiting_for_input = false

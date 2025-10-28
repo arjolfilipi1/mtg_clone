@@ -594,7 +594,6 @@ scale = Vector2(0.284091, 0.288788)
 texture = ExtResource("28_k3r52")
 
 [node name="effect" type="ColorRect" parent="."]
-visible = false
 material = SubResource("ShaderMaterial_6lclf")
 layout_mode = 0
 offset_left = -11.0

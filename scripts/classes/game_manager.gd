@@ -51,7 +51,7 @@ func _ready():
 
 	cm = CombatManager.new()
 	# Connect overlay signals
-
+	
 	
 func request_confirmation(action_message: String, on_confirm_callback: Callable) -> void:
 	# Store the callback for later execution
@@ -67,13 +67,15 @@ func _on_overlay_confirmed() -> void:
 		callback.call()
 	else:
 		print("it was null")
+	print("confirmed for attack")
 	confirm_overlay.meta = confirm_overlay.null_meta
-
+	confirm_overlay.hide()
 func _on_overlay_cancelled() -> void:
 	# Clear the pending callback
 	confirm_overlay.meta = confirm_overlay.null_meta
 	TurnManager.waiting_for_input = false
 	print("Action cancelled")
+	confirm_overlay.hide()
 func spawn_players():
 	player1 = Player.new("You",player_mana_zone,player_hand,player_board,player_deck)
 	player2 = Player.new("Enemy",enemy_mana_zone,enemy_hand,enemy_board,enemy_deck)

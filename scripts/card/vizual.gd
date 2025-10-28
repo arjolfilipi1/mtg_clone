@@ -18,6 +18,7 @@ extends Node
 #color to show that card in hand can be played
 @onready var Playable:= $"../Playable"
 @onready var effect := $"../effect"
+var effect_progress:float = 0.0
 @onready var name_panel:= $"../SubViewportContainer/SubViewport/Panel/Name"
 @onready var health_panel:= $"../SubViewportContainer/SubViewport/Panel/Health"
 @onready var power_panel:= $"../SubViewportContainer/SubViewport/Panel/Power"
@@ -60,10 +61,12 @@ func _ready() -> void:
 			sprite.material = unique_material
 	subvp.material.set_shader_parameter("destroy", false)
 	card.state.pt_changed.connect(update_pt)
-
+	effect.visible = false
 	pass
 #show effect overlay
-func show_effect():
+func show_effect(_effect:Effect_class):
+	print("showing effect of " +card.state.card_name)
+	effect.visible = true
 	if effect.material and effect.material is ShaderMaterial:
 		effect.material.set_shader_parameter("activated", true)
 #updates the power/toughtness visual
@@ -223,6 +226,14 @@ func burn_update(value: float):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
+	if effect.visible:
+		if effect_progress < 1.0:
+			effect_progress += _delta
+			if effect.material and effect.material is ShaderMaterial:
+				effect.material.set_shader_parameter("progress", effect_progress)
+		else:
+			effect.visible = false
+			effect_progress = 0.0
 	if card.parts_highlighted:
 		buttons.z_index = b_index + 10
 	

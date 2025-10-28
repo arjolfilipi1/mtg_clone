@@ -118,9 +118,9 @@
 	},
 	"type": "Creature",
 	"effects": [{
-		"spec": "buff self +100/0 instant",
+		"spec": "buff self -1/0 instant",
 		"target_spec": "stack",
-		"trigger_spec": "on_effect_activation",
+		"trigger_spec": "on_death",
 		"mandatory": false,
 		"target_count":1,
 		"targets": true,
@@ -157,7 +157,7 @@
 	  {
 		"spec": "buff self +100/0 instant",
 		"target_spec": "self",
-		"trigger_spec": "on_end_phase",
+		"trigger_spec": "on_death",
 		"mandatory": false,
 		"target_count":1,
 		"targets": true,
@@ -168,7 +168,7 @@
 	{
 		"spec": "damage 3",
 		"target_spec": "target_creature",
-		"trigger_spec": "on_turn_end_on_field",
+		"trigger_spec": "on_death",
 		"target_count":1,
 		"mandatory": false,
 		"targets": true,

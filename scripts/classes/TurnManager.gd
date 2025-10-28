@@ -65,14 +65,9 @@ enum TargetKindEnum  {
 	EFFECT
 }
 var Target_kind : TargetKindEnum
-var stack = []
 
-func push_to_stack(effect: Effect_class, ctx: Dictionary):
-	stack.append({"effect": effect, "context": ctx})
-func resolve_stack():
-	while stack.size() > 0:
-		var top = stack.pop_back()
-		await EffectRunner.apply_effect(top.effect, top.context)
+
+
 func reset_highlited():
 	for node:Area2D in highlighted_slots:
 		node.og_color = Vector4(0,0,0,0)
@@ -127,7 +122,7 @@ func handle_stack_phase():
 		print("stack", game.stack.size())
 		# both passed, resolve top effect
 		var top = game.pop_from_stack()
-		print("top",top)
+		print("top",top.source.card_name)
 		if top:
 			await EffectRunner.apply_effect(top.effect, top.context)
 	print("=== STACK END ===")

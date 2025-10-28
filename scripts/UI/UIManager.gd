@@ -4,6 +4,7 @@ var selected:String =""
 var done = false
 func ask_choice(options:Array[String],title:String = "Choose")->String:
 	var dialog = preload("res://scenes/ChoiceDialog.tscn").instantiate()
+	dialog.created = true
 	TurnManager.game_manager.get_tree().root.add_child(dialog)
 	dialog.show_confirm(title,options[0],options[1])
 	

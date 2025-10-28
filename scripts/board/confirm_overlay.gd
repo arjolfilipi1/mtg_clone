@@ -9,7 +9,7 @@ extends CanvasLayer
 var meta:Callable 
 var null_meta:Callable
 signal choice_selected(choice)
-
+var created = false
 
 func _ready() -> void:
 	hide_confirm()
@@ -47,14 +47,16 @@ func _on_confirm_pressed() -> void:
 	print("_on_confirm_pressed")
 	hide_confirm()
 	choice_selected.emit(confirm_button.text)
-	queue_free()
+	if created:
+		queue_free()
 	
 
 func _on_cancel_pressed() -> void:
 	print("_on_cancel_pressed")
 	choice_selected.emit(cancel_button.text)
 	hide_confirm()
-	queue_free()
+	if created:
+		queue_free()
 func _on_focus_entered() -> void:
 	# Play focus sound if desired
 	pass
