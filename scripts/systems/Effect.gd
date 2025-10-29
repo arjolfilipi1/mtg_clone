@@ -13,3 +13,4 @@ class_name Effect_class
 @export var mana_cost:Dictionary = {}
 @export var duration:String = "instant"
 @export var once_per_turn:String = "soft"
+@export var description:String = ""

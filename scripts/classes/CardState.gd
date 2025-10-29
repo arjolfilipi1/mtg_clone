@@ -59,6 +59,7 @@ func setup(data):
 			e.target_count = effect_spec.target_count
 			e.target_spec = effect_spec.target_spec
 			e.speed = effect_spec.speed
+			e.description = effect_spec.description
 			e.trigger_spec = effect_spec.trigger_spec
 			e.mandatory = effect_spec.mandatory
 			e.targets = effect_spec.targets

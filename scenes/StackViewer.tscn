@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://biwqjj2ylbwr6"]
+
+[ext_resource type="Script" path="res://scripts/prev/CardListViewer.gd" id="1_3ioeg"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_higb5"]
+line_spacing = 45.0
+font_size = 45
+
+[node name="CardListViewer" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_3ioeg")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 410.0
+offset_bottom = 772.0
+color = Color(0.372549, 0.372549, 0.372549, 0.588235)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 400.0
+offset_bottom = 780.0
+
+[node name="TitleLabel" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+text = "Current Chain"
+label_settings = SubResource("LabelSettings_higb5")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 700)
+layout_mode = 2
+
+[node name="CardGrid" type="HBoxContainer" parent="VBoxContainer/ScrollContainer"]
+custom_minimum_size = Vector2(400, 700)
+layout_mode = 2
