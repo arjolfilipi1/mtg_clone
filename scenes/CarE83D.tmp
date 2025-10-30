@@ -276,6 +276,7 @@ position = Vector2(100, 127)
 texture = ExtResource("3_2g06r")
 
 [node name="art" type="Sprite2D" parent="SubViewportContainer/SubViewport/Panel/front"]
+visible = false
 position = Vector2(100, 127)
 texture = ExtResource("9_xnj1b")
 region_rect = Rect2(0, 0, 474, 620)

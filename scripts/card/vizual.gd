@@ -96,14 +96,21 @@ func set_background_color():
 	#ShaderMaterial
 	
 	card_sprite = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
-
+	
 # Duplicate the material (shallow copy still shares the shader, which is fine)
 	var bg_unique_material := card_sprite.material.duplicate()
 	card_sprite.material = bg_unique_material
 	var color_list = []
+	var max_str = ""
+	var max_nr = 0
 	for color in card.state.mana_cost.keys():
 		if card.state.mana_cost[color] and color != "generic":
 			color_list.append(color)
+			if card.state.mana_cost[color] > max_nr:
+				max_str = color
+				max_nr = card.state.mana_cost[color]
+	if max_str != "":
+		card_sprite.texture = load("res://assets/card/%s.png" % max_str)
 	var multi_color = len(color_list)
 	if  multi_color:
 		if color_list[0] :
