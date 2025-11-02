@@ -14,7 +14,14 @@ vec3 cmap(float x) {
 }
 
 void fragment() {
-	if (is_glowing) {
+	vec4 original_color = texture(TEXTURE, UV);
+    
+    // Check if the pixel is transparent (or very close to transparent)
+    if (original_color.a < 0.01) {
+        COLOR = vec4(0.0, 0.0, 0.0, 0.0);
+        
+    }
+	else if (is_glowing) {
     vec2 uv = (2.0 * FRAGCOORD.xy - SCREEN_PIXEL_SIZE.xy) / SCREEN_PIXEL_SIZE.y;
 
     float focal = 3.25;

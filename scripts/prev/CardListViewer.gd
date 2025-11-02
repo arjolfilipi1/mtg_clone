@@ -1,5 +1,5 @@
 extends Control
-class_name CardListViewer
+class_name CardList_Viewer
 
 @onready var title_label: Label = $VBoxContainer/TitleLabel
 @onready var grid: GridContainer = $VBoxContainer/ScrollContainer/CardGrid

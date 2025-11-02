@@ -113,9 +113,9 @@ func set_background_color():
 		card_sprite.texture = load("res://assets/card/%s.png" % max_str)
 	var multi_color = len(color_list)
 	if  multi_color:
-		if color_list[0] :
-			bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[0]])
-			bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
+		#if color_list[0] :
+			#bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[0]])
+			#bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
 		if  multi_color > 1:
 			bg_unique_material.set_shader_parameter("mana_color2" ,_MANA_COLORS[color_list[1]])
 			bg_unique_material.set_shader_parameter("weight2" ,1.0/multi_color)

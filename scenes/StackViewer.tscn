@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://biwqjj2ylbwr6"]
 
-[ext_resource type="Script" path="res://scripts/prev/CardListViewer.gd" id="1_3ioeg"]
+[ext_resource type="Script" path="res://scripts/prev/StackViewer.gd" id="1_vvqhd"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_higb5"]
 line_spacing = 45.0
@@ -9,7 +9,7 @@ font_size = 45
 [node name="CardListViewer" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-script = ExtResource("1_3ioeg")
+script = ExtResource("1_vvqhd")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 0
