@@ -128,11 +128,12 @@ func _request_response_human(game):
 	var ui = TurnManager.ui
 
 	# Filter cards that can respond right now (instants, traps, etc.)
-	var response_cards:Array[CardState] = []
+	
+	var response_cards:Array = []
 	for c in game.player_hand:
 		if c.effects : # "quick-play" or "instant" speed
-			for eff in c.effects:
-				if c.can_respond(game):
+			for i in len(c.effects): 
+				if c.can_respond(game,i):
 					response_cards.append(c)
 
 	if response_cards.is_empty():
@@ -145,11 +146,12 @@ func _request_response_human(game):
 		return {}
 
 	# Ask them to pick which card to play
-	var selected_card = await ui.select_card_from(response_cards, "Select response card")
+	var selected_card = await ui.select_card_from(response_cards, "Select card to respond")
 	if selected_card == null:
 		return {}
 
 	# The effect is not resolved yet; we only push it to stack
+	
 	return {
 		"type": "play_card",
 		"card": selected_card,

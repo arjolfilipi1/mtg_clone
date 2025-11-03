@@ -23,7 +23,6 @@ func scale_sprite_preserving_center(_art: Sprite2D, frame_size: Vector2 = Vector
 		return
 
 	var tex_size = sprite.texture.get_size()
-	print("tex_size",tex_size)
 	var scale_factor: float
 
 	if fill:

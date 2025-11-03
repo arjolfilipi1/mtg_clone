@@ -151,10 +151,11 @@ func apply_effect(effect:Effect_class,game = TurnManager):
 		if card_type == "Spell" and effect.trigger_spec == "on_play":
 			destroy_card(game.game_manager.gamestate)
 
-func can_respond(game:GameState)-> bool:
-	for eff in effects:
-		if eff.speed > 1:
-			return true
+func can_respond(game:GameState,index:int)-> bool:
+	var eff = effects[index]
+
+	if eff.speed >= game.stack[-1].effect.speed :
+		return true
 	return false
 
 #check if effect can be activated, will be added to later

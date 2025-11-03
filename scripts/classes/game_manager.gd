@@ -16,6 +16,7 @@ class_name GameManager
 @onready var confirm_overlay = $"../ConfirmOverlay"
 @onready var sp:Label = $"../debug2/pos"
 @onready var sl:Label = $"../debug2/selected"
+@onready var stack_view = $"../StackListViewer"
 var player1 : Player
 var player2 : Player
 var card_database = []
@@ -158,8 +159,9 @@ func _input(event: InputEvent) -> void:
 
 			get_viewport().set_input_as_handled()  # Prevent other nodes from processing
 func _process(_delta: float) -> void:
-	#if  len(gamestate.stack) > 0 :
-		#TurnManager.handle_stack_phase(gamestate)
+	if  len(gamestate.stack) > 0 :
+		
+		stack_view.show_cards(gamestate.stack)
 	#debug putton size
 	if TurnManager.highlighted:
 

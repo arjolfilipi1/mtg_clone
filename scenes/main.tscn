@@ -1,4 +1,4 @@
-[gd_scene load_steps=70 format=3 uid="uid://ciikqwfm6mbci"]
+[gd_scene load_steps=71 format=3 uid="uid://ciikqwfm6mbci"]
 
 [ext_resource type="Script" path="res://scripts/classes/game_manager.gd" id="1_qqfnl"]
 [ext_resource type="Script" path="res://scripts/board/fan.gd" id="2_x817q"]
@@ -49,6 +49,7 @@
 [ext_resource type="Texture2D" uid="uid://d4f1dkt45n3bs" path="res://assets/field/3-5.png" id="37_uoigk"]
 [ext_resource type="Script" path="res://scripts/board/confirm_overlay.gd" id="47_oseo6"]
 [ext_resource type="PackedScene" uid="uid://bwx7svabthek7" path="res://scenes/CardListViewer.tscn" id="49_b040d"]
+[ext_resource type="PackedScene" uid="uid://biwqjj2ylbwr6" path="res://scenes/StackViewer.tscn" id="50_hbw05"]
 [ext_resource type="Script" path="res://scripts/UI/UIManager.gd" id="50_rvoge"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2udy6"]
@@ -925,10 +926,10 @@ shortcut = SubResource("Shortcut_2m60o")
 text = "No"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
-offset_left = 1737.0
-offset_top = 323.0
-offset_right = 1998.0
-offset_bottom = 865.0
+offset_left = 1663.0
+offset_top = 43.0
+offset_right = 1924.0
+offset_bottom = 585.0
 
 [node name="debug" type="Label" parent="ScrollContainer"]
 custom_minimum_size = Vector2(250, 100)
@@ -946,6 +947,13 @@ scale = Vector2(0.5, 0.5)
 
 [node name="UIManager" type="Node" parent="."]
 script = ExtResource("50_rvoge")
+
+[node name="StackListViewer" parent="." instance=ExtResource("50_hbw05")]
+offset_left = 56.0
+offset_top = 418.0
+offset_right = 56.0
+offset_bottom = 418.0
+scale = Vector2(0.75, 0.75)
 
 [connection signal="input_event" from="PlayerBoard/4-2" to="PlayerBoard/4-2" method="_on_input_event"]
 [connection signal="input_event" from="PlayerBoard/4-3" to="PlayerBoard/4-3" method="_on_input_event"]

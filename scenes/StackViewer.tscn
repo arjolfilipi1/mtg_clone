@@ -6,7 +6,7 @@
 line_spacing = 45.0
 font_size = 45
 
-[node name="CardListViewer" type="Control"]
+[node name="StackListViewer" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_vvqhd")
@@ -36,6 +36,6 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(0, 700)
 layout_mode = 2
 
-[node name="CardGrid" type="HBoxContainer" parent="VBoxContainer/ScrollContainer"]
+[node name="CardGrid" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
 custom_minimum_size = Vector2(400, 700)
 layout_mode = 2
