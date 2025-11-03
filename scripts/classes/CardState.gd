@@ -154,7 +154,7 @@ func apply_effect(effect:Effect_class,game = TurnManager):
 func can_respond(game:GameState,index:int)-> bool:
 	var eff = effects[index]
 
-	if eff.speed >= game.stack[-1].effect.speed :
+	if eff.speed > 1 and eff.speed >= game.stack[-1].effect.speed :
 		return true
 	return false
 

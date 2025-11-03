@@ -134,7 +134,7 @@ func handle_priority(game: GameState):
 	
 	# Ask player to respond (UI prompt or AI logic)
 	var response = await player.request_response(game)
-	print(response)
+	
 	if response in [null,"{  }",{}]:
 		# Pass priority
 		priority = not priority
@@ -144,7 +144,7 @@ func handle_priority(game: GameState):
 			waiting_for_input = false
 	else:
 		# Player responded with a new effect → push it
-		game.push_to_stack(response)
+		response.source.apply_effect(response.effect,TurnManager)
 		priority = not priority # other player gets chance next
 func finish_mana_selection():
 	var i = 0

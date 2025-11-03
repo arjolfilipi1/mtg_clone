@@ -147,14 +147,20 @@ func _request_response_human(game):
 
 	# Ask them to pick which card to play
 	var selected_card = await ui.select_card_from(response_cards, "Select card to respond")
+	print("selected_card:",selected_card)
 	if selected_card == null:
 		return {}
-
-	# The effect is not resolved yet; we only push it to stack
+	print("selected_effect")
+	#  New step: choose which effect
+	var selected_effect = await ui.select_effect(selected_card.effects, selected_card.card_name)
+	if selected_effect == null:
+		return null
 	
+	# Return both card and chosen effect
 	return {
 		"type": "play_card",
-		"card": selected_card,
+		"source": selected_card,
+		"effect": selected_effect,
 		"controller": self
 	}
 func _request_response_ai(_game):

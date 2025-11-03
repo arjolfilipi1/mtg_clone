@@ -9,7 +9,7 @@ class_name CardList_Viewer
 @onready var vb: =$VBoxContainer
 @export var card_preview_scene: PackedScene= preload("res://scenes/CardPreview.tscn")
 
-var card_states: Array[CardState] = []
+var card_states: Array = []
 
 var selected_card: CardState = null
 @export var allow_selection: bool = false
@@ -22,7 +22,8 @@ func _ready():
 	button_activate.disabled = true
 	hide()  # hidden by default
 
-func show_cards(cards: Array[CardState], title: String = "Cards in Graveyard"):
+func show_cards(cards: Array, title: String = "Cards in Graveyard"):
+	print(cards)
 	card_states = cards
 	title_label.text = title
 

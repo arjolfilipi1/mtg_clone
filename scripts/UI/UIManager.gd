@@ -2,7 +2,7 @@ extends Node
 class_name UIManager
 var selected:String =""
 var done = false
-
+var selected_card: CardState = null
 func select_effect(effects: Array[Effect_class],card_name:String):
 	var options = []
 	for eff in effects:
@@ -12,21 +12,23 @@ func select_effect(effects: Array[Effect_class],card_name:String):
 		return null
 	var index = options.find(choice)
 	return effects[index]
-func ask_choice(options:Array[String],title:String = "Choose")->String:
+func ask_choice(options:Array,title:String = "Choose")->String:
+	print(options)
 	var dialog = preload("res://scenes/ChoiceDialog.tscn").instantiate()
 	dialog.created = true
 	TurnManager.game_manager.get_tree().root.add_child(dialog)
-	dialog.show_confirm(title,options[0],options[1])
-	
+	dialog.callv("show_confirm", [title]+options)
 	
 	dialog.choice_selected.connect(func(choice):
-		selected = choice
-		done= true
+		self.selected = choice
+		self.done= true
 		dialog.queue_free()
 		)
 	while  not done:
 		await TurnManager.game_manager.get_tree().process_frame
+	done = false
 	return selected
+
 func show_stack(stack):
 	print(stack)
 
@@ -39,17 +41,19 @@ func select_card_from(cards: Array, title: String = "Select a card") -> CardStat
 	preview_scene.show_cards(cards,title)  # existing method in your list
 
 
-	var selected_card: CardState = null
+	
 	var finished := false
 
 	preview_scene.card_selected.connect(func(card):
-		selected_card = card
-		finished = true
+		self.selected_card = card
+		self.done = true
 		print("responded with card "+card.card_name)
-		preview_scene.queue_free()
+		
 	)
 
 	# Wait for player selection
-	while not finished:
+	while not done:
 		await TurnManager.game_manager.get_tree().process_frame
+	preview_scene.queue_free()
+	done = false
 	return selected_card

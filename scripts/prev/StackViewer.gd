@@ -19,6 +19,7 @@ func _ready():
 func show_cards(effects: Array):
 	card_states = []
 	for effect_ctx in effects:
+		print(effect_ctx)
 		card_states.append(effect_ctx.source)
 
 
