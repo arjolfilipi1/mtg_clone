@@ -8,6 +8,8 @@ var card_data:CardState
 @onready var toughness = $Panel/Health
 @onready var power = $Panel/Power
 @onready var frame:ColorRect = $ColorRect
+
+@onready var background:Sprite2D = $Panel/front/backgourd
 var selected: bool = false
 func _ready() -> void:
 	frame.visible = false
@@ -51,6 +53,30 @@ func setup_from_card_state(data: CardState):
 		if art_path != "":
 			art.texture = load(art_path)
 			scale_sprite_preserving_center(art)
+		var bg_unique_material := background.material.duplicate()
+		background.material = bg_unique_material
+		var color_list = []
+		var max_str = ""
+		var max_nr = 0
+		for color in data.mana_cost.keys():
+			if data.mana_cost[color] and color != "generic":
+				color_list.append(color)
+				if data.mana_cost[color] > max_nr:
+					max_str = color
+					max_nr = data.mana_cost[color]
+		if max_str != "":
+			background.texture = load("res://assets/card/%s.png" % max_str)
+		var multi_color = len(color_list)
+		if  multi_color:
+			#if color_list[0] :
+				#bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[0]])
+				#bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
+			if  multi_color > 1:
+				bg_unique_material.set_shader_parameter("mana_color2" ,Card_event._MANA_COLORS[ color_list[1]])
+				bg_unique_material.set_shader_parameter("weight2" ,1.0/multi_color)
+			if  multi_color > 2 :
+				bg_unique_material.set_shader_parameter("mana_color3" ,Card_event._MANA_COLORS[color_list[2]])
+				bg_unique_material.set_shader_parameter("weight3" ,1.0/multi_color)
 func _gui_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		card_selected.emit()

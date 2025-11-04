@@ -119,8 +119,8 @@
 	"type": "Creature",
 	"effects": [{
 		"spec": "buff self -1/0 instant",
-		"target_spec": "stack",
-		"trigger_spec": "on_death",
+		"target_spec": "self",
+		"trigger_spec": "on_stack_buff",
 		"mandatory": false,
 		"target_count":1,
 		"targets": true,

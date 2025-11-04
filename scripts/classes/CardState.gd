@@ -153,19 +153,32 @@ func apply_effect(effect:Effect_class,game = TurnManager):
 
 func can_respond(game:GameState,index:int)-> bool:
 	var eff = effects[index]
-
-	if eff.speed > 1 and eff.speed >= game.stack[-1].effect.speed :
-		return true
+	var last_stack = game.stack[-1]
+	if eff.speed > 1 and eff != last_stack.effect and eff.speed >= last_stack.effect.speed :
+		if can_activate_effect(game,eff) and effect_targets(game,eff):
+			return true
+	
 	return false
 
 #check if effect can be activated, will be added to later
-func can_activate_effect(game:GameState) ->Array[Effect_class]:
+func can_activate_effect(game:GameState,effect:Effect_class = null) ->Array[Effect_class]:
 	var res :Array[Effect_class] = []
 	if effects:
+		
 		for eff in effects:
-			if eff.trigger_spec == "selected_on_hand" :
-				if card_location == le.hand and can_be_payed(game,eff.mana_cost):
+			if effect != null:
+				eff = effect
+			if can_be_payed(game,eff.mana_cost):
+				if eff.trigger_spec == "true":
 					res.append(eff)
+				elif eff.trigger_spec == "selected_on_hand" :
+					if card_location == le.hand :
+						res.append(eff)
+				elif eff.trigger_spec == "on_stack_buff" and len(game.stack) > 0:
+					if "buff" in game.stack[-1].effect.spec:
+						res.append(eff)
+			if effect != null:
+				break
 	return res
 # --- Gameplay logic ---
 func can_attack(game:GameState) -> Array:

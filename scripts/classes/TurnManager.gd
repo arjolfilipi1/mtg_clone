@@ -122,8 +122,9 @@ func handle_stack_phase():
 		print("stack", game.stack.size())
 		# both passed, resolve top effect
 		var top = game.pop_from_stack()
-		print("top",top.source.card_name)
+		
 		if top:
+			print("top",top.source.card_name)
 			await EffectRunner.apply_effect(top.effect, top.context)
 	print("=== STACK END ===")
 	
