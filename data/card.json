@@ -158,7 +158,7 @@
 	  {
 		"spec": "buff self +100/0 instant",
 		"target_spec": "self",
-		"trigger_spec": "on_death",
+		"trigger_spec": "selected_on_hand",
 		"mandatory": false,
 		"target_count":1,
 		"targets": true,

@@ -162,6 +162,8 @@ func _process(_delta: float) -> void:
 	if  len(gamestate.stack) > 0 :
 		
 		stack_view.show_cards(gamestate.stack)
+	else:
+		stack_view.clear()
 	#debug putton size
 	if TurnManager.highlighted:
 

@@ -53,6 +53,7 @@ func setup_from_card_state(data: CardState):
 		if art_path != "":
 			art.texture = load(art_path)
 			scale_sprite_preserving_center(art)
+		background = $Panel/front/backgourd
 		var bg_unique_material := background.material.duplicate()
 		background.material = bg_unique_material
 		var color_list = []

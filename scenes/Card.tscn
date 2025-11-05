@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=54 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/classes/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/card/playable.gdshader" id="1_6a0q4"]
@@ -27,7 +27,9 @@
 [ext_resource type="Shader" path="res://assets/shaders/card/target.gdshader" id="22_m58xb"]
 [ext_resource type="Script" path="res://scripts/test.gd" id="23_xadkh"]
 [ext_resource type="Shader" path="res://assets/shaders/outline.gdshader" id="26_g4vjj"]
+[ext_resource type="Texture2D" uid="uid://5mlbnhw2ls5i" path="res://assets/move.png" id="26_xytre"]
 [ext_resource type="Texture2D" uid="uid://cjxcykcq7mcfv" path="res://tar.png" id="27_7bcrs"]
+[ext_resource type="Script" path="res://scripts/card/move_button.gd" id="27_nw2fs"]
 [ext_resource type="Texture2D" uid="uid://o866i4nie6d8" path="res://sel.png" id="28_k3r52"]
 [ext_resource type="Shader" path="res://assets/shaders/card/effect.gdshader" id="30_w1es4"]
 
@@ -561,7 +563,34 @@ color = Color(0.686275, 0.686275, 0.686275, 0.811765)
 material = SubResource("ShaderMaterial_yw0vi")
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
+text = "Activate"
 script = ExtResource("23_xadkh")
+
+[node name="move" type="TextureButton" parent="ButtonsContainer"]
+z_index = 2
+material = SubResource("ShaderMaterial_85fdt")
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+texture_normal = ExtResource("26_xytre")
+script = ExtResource("27_nw2fs")
+
+[node name="ColorRect" type="ColorRect" parent="ButtonsContainer/move"]
+z_index = -1
+material = SubResource("ShaderMaterial_23tgi")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -5.0
+offset_top = -6.0
+offset_right = 5.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.686275, 0.686275, 0.686275, 0.811765)
 
 [node name="target" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_arkvt")
@@ -618,3 +647,10 @@ color = Color(1, 1, 1, 0.305882)
 [connection signal="gui_input" from="ButtonsContainer/activate" to="ButtonsContainer/activate" method="_on_gui_input"]
 [connection signal="mouse_entered" from="ButtonsContainer/activate" to="ButtonsContainer/activate" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="ButtonsContainer/activate" to="ButtonsContainer/activate" method="_on_mouse_exited"]
+[connection signal="gui_input" from="ButtonsContainer/move" to="ButtonsContainer/move" method="_attack_pressed"]
+[connection signal="mouse_entered" from="ButtonsContainer/move" to="ButtonsContainer/move" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="ButtonsContainer/move" to="ButtonsContainer/move" method="_on_mouse_exited"]
+[connection signal="gui_input" from="ButtonsContainer/move/ColorRect" to="ButtonsContainer/move" method="_on_color_rect_gui_input"]
+[connection signal="mouse_entered" from="ButtonsContainer/move/ColorRect" to="ButtonsContainer/move" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="ButtonsContainer/move/ColorRect" to="ButtonsContainer/move" method="_on_mouse_exited"]
+[connection signal="visibility_changed" from="ButtonsContainer/move/ColorRect" to="ButtonsContainer/move" method="_on_visibility_changed"]

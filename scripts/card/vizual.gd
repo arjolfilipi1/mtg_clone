@@ -3,6 +3,7 @@ extends Node
 @onready var card:Card = $".."
 #attach button
 @onready var attack_button = $"../ButtonsContainer/attack"
+@onready var move_button = $"../ButtonsContainer/move"
 @onready var card_sprite: Sprite2D = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
 @onready var grid = $"../SubViewportContainer/SubViewport/CenterContainer/grid"
 #tooltip container
@@ -280,6 +281,10 @@ func _process(_delta: float) -> void:
 			attack_button.visible = true
 		else:
 			attack_button.visible = false
+		if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and card.state.can_move(TurnManager.game_manager.gamestate) and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
+			move_button.visible = true
+		else:
+			move_button.visible = false
 	else:
 		cd -= _delta
 		if cd <= 0:

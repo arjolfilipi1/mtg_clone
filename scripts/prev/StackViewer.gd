@@ -13,7 +13,10 @@ var selected_card: CardState = null
 @export var allow_selection: bool = false
 signal card_selected(card_state: CardState)
 signal card_action(action: String, card_state: CardState)
-
+func clear():
+	# Clear old previews
+	for c in grid.get_children():
+		c.queue_free()
 func _ready():
 	pass
 func show_cards(effects: Array):
@@ -23,9 +26,7 @@ func show_cards(effects: Array):
 		card_states.append(effect_ctx.source)
 
 
-	# Clear old previews
-	for c in grid.get_children():
-		c.queue_free()
+	clear()
 
 	# Add new previews
 	for cs in card_states:

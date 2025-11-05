@@ -159,7 +159,19 @@ func can_respond(game:GameState,index:int)-> bool:
 			return true
 	
 	return false
-
+func can_move(game:GameState):
+	if card_location != le.field:
+		return false
+	var res:Array = []
+	var origin = pos.split("-")
+	var x = int(origin[0])
+	var y = int(origin[1])
+	var adj:Array = [str(x-1)+"-"+str(y),str(x)+"-"+str(y-1),str(x+1)+"-"+str(y),str(x)+"-"+str(y+1)]
+	for a in adj:
+		if a in game.board:
+			if len(game.board[a]) == 0:
+				res.append(a)
+	return res
 #check if effect can be activated, will be added to later
 func can_activate_effect(game:GameState,effect:Effect_class = null) ->Array[Effect_class]:
 	var res :Array[Effect_class] = []

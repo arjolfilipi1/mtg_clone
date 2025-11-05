@@ -124,7 +124,7 @@ func pay_for_card( card) -> void:
 					break
 	emit_signal("mana_changed",self)
 
-func _request_response_human(game):
+func _request_response_human(game:GameState ):
 	var ui = TurnManager.ui
 
 	# Filter cards that can respond right now (instants, traps, etc.)
@@ -141,7 +141,7 @@ func _request_response_human(game):
 		return {}
 
 	# Ask the user what to do
-	var choice = await ui.ask_choice(["Play a card", "Pass"])
+	var choice = await ui.ask_choice(["Play a card" , "Pass"],"Activate a card in response to "+ game.stack[-1].source.card_name)
 	if choice == "Pass":
 		return {}
 
