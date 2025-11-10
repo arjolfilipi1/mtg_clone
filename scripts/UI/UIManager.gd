@@ -3,6 +3,23 @@ class_name UIManager
 var selected:String =""
 var done = false
 var selected_card: CardState = null
+
+func select_slot(valid_slots: Array[String]) -> String:
+	TurnManager.selecting_slot = true
+	TurnManager.highlight_valid_slots(valid_slots)
+
+	var chosen := ""
+	while TurnManager.selecting_slot and chosen == "":
+		for slot in get_tree().get_nodes_in_group("slots"):
+			if slot.is_hovered and Input.is_action_just_pressed("click_left"):
+				chosen = slot.name
+				break
+		await TurnManager.game_manager.get_tree().process_frame
+
+	TurnManager.clear_slot_highlights()
+	TurnManager.selecting_slot = false
+	return chosen
+
 func select_effect(effects: Array[Effect_class],card_name:String):
 	var options = []
 	for eff in effects:

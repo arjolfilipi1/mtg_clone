@@ -37,10 +37,10 @@ func _process(_delta: float) -> void:
 	material.set_shader_parameter("hover_ratio", highlight)
 	pass
 func _move_pressed(event: InputEvent) -> void:
-	if event is InputEventMouseButton: 
+	if event is InputEventMouseButton and event.pressed: 
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and not TurnManager.waiting_for_input and card.state.can_move(TurnManager.game_manager.gamestate):
-				card.movement.attack_target()
+				card.movement.move_target()
 
 func _on_color_rect_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton: 

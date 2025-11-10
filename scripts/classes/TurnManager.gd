@@ -65,8 +65,19 @@ enum TargetKindEnum  {
 	EFFECT
 }
 var Target_kind : TargetKindEnum
+var selecting_slot: bool = false
+var selected_slot_name: String = ""
 
+func highlight_valid_slots(valid_slots: Array[String]):
+	for node in get_tree().get_nodes_in_group("slots"):
+		if node.name in valid_slots:
+			node.set_color(Vector4(0, 1, 0, 0.75)) # green for valid
+		else:
+			node.reset_higlight()
 
+func clear_slot_highlights():
+	for node in get_tree().get_nodes_in_group("slots"):
+		node.reset_higlight()
 
 func reset_highlited():
 	for node:Area2D in highlighted_slots:

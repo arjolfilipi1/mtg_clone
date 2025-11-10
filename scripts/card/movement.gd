@@ -15,6 +15,10 @@ var affected: Array[Card]
 var pending_target:Card
 
 #attack visuals
+func move_target():
+	for pos in card.state.can_move(TurnManager.game_manager.gamestate):
+		print(pos)
+#attack visuals
 func attack_target():
 	if card.is_ancestor_of(targeting_arrow):
 		pass
