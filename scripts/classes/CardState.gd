@@ -32,14 +32,14 @@ var controller : Player
 var real:bool = true
 var effects:Array[Effect_class] = []
 var active_buffs:Array = []
-var card_node: Card
-enum Zone { DECK, HAND, FIELD, GRAVE, MANA }
+var card_node:Card
 
 #signal that the card is attacking
 func attack(attacker:CardState, defender:CardState):
 	emit_signal("attack_signal",attacker,defender)
+
 #setup and store data from the json database
-func setup(data: Dictionary):
+func setup(data):
 	card_data = data
 	if controller.is_human:
 		face_up = true
@@ -260,7 +260,7 @@ func play_to_board(area_name:String,game:GameState,card:Card=null):
 			game.player_hand.erase(card.state)
 		else:
 			game.enemy_hand.erase(card.state)
-		summoned_on_turn = game.turn_number
+		summoned_on_turn = game.turn
 		controller.board.reset_higlight()
 		if card_location == le.hand:
 			if player_controled:
