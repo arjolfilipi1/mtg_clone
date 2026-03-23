@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://bmv6ee285rb4k"]
 
-[ext_resource type="Script" path="res://scripts/board/confirm_overlay.gd" id="1_5pklf"]
+[ext_resource type="Script" path="res://scripts/board/ConfirmOverlay.gd" id="1_5pklf"]
 
 [sub_resource type="Theme" id="Theme_ycla5"]
 Button/colors/font_color = Color(0.0784314, 0.87451, 0.152941, 1)

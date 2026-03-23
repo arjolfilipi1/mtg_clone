@@ -112,7 +112,7 @@ func can_attack():
 					if targets:
 						attacker = card
 						defender = targets[0]
-						TurnManager.current_phase = TurnManager.TurnEnum.ATTACK
+						TurnManager.current_phase = GameEnums.TurnEnum.ATTACK
 					
 	
 func _process(_delta):
@@ -122,14 +122,14 @@ func _process(_delta):
 	pass
 	if TurnManager.priority == false:
 		card_played = false
-	if TurnManager.current_phase==TurnManager.TurnEnum.MAIN and TurnManager.priority == false:
+	if TurnManager.current_phase==GameEnums.TurnEnum.MAIN and TurnManager.priority == false:
 		can_attack()
-		if TurnManager.current_phase==TurnManager.TurnEnum.MAIN and card_played == false and thinking == false:
+		if TurnManager.current_phase==GameEnums.TurnEnum.MAIN and card_played == false and thinking == false:
 			thinking = true
 			print("Enemy is thinking of playing card to field")
 			TurnManager.debug.text += "Enemy is playing card to field \n"
 			enemy_play_card()
-		elif TurnManager.current_phase==TurnManager.TurnEnum.ATTACK:
+		elif TurnManager.current_phase==GameEnums.TurnEnum.ATTACK:
 			attacker.attack(attacker,defender)
 			attacker = null
 			defender = null

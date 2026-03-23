@@ -21,7 +21,7 @@ func _ready() -> void:
 func reset_higlight():
 	for slot in board_slots:
 		slot.reset_higlight()
-func check_card(card,game:GameState):
+func check_card(card,game:MTGGameState):
 	for slot in board_slots:
 		if slot.accepts_card(card,game):
 			slot.set_color(Vector4(0,1,0,0.75))

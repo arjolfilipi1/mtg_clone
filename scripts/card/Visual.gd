@@ -7,7 +7,7 @@ extends Node
 @onready var card_sprite: Sprite2D = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
 @onready var grid = $"../SubViewportContainer/SubViewport/CenterContainer/grid"
 #tooltip container
-@onready var buttons = $"../ButtonsContainer"
+@onready var buttons_container = $"../ButtonsContainer"
 #color to indicate that card can be attacked
 @onready var target_overlay:ColorRect =$"../target"
 #subviewport to hold the card image, made so that shaders can be applied individualy
@@ -33,7 +33,7 @@ var selected_target := false
 var b_index:int
 #highlight time for the buttons 
 var cd:float = 0.0
-
+var burn_tween: Tween = null
 #node that has the attack animation logic
 @onready var attack = $attack
 const _MANA_COLORS = {
@@ -44,12 +44,16 @@ const _MANA_COLORS = {
 	"blue": Color(0.1, 0.6, 1),
 	"red": Color(1, 0.2, 0.2),
 	"earth": Color(0.6, 0.4, 0.2)}
-
+func _exit_tree():
+	"""Clean up burn tween"""
+	if burn_tween and burn_tween.is_valid():
+		burn_tween.kill()
+		burn_tween = null
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	tar.visible =false
+	tar.visible = false
 	sel.visible = false
-	b_index = buttons.z_index
+	b_index = buttons_container.z_index
 	name_panel.text = card.state.card_name
 	health_panel.text = str(card.state.toughness)
 	power_panel.text = str(card.state.power)
@@ -63,7 +67,8 @@ func _ready() -> void:
 	subvp.material.set_shader_parameter("destroy", false)
 	card.state.pt_changed.connect(update_pt)
 	effect.visible = false
-	pass
+	if buttons_container:
+		buttons_container.mouse_filter = Control.MOUSE_FILTER_PASS
 #show effect overlay
 func show_effect(_effect:Effect_class):
 	print("showing effect of " +card.state.card_name)
@@ -90,7 +95,6 @@ func update_pt(c:CardState)->void:
 		else:
 			health_panel.add_theme_color_override("font_color", Color.BLACK)
 
-	pass
 
 #sets the card background
 func set_background_color():
@@ -198,42 +202,38 @@ func set_drag_visuals(is_dragging: bool):
 	if card.state.can_be_payed(TurnManager.game_manager.gamestate,card.state.mana_cost) and is_dragging:
 		card.state.controller.board.check_card(card,TurnManager.game_manager.gamestate)
 
-func _on_mouse_entered():
-	card.card_index = card.z_index
-	if card.state.face_up and card.state.card_location != CardState.le.mana:
-		card.movement.highlighted = true
-		TurnManager.highlighted = card
-		card.z_index = card.card_index + 10
-		card.movement.animate_scale(card.hover_scale)
-func _on_mouse_exited():
-	if not card.parts_highlighted:
-		card.movement.highlighted = false
-	
-	card.z_index = card.card_index
+
 
 #burn effect when card is destroyed
 func burnCard(_state:CardState):
 	var rng = RandomNumberGenerator.new()
 	var direction := rng.randf_range(0.0, 360.0)
 	TurnManager.waiting_for_input = true
+	
 	if subvp.material and subvp.material is ShaderMaterial:
 		subvp.material.set_shader_parameter("destroy", true)
 		
-		var tween = create_tween()
-		# set burning direction in degrees
+		# Kill existing burn tween
+		if burn_tween and burn_tween.is_valid():
+			burn_tween.kill()
+		
+		burn_tween = create_tween()
 		subvp.material.set_shader_parameter("direction", direction)
-		# use tweens to animate the progress value
-		tween.tween_method(burn_update, -1.5, 1.5, 1.0)
-		tween.tween_callback(card.send_to_grave)
-		await tween.finished
+		burn_tween.tween_method(burn_update, -1.5, 1.5, 1.0)
+		burn_tween.tween_callback(card.send_to_grave)
+		await burn_tween.finished
+		burn_tween = null
 #
 func burn_update(value: float):
 	if subvp.material:
 		subvp.material.set_shader_parameter("progress", value)
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+
+
+# Simplify _process - remove button visibility logic (moved to highlight_manager)
 func _process(_delta: float) -> void:
+	# Effect animation
 	if effect.visible:
 		if effect_progress < 1.0:
 			effect_progress += _delta
@@ -242,24 +242,32 @@ func _process(_delta: float) -> void:
 		else:
 			effect.visible = false
 			effect_progress = 0.0
-	if card.parts_highlighted:
-		buttons.z_index = b_index + 10
 	
-	if Summoning_sickness.material is ShaderMaterial:
-			pass
-			#Summoning_sickness.material.set_shader_parameter("ss", card.state.summoned_on_turn == TurnManager.turn)
+	# Card face animation
 	if card.state.face_up:
-		if Flip_animator.current_state == Flip_animator.CardSide.BACK_VISIBLE:
+		if Flip_animator.current_state == GameEnums.CardSide.BACK:
 			Flip_animator.flip_to_front()
-			
-		pass
-	if card.state.player_controled  and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
-		if card.state.can_be_payed(TurnManager.game_manager.gamestate,card.state.mana_cost) and card.state.card_location==CardState.le.hand and (card.state.is_creature or card.state.can_activate_effect):
+	
+	# Playable glow effect (hand cards only)
+	if card.state.player_controled and TurnManager.current_phase == GameEnums.TurnEnum.MAIN:
+		var can_pay = card.state.can_be_payed(TurnManager.game_manager.gamestate, card.state.mana_cost)
+		var in_hand = card.state.card_location == GameEnums.CardZone.HAND
+		var has_effect = card.state.is_creature or card.state.can_activate_effect
+		
+		if can_pay and in_hand and has_effect:
 			if Playable.material is ShaderMaterial:
 				Playable.material.set_shader_parameter("is_glowing", true)
 		else:
 			if Playable.material is ShaderMaterial:
 				Playable.material.set_shader_parameter("is_glowing", false)
+	
+	# Target overlay (remains same)
+	_update_target_overlay()
+	
+	# Buttons visibility is now handled by highlight_manager
+	# Remove the old button visibility logic
+
+func _update_target_overlay():
 	if selected_target:
 		if target_overlay.material is ShaderMaterial:
 			target_overlay.show()
@@ -273,22 +281,3 @@ func _process(_delta: float) -> void:
 	elif not selected_target and not valid_target:
 		target_overlay.hide()
 		target_overlay.material.set_shader_parameter('Enable_Effects', false)
-	if card.movement.highlighted and card.state.controller.is_human:
-		buttons.visible = true
-		#buttons.mouse_filter = Control.MOUSE_FILTER_PASS
-		cd = 1
-		if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and card.state.can_attack(TurnManager.game_manager.gamestate) and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
-			attack_button.visible = true
-		else:
-			attack_button.visible = false
-		if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and card.state.can_move(TurnManager.game_manager.gamestate) and TurnManager.current_phase == TurnManager.TurnEnum.MAIN:
-			move_button.visible = true
-		else:
-			move_button.visible = false
-	else:
-		cd -= _delta
-		if cd <= 0:
-			pass
-			#buttons.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			#buttons.visible = false
-	pass

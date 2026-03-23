@@ -1,5 +1,5 @@
 extends Resource
-class_name GameState
+class_name MTGGameState
 
 var player_hand:Array[CardState]
 var enemy_hand:Array[CardState]

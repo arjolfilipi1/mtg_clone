@@ -49,7 +49,7 @@ func check_mouse():
 		if collider == self:
 			return true
 
-func accepts_card(_card: Control,game:GameState) -> bool:
+func accepts_card(_card: Control,game:MTGGameState) -> bool:
 	# Add logic for rules, e.g., mana cost, etc.
 	#return is_hovered
 	if _card.state.controller.board != self.get_parent() or _card.state.can_be_payed(game,_card.state.mana_cost) == false:
@@ -67,7 +67,7 @@ func color_range(dragging = true):
 		_coloring_type = "to_play"
 		ranges  = (TurnManager.dragging.card_data['range'])
 	elif TurnManager.targeting:
-		if TurnManager.targeting.state.card_location == CardState.le.field:
+		if TurnManager.targeting.state.card_location == GameEnums.CardZone.FIELD:
 			ranges = (TurnManager.targeting.card_data['range'])
 	var aplied : Array[String] = []
 	var altered: Array[Area2D] = []

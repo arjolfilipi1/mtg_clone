@@ -5,22 +5,19 @@ signal deleted(CardState)
 signal activated_effect(Effect_class)
 signal attack_signal(attacker:CardState, defender:CardState)
 # --- Core immutable data (copied from database) ---
-var card_data = {}
+var card_data:Dictionary
 var card_name: String
-var card_range
-var mana_cost = {}
-var mana_creation = {}
+var card_range:Array
+var mana_cost :Dictionary
+var mana_creation :String
 var is_creature: bool
 var power: int
 var toughness: int
-var card_type: String
+var card_type : GameEnums.CardType
 #if controlled by the player
 var player_controled = false
 # --- Mutable runtime data ---
-enum le {
-deck,hand,field,grave,mana
-}
-var card_location: le = le.deck # hand, field, grave, mana, etc
+var card_location: GameEnums.CardZone = GameEnums.CardZone.DECK
 #board position name, 6x5 grid 
 var pos:String
 var tapped: bool = false
@@ -39,18 +36,29 @@ func attack(attacker:CardState, defender:CardState):
 	emit_signal("attack_signal",attacker,defender)
 
 #setup and store data from the json database
-func setup(data):
+# Setup with type-safe enums
+func setup(data: Dictionary):
 	card_data = data
 	if controller.is_human:
 		face_up = true
+	
 	card_name = card_data['name']
-	card_range = card_data['range']
+	card_range = card_data['range'] if card_data['range'] != null else []
 	power = card_data['power']
 	toughness = card_data['toughness']
-	card_type = card_data['type']
+	
+	# Convert string type to enum
+	match card_data['type'].to_lower():
+		"creature": card_type = GameEnums.CardType.CREATURE
+		"spell": card_type = GameEnums.CardType.SPELL
+		"enchantment": card_type = GameEnums.CardType.ENCHANTMENT
+		"artifact": card_type = GameEnums.CardType.ARTIFACT
+		_ : card_type = GameEnums.CardType.CREATURE
+	
+	is_creature = card_type == GameEnums.CardType.CREATURE
 	mana_cost = card_data['mana_cost']
-	is_creature = card_data['type'] == "Creature"
 	mana_creation = card_data['Mana_creation']
+	
 	var effects_spec = card_data['effects']
 	if effects_spec:
 		for effect_spec in effects_spec:
@@ -69,28 +77,28 @@ func setup(data):
 				e.mana_cost = {}
 			effects.append(e)
 
-func destroy_card(game:GameState):
-	if card_location == le.hand:
+func destroy_card(game:MTGGameState):
+	if card_location == GameEnums.CardZone.HAND:
 		if controller.is_human:
 			game.player_hand.erase(self)
 			game.player_grave.append(self)
 		else:
 			game.enemy_hand.erase(self)
 			game.enemy_grave.append(self)
-	elif card_location == le.field:
+	elif card_location == GameEnums.CardZone.FIELD:
 		game.board[pos].erase(self)
 	if controller.is_human:
 		game.player_grave.append(self)
 	else:
 		game.enemy_grave.append(self)
-	card_location = le.grave
+	card_location = GameEnums.CardZone.GRAVEYARD
 	
 	pos = ""
 	emit_signal("deleted",self)
 	print(card_name +" was destoyed")
 	
 #function to get effect targets
-func effect_targets(gs:GameState, eff:Effect_class):
+func effect_targets(gs:MTGGameState, eff:Effect_class):
 	if eff.target_spec == "self":
 		return [self]
 	var res:Array = []
@@ -148,10 +156,10 @@ func apply_effect(effect:Effect_class,game = TurnManager):
 		
 		#await EffectRunner.apply_effect(effect,ctx)
 		TurnManager.waiting_for_input = false
-		if card_type == "Spell" and effect.trigger_spec == "on_play":
+		if card_type == GameEnums.CardType.SPELL and effect.trigger_spec == "on_play":
 			destroy_card(game.game_manager.gamestate)
 
-func can_respond(game:GameState,index:int)-> bool:
+func can_respond(game:MTGGameState,index:int)-> bool:
 	var eff = effects[index]
 	var last_stack = game.stack[-1]
 	if eff.speed > 1 and eff != last_stack.effect and eff.speed >= last_stack.effect.speed :
@@ -159,9 +167,9 @@ func can_respond(game:GameState,index:int)-> bool:
 			return true
 	
 	return false
-func can_move(game:GameState):
-	if card_location != le.field:
-		return false
+func can_move(game:MTGGameState) -> Array:
+	if card_location != GameEnums.CardZone.FIELD:
+		return []
 	var res:Array = []
 	var origin = pos.split("-")
 	var x = int(origin[0])
@@ -173,7 +181,7 @@ func can_move(game:GameState):
 				res.append(a)
 	return res
 #check if effect can be activated, will be added to later
-func can_activate_effect(game:GameState,effect:Effect_class = null) ->Array[Effect_class]:
+func can_activate_effect(game:MTGGameState,effect:Effect_class = null) ->Array[Effect_class]:
 	var res :Array[Effect_class] = []
 	if effects:
 		
@@ -184,7 +192,7 @@ func can_activate_effect(game:GameState,effect:Effect_class = null) ->Array[Effe
 				if eff.trigger_spec == "true":
 					res.append(eff)
 				elif eff.trigger_spec == "selected_on_hand" :
-					if card_location == le.hand :
+					if card_location == GameEnums.CardZone.HAND :
 						res.append(eff)
 				elif eff.trigger_spec == "on_stack_buff" and len(game.stack) > 0:
 					if "buff" in game.stack[-1].effect.spec:
@@ -193,12 +201,12 @@ func can_activate_effect(game:GameState,effect:Effect_class = null) ->Array[Effe
 				break
 	return res
 # --- Gameplay logic ---
-func can_attack(game:GameState) -> Array:
+func can_attack(game:MTGGameState) -> Array:
 	
 	var res:Array[CardState] =[]
 	if  not is_creature:
 		return res
-	if card_location == le.field and not has_summoning_sickness:
+	if card_location == GameEnums.CardZone.FIELD and not has_summoning_sickness:
 		#add fake dictionary for ai calcs
 		var di =  game.board
 		for slot in get_board_range(di):
@@ -227,7 +235,7 @@ func get_board_range(di:Dictionary):
 	return res
 
 func can_be_attacked() -> bool:
-	return card_location == le.field
+	return card_location == GameEnums.CardZone.FIELD
 
 func on_end_phase_trigger():
 	if effects.size() > 0:
@@ -235,13 +243,13 @@ func on_end_phase_trigger():
 			if eff and eff.trigger_spec == "on_end_phase":
 				print("Playing card with on_end_phase effect: ", eff.spec)
 				apply_effect(eff)
-			elif eff and eff.trigger_spec == "on_end_phase_on_field" and card_location == le.field:
+			elif eff and eff.trigger_spec == "on_end_phase_on_field" and card_location == GameEnums.CardZone.FIELD:
 				print("Playing card with on_end_phase effect: ", eff.spec)
 				await apply_effect(eff)
 func on_turn_end_trigger():
 	if effects.size() > 0:
 		for eff in effects:
-			if eff and eff.trigger_spec == "on_turn_end_on_field" and card_location == le.field:
+			if eff and eff.trigger_spec == "on_turn_end_on_field" and card_location == GameEnums.CardZone.FIELD:
 				print("Playing "+ card_name +" with on_turn_end effect: ", eff.spec)
 				await apply_effect(eff)
 	return null
@@ -253,7 +261,7 @@ func on_summon():
 func get_power():
 	return card_data.get("power", 0)
 
-func play_to_board(area_name:String,game:GameState,card:Card=null):
+func play_to_board(area_name:String,game:MTGGameState,card:Card=null):
 	if is_creature:
 		pos = area_name
 		if controller.is_human:
@@ -262,12 +270,12 @@ func play_to_board(area_name:String,game:GameState,card:Card=null):
 			game.enemy_hand.erase(card.state)
 		summoned_on_turn = game.turn
 		controller.board.reset_higlight()
-		if card_location == le.hand:
+		if card_location == GameEnums.CardZone.HAND:
 			if player_controled:
 				game.player_hand.erase(self)
 			else:
 				game.enemy_hand.erase(self)
-		card_location = le.field
+		card_location = GameEnums.CardZone.FIELD
 		controller.pay_for_card(card)
 		face_up = true
 		game.board[pos].append(self)
@@ -284,7 +292,7 @@ func get_toughness():
 	return card_data.get("toughness", 0)
 
 
-func take_damage(amount:int,_source:CardState,game:GameState):
+func take_damage(amount:int,_source:CardState,game:MTGGameState):
 	self.toughness = max(self.toughness - amount , 0)
 	if self.toughness ==0:
 		destroy_card(game)
@@ -318,7 +326,7 @@ func add_temp_buff(power_to_add:int,toughness_to_add:int,duration:String,_source
 		emit_signal("pt_changed",self)
 
 #send card to mana zone, we are using card as resource 
-func to_mana(game:GameState):
+func to_mana(game:MTGGameState):
 
 	if controller.is_human:
 		game.player_hand.erase(self)
@@ -326,10 +334,10 @@ func to_mana(game:GameState):
 	else:
 		game.enemy_hand.erase(self)
 		game.enemy_mana.append(self)
-	card_location = le.mana
+	card_location = GameEnums.CardZone.MANA
 
 #checks if player can play the card
-func can_be_payed(_game:GameState,cost) -> bool:
+func can_be_payed(_game:MTGGameState,cost) -> bool:
 	var mana_pool = controller.mana_pool
 	var pool = mana_pool.duplicate()
 	for color in cost.keys():

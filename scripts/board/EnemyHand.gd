@@ -7,9 +7,20 @@ const HEIGHT_ARC = 30.0  # how much they curve
 const fan_radius := 300.0
 var tweens: Array[Tween] = []
 const animation_time := 0.4
+func _exit_tree():
+	"""Clean up all tweens"""
+	for tween in tweens:
+		if tween and tween.is_valid():
+			tween.kill()
+	tweens.clear()
 func _process_hand(_initialPosition):
 	pass
 func reset():
+	for tween in tweens:
+		if tween and tween.is_valid():
+			tween.kill()
+	tweens.clear()
+	
 	var card_count = get_child_count()
 	var center_index = (card_count - 1) / 2.0
 
@@ -17,7 +28,7 @@ func reset():
 		var card = get_child(i)
 		var offset = i - center_index
 		var x = offset * SPACING
-		var y = -abs(offset) * HEIGHT_ARC  # makes a U shape
+		var y = -abs(offset) * HEIGHT_ARC
 		var rot = offset * ROTATION_SPREAD / card_count
 
 		var fan_tween = get_tree().create_tween()
@@ -26,6 +37,11 @@ func reset():
 		
 		tweens.append(fan_tween)
 func initial_draw(_initialPosition):
+	for tween in tweens:
+		if tween and tween.is_valid():
+			tween.kill()
+	tweens.clear()
+	
 	var card_count = get_child_count()
 	var center_index = (card_count - 1) / 2.0
 	
@@ -33,9 +49,9 @@ func initial_draw(_initialPosition):
 		var card = get_child(i)
 		var offset = i - center_index
 		var x = offset * SPACING
-		var y = -abs(offset) * HEIGHT_ARC  # makes a U shape
+		var y = -abs(offset) * HEIGHT_ARC
 		var rot = offset * ROTATION_SPREAD / card_count
 		
 		card.position = Vector2(x, y)
 		card.rotation = rot
-		card.z_index = i  # ensure proper overlap
+		card.z_index = i

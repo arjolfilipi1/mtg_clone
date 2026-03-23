@@ -24,7 +24,7 @@ var last_card_drawn:Card
 var is_player_turn = true
 var current_player : Player
 var cm:CombatManager
-var gamestate:GameState
+var gamestate:MTGGameState
 
 var player_deck_init:Array[int] = [2,3,4,5,6,0,1,5]
 var enemy_deck_init:Array[int] = [0,1,2,3,4,5,6,3]
@@ -36,7 +36,7 @@ func store_gamestate():
 
 func _ready():
 	TurnManager.game_manager = self
-	gamestate = GameState.new()
+	gamestate = MTGGameState.new()
 	gamestate.stack_changed.connect(await  TurnManager.handle_stack_phase)
 	spawn_players()
 	load_cards()
@@ -103,7 +103,7 @@ func load_cards():
 @onready var initialPosition =  $"../PlayerDeck".global_position
 func start_game():
 	#Engine.time_scale = 0.1
-	TurnManager.current_phase = TurnManager.TurnEnum.DRAW
+	TurnManager.current_phase = GameEnums.TurnEnum.DRAW
 	TurnManager.debug = debug
 	for i in range(5):
 		var card_id = player_deck_init.pop_at(0)
@@ -117,9 +117,9 @@ func start_game():
 	TurnManager.start_turn()
 func initial_draw_card(_player:Player,card_id):
 	var random_card = card_database[card_id]
-	var card = preload("res://scenes/Card.tscn").instantiate()
+	var card = load("res://scenes/Card.tscn").instantiate()
 	card.setup(random_card,_player)
-	card.state.card_location = card.state.le.hand
+	card.state.card_location = GameEnums.CardZone.HAND
 	if _player.is_human:
 		gamestate.player_hand.append(card.state)
 	else:
@@ -134,7 +134,7 @@ func draw_card(card: Card, from_pos: Vector2, to_pos: Vector2, duration: float =
 	card.scale = Vector2(0.8, 0.8)
 	card.global_position = from_pos
 	last_card_drawn = card
-	card.state.card_location = CardState.le.hand
+	card.state.card_location = GameEnums.CardZone.HAND
 	# Keep card in current parent during tweening
 	var tween = get_tree().create_tween()
 	tween.set_parallel(true)
@@ -154,7 +154,7 @@ func draw_card(card: Card, from_pos: Vector2, to_pos: Vector2, duration: float =
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			if TurnManager.targeting and TurnManager.Target_kind == TurnManager.TargetKindEnum.ATTACK:
+			if TurnManager.targeting and TurnManager.target_kind == GameEnums.TargetKind.ATTACK:
 				_on_cancel_attack_pressed()
 
 			get_viewport().set_input_as_handled()  # Prevent other nodes from processing
@@ -178,28 +178,28 @@ func _process(_delta: float) -> void:
 		$"../EnemyBoard/sprite/OverlayEffect".visible = true
 		$"../PlayerBoard/sprite/OverlayEffect".visible = false
 		current_player = player2 
-	if TurnManager.current_phase == TurnManager.TurnEnum.MANA_CREATE:
+	if TurnManager.current_phase == GameEnums.TurnEnum.MANA_CREATE:
 		current_player.reset_mana()
 		
 		current_player.create_mana()
 		#await get_tree().create_timer(1.0).timeout  # Small delay
-	if TurnManager.current_phase == TurnManager.TurnEnum.MANA_SELECT:
+	if TurnManager.current_phase == GameEnums.TurnEnum.MANA_SELECT:
 		TurnManager.is_selecting_mana = true
-	if TurnManager.current_phase == TurnManager.TurnEnum.DRAW and current_player.did_draw == false:
+	if TurnManager.current_phase == GameEnums.TurnEnum.DRAW and current_player.did_draw == false:
 		
 		TurnManager.debug.text += current_player.player_name+" drawing \n"
 		current_player.draw(gamestate)
-	if TurnManager.current_phase == TurnManager.TurnEnum.MAIN and TurnManager.priority:
+	if TurnManager.current_phase == GameEnums.TurnEnum.MAIN and TurnManager.priority:
 		$"../ButtonContainer/EndTurnButton".disabled = false
 	else:
 		$"../ButtonContainer/EndTurnButton".disabled = true
-	if TurnManager.current_phase == TurnManager.TurnEnum.ATTACK and TurnManager.priority:
+	if TurnManager.current_phase == GameEnums.TurnEnum.ATTACK and TurnManager.priority:
 		$"../ButtonContainer/Cancel attack".disabled = false
 	else:
 		$"../ButtonContainer/Cancel attack".disabled = true
 	prio.text = current_player.player_name
-	turn.text = TurnManager.TurnEnum.keys()[ TurnManager.current_phase]
-	high.text = TurnManager.highlighted.state.card_name+ str(snappedf( TurnManager.highlighted.size.x,0.01)) if TurnManager.highlighted else "No focus"
+	turn.text = GameEnums.TurnEnum.keys()[ TurnManager.current_phase]
+	high.text = TurnManager.highlighted.state.card_name+ str(snappedf( TurnManager.highlighted.highlight_manager.is_hovered,0)) if TurnManager.highlighted else "No focus"
 func _on_cancel_attack_pressed() -> void:
 	if TurnManager.targeting:
 		TurnManager.targeting.movement.targeting_arrow.is_targeting = false
@@ -207,7 +207,7 @@ func _on_cancel_attack_pressed() -> void:
 		
 	TurnManager.reset_highlited()
 	#TurnManager.targeting = null
-	TurnManager.current_phase = TurnManager.TurnEnum.MAIN
+	TurnManager.current_phase = GameEnums.TurnEnum.MAIN
 	pass # Replace with function body.
 func _on_end_turn_button_pressed() -> void:
 	TurnManager.end_turn()

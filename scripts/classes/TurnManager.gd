@@ -1,6 +1,8 @@
 extends Node
 signal end_of_turn
 signal end_phase
+
+
 var orb_list = []
 var turn = 1
 var players: Array[Player] = []
@@ -31,16 +33,8 @@ var player_mana_card_nr = 0
 var enemy_mana_card_nr = 0
 var waiting_for_input:bool = false
 var board_slots: Dictionary
-enum TurnEnum  {
-	DRAW,
-	MANA_SELECT,
-	MANA_CREATE,
-	MAIN,
-	ATTACK,
-	WAITING_FOR_INPUT,
-	END
-}
-var current_phase :TurnEnum
+
+var current_phase :GameEnums.TurnEnum = GameEnums.TurnEnum.DRAW
 var priority = true
 var player_orbs = {
 	"generic": [],
@@ -60,11 +54,9 @@ var enemy_orbs = {"generic": [],
 var highlighted_slots : Array[Area2D] = []
 var highlighted: Card
 
-enum TargetKindEnum  {
-	ATTACK,
-	EFFECT
-}
-var Target_kind : TargetKindEnum
+
+
+var target_kind: GameEnums.TargetKind = GameEnums.TargetKind.ATTACK
 var selecting_slot: bool = false
 var selected_slot_name: String = ""
 
@@ -90,7 +82,7 @@ func end_turn():
 	await  game_manager.gamestate.on_turn_end_triggers()
 	
 	turn += 1
-	current_phase = TurnEnum.DRAW
+	current_phase = GameEnums.TurnEnum.DRAW
 	priority = !priority
 	print("end_of_turn")
 	
@@ -99,14 +91,14 @@ func _pass_priority():
 	priority = !priority
 func start_turn():
 	is_selecting_mana = true
-	current_phase = TurnEnum.MANA_SELECT
+	current_phase = GameEnums.TurnEnum.MANA_SELECT
 func finish_mana_creation():
 	for player in players:
 		if player.mana_created == false:
 			return null
 	for player in players:
 		player.mana_created = false
-	current_phase = TurnEnum.MAIN
+	current_phase = GameEnums.TurnEnum.MAIN
 func finish_draw():
 	var i = 0
 	for pl in players:
@@ -116,7 +108,7 @@ func finish_draw():
 	if i == len(players):
 		for pl in players:
 			pl.did_draw = false
-		current_phase = TurnEnum.MANA_SELECT
+		current_phase = GameEnums.TurnEnum.MANA_SELECT
 	_pass_priority()
 	
 func handle_stack_phase():
@@ -139,7 +131,7 @@ func handle_stack_phase():
 			await EffectRunner.apply_effect(top.effect, top.context)
 	print("=== STACK END ===")
 	
-func handle_priority(game: GameState):
+func handle_priority(game: MTGGameState):
 	
 	print("Player " if priority else "enemy ", "has priority:"+ str(players_passed))
 	var player = players[0] if priority else players[1]
@@ -167,7 +159,7 @@ func finish_mana_selection():
 		for pl in players:
 			pl.mana_selected = false
 		is_selecting_mana = false
-		current_phase = TurnEnum.MANA_CREATE
+		current_phase = GameEnums.TurnEnum.MANA_CREATE
 		print("finish mana select")
 	else:
 		return null

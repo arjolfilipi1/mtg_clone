@@ -1,0 +1,371 @@
+Great question! You're right that drag-and-drop detection with complex UI elements needs special handling. Here's a better approach using Godot's built-in drag system and hover detection:
+
+## Solution: Use Godot's Drag & Drop System
+
+### Step 1: Enable Drag on Cards
+
+In `Movement.gd`, modify the drag handling to use Godot's built-in drag system:
+
+```gdscript
+# In Movement.gd
+
+func on_click(event):
+	if event is InputEventMouseButton:
+		var s: CardState = card.state
+		
+		if _is_mouse_over_button():
+			return
+		
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			# Mana selection
+			if s.player_controled and TurnManager.is_selecting_mana and not TurnManager.waiting_for_input and not s.controller.mana_selected and s.card_location == GameEnums.CardZone.HAND and event.pressed:
+				move_to_mana_zone()
+			
+			# Dragging from hand - Use Godot's drag system
+			elif s.player_controled and TurnManager.current_phase == GameEnums.TurnEnum.MAIN and not TurnManager.waiting_for_input and s.card_location == GameEnums.CardZone.HAND:
+				if event.pressed:
+					# Start drag with custom data
+					var drag_data = {
+						"card": card,
+						"card_state": s,
+						"original_position": card.global_position
+					}
+					
+					# Set up drag preview
+					var preview = Control.new()
+					preview.size = card.size
+					card.visual.set_drag_visuals(true)
+					
+					# Start the drag
+					var drag_result = card.control.start_drag(preview, drag_data)
+					card.dragging = true
+					card.offset = get_global_mouse_position() - card.global_position
+					raise()
+				else:
+					# Handle drop
+					check_and_return_to_hand()
+
+func _is_mouse_over_button() -> bool:
+	"""Check if mouse is currently over any button"""
+	if not card.visual or not card.visual.buttons_container:
+		return false
+	
+	if not card.visual.buttons_container.visible:
+		return false
+	
+	var mouse_pos = card.get_global_mouse_position()
+	
+	for button in card.visual.buttons_container.get_children():
+		if button is BaseButton and button.visible:
+			var button_rect = Rect2(button.global_position, button.size)
+			if button_rect.has_point(mouse_pos):
+				return true
+	
+	return false
+```
+
+### Step 2: Make Board Slots Accept Drag Data
+
+In `BoardSlot.gd`, implement drag detection:
+
+```gdscript
+extends Area2D
+
+# Add drag detection properties
+var is_drag_hovered := false
+var drag_data: Dictionary = {}
+
+func _ready() -> void:
+	pos = pos_dict[self.name] + sp.position + Vector2(-100, -127)
+	
+	# Connect signals
+	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exited)
+	
+	# Enable drag monitoring
+	set_process(true)
+	
+	# For drag detection - we need to monitor mouse position during drag
+	# This is much lighter than full collision detection
+
+func _process(_delta: float) -> void:
+	# Only check drag hover if something is being dragged
+	if TurnManager.dragging:
+		_update_drag_hover()
+	
+	# Visual updates
+	if og_color:
+		set_color(og_color)
+	elif og_color == null or og_color == Vector4(0,0,0,0):
+		reset_higlight()
+	
+	# Card hover handling (existing)
+	if is_hovered and card_list:
+		card_list[0].movement.highlighted = true
+		TurnManager.highlighted = card_list[0]
+		card_list[0].movement.animate_scale(card_list[0].hover_scale)
+	elif is_hovered == false and len(card_list) > 0:
+		var card = card_list[0]
+		if is_instance_valid(card) and card.movement:
+			card.movement.highlighted = false
+			card.movement.animate_scale(card.normal_scale)
+		else:
+			card_list.erase(card)
+
+func _update_drag_hover():
+	"""Lightweight drag hover detection"""
+	if not TurnManager.dragging:
+		is_drag_hovered = false
+		return
+	
+	# Get mouse position in global coordinates
+	var mouse_pos = get_global_mouse_position()
+	
+	# Check if mouse is inside this slot's area
+	# Instead of physics query, use simple rect check with collision polygon
+	var is_inside = _is_point_in_collision_polygon(mouse_pos)
+	
+	if is_inside != is_drag_hovered:
+		is_drag_hovered = is_inside
+		if is_drag_hovered:
+			_on_drag_hover_enter()
+		else:
+			_on_drag_hover_exit()
+
+func _is_point_in_collision_polygon(point: Vector2) -> bool:
+	"""Check if a point is inside the collision polygon - faster than physics query"""
+	# Transform point to local coordinates
+	var local_point = to_local(point)
+	
+	# Get the collision polygon
+	var collision_shape = $CollisionPolygon2D
+	if collision_shape and collision_shape.polygon:
+		return Geometry2D.is_point_in_polygon(local_point, collision_shape.polygon)
+	
+	# Fallback to simple bounding box
+	return get_rect().has_point(point)
+
+func _on_drag_hover_enter():
+	"""Called when a dragged card enters this slot"""
+	if TurnManager.dragging and accepts_card(TurnManager.dragging, TurnManager.game_manager.gamestate):
+		set_color(Vector4(0, 1, 0, 0.75))
+		# Also highlight attack range if needed
+		highlight_range()
+	else:
+		set_color(Vector4(1, 0, 0, 0.75))
+
+func _on_drag_hover_exit():
+	"""Called when a dragged card exits this slot"""
+	reset_higlight()
+	
+	# Restore any range highlighting
+	if TurnManager.dragging:
+		highlight_range()
+
+func accepts_card(_card: Control, game: MTGGameState) -> bool:
+	"""Check if slot can accept the card"""
+	if _card.state.controller.board != self.get_parent():
+		return false
+	if not _card.state.can_be_payed(game, _card.state.mana_cost):
+		return false
+	if not card_list.is_empty():
+		return false
+	return true
+
+# Keep your existing hover methods for non-drag hover
+func _on_mouse_entered() -> void:
+	is_hovered = true
+	if not TurnManager.dragging:  # Only show hover if not dragging
+		if not overlay:
+			overlay = $overlay
+		if overlay and overlay.material is ShaderMaterial:
+			overlay.material.set_shader_parameter("Enable_Effects", true)
+			overlay.material.set_shader_parameter("Border_Color", Vector4(0, 0, 1, 1))
+
+func _on_mouse_exited() -> void:
+	is_hovered = false
+	if not TurnManager.dragging:  # Only clear if not dragging
+		if not overlay:
+			overlay = $overlay
+		if overlay and overlay.material is ShaderMaterial:
+			overlay.material.set_shader_parameter("Enable_Effects", false)
+			overlay.material.set_shader_parameter("Border_Color", Vector4(0, 0, 1, 0))
+```
+
+### Step 3: Optimize Range Highlighting
+
+Create a separate system for range highlighting that only updates when needed:
+
+```gdscript
+# In BoardSlot.gd
+
+# Cache the range slots for faster lookup
+var _cached_range_slots: Array[Area2D] = []
+var _range_dirty: bool = true
+
+func color_range(dragging = true):
+	"""Optimized range highlighting"""
+	all_nodes = get_tree().get_nodes_in_group("slots")
+	var ranges: Array
+	
+	if dragging:
+		ranges = TurnManager.dragging.card_data.get('range', [])
+	elif TurnManager.targeting and TurnManager.targeting.state.card_location == GameEnums.CardZone.FIELD:
+		ranges = TurnManager.targeting.card_data.get('range', [])
+	else:
+		return
+	
+	# Cache the result for this slot/range combination
+	if _range_dirty or ranges != _cached_ranges:
+		_cached_ranges = ranges
+		_cached_range_slots.clear()
+		
+		var origin = name.split("-")
+		var origin_x = int(origin[0])
+		var origin_y = int(origin[1])
+		
+		for node in all_nodes:
+			var slot_name = node.name
+			var in_range = false
+			
+			for r in ranges:
+				var parts = r.split(".")
+				var target_x = origin_x - int(parts[0])
+				var target_y = origin_y - int(parts[1])
+				if slot_name == str(target_x) + "-" + str(target_y):
+					in_range = true
+					break
+			
+			if in_range:
+				_cached_range_slots.append(node)
+				node.set_color(Vector4(0.8, 0, 0, 0.75))
+				node.og_color = Vector4(0.8, 0, 0, 0.75)
+			else:
+				if node.og_color == Vector4(0.8, 0, 0, 0.75):
+					node.og_color = Vector4(0, 0, 0, 0)
+		
+		_range_dirty = false
+	
+	TurnManager.highlighted_slots = _cached_range_slots
+
+func highlight_range() -> void:
+	"""Called when drag enters slot - update range if needed"""
+	if TurnManager.dragging and TurnManager.dragging.state.is_creature:
+		if TurnManager.dragging.state.can_be_payed(TurnManager.game_manager.gamestate, TurnManager.dragging.state.mana_cost):
+			_range_dirty = true
+			color_range()
+
+func reset_higlight():
+	"""Reset highlight"""
+	if not overlay:
+		overlay = $overlay
+	if overlay and overlay.material is ShaderMaterial:
+		overlay.material.set_shader_parameter("Enable_Effects", false)
+		overlay.material.set_shader_parameter("Border_Color", Vector4(0, 0, 0, 0))
+	is_drag_hovered = false
+```
+
+### Step 4: Create a Global Drag Manager (Optional but Recommended)
+
+Create `scripts/systems/DragManager.gd`:
+
+```gdscript
+extends Node
+class_name DragManager
+
+static var is_dragging: bool = false
+static var dragged_card: Card = null
+static var current_hover_slot: Area2D = null
+
+static func start_drag(card: Card):
+	is_dragging = true
+	dragged_card = card
+	current_hover_slot = null
+
+static func end_drag():
+	is_dragging = false
+	dragged_card = null
+	current_hover_slot = null
+
+static func update_hover_slot(slot: Area2D):
+	if current_hover_slot == slot:
+		return
+	
+	# Exit previous slot
+	if current_hover_slot:
+		current_hover_slot._on_drag_hover_exit()
+	
+	# Enter new slot
+	current_hover_slot = slot
+	if slot:
+		slot._on_drag_hover_enter()
+```
+
+### Step 5: Update Movement.gd to Use Drag Manager
+
+```gdscript
+# In Movement.gd, replace on_click with:
+
+func on_click(event):
+	if event is InputEventMouseButton:
+		var s: CardState = card.state
+		
+		if _is_mouse_over_button():
+			return
+		
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			# Mana selection
+			if s.player_controled and TurnManager.is_selecting_mana and not TurnManager.waiting_for_input and not s.controller.mana_selected and s.card_location == GameEnums.CardZone.HAND and event.pressed:
+				move_to_mana_zone()
+			
+			# Dragging from hand
+			elif s.player_controled and TurnManager.current_phase == GameEnums.TurnEnum.MAIN and not TurnManager.waiting_for_input and s.card_location == GameEnums.CardZone.HAND:
+				if event.pressed:
+					DragManager.start_drag(card)
+					TurnManager.dragging = card
+					card.dragging = true
+					card.offset = get_global_mouse_position() - card.global_position
+					card.visual.set_drag_visuals(true)
+					raise()
+				else:
+					# Check drop with DragManager
+					if DragManager.current_hover_slot:
+						var slot = DragManager.current_hover_slot
+						if slot.accepts_card(card, TurnManager.game_manager.gamestate):
+							play_card_to_board(slot, slot.scew_dict[slot.name])
+							DragManager.end_drag()
+						else:
+							check_and_return_to_hand()
+					else:
+						check_and_return_to_hand()
+	
+	elif event is InputEventMouseMotion and card.dragging and card.state.card_location == GameEnums.CardZone.HAND:
+		card.global_position = get_global_mouse_position() - card.offset
+		rotation = 0
+		
+		# Update drag hover - check all slots
+		var mouse_pos = card.get_global_mouse_position()
+		for slot in card.state.controller.board.board_slots:
+			if slot._is_point_in_collision_polygon(mouse_pos):
+				DragManager.update_hover_slot(slot)
+				return
+		DragManager.update_hover_slot(null)
+```
+
+## Benefits of This Approach:
+
+1. **No frame-by-frame collision checks** - Uses Godot's built-in drag system with point-in-polygon checks only when dragging
+2. **Cleaner separation** - Drag logic is isolated from regular hover logic
+3. **Cached range calculations** - Range highlighting only recomputes when needed
+4. **Better performance** - `_process()` is now extremely lightweight
+5. **Works with complex UI** - Button detection remains separate from slot detection
+
+## How It Works:
+
+1. **Dragging**: When a card is clicked, we store it in `DragManager` and start dragging
+2. **Hover Detection**: During drag, we check the mouse position against each slot's collision polygon
+3. **Range Caching**: Range calculations are cached and only recomputed when the drag enters a new slot
+4. **Visual Feedback**: Slots change color based on whether they can accept the card
+5. **Drop**: When releasing, we check the currently hovered slot and play the card there
+
+This approach is much more efficient than checking every frame for collision, while still providing responsive visual feedback during drag!

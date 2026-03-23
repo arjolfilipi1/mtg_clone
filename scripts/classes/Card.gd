@@ -26,8 +26,17 @@ var parts_highlighted:= false
 #nodes to handle visual and movement(also clicking
 @onready var visual : Node = $vizual
 @onready var movement: Node =  $movement
-
-
+@onready var highlight_manager: CardHighlightManager = $HighlightManager
+func _exit_tree():
+	"""Clean up when card is destroyed"""
+	# Clean up tweens from movement
+	if movement and movement.has_method("_cleanup_tweens"):
+		movement._cleanup_tweens()
+	
+	# Clean up highlight manager tweens
+	if highlight_manager:
+		if highlight_manager.current_scale_tween and highlight_manager.current_scale_tween.is_valid():
+			highlight_manager.current_scale_tween.kill()
 
 #initial setup of the card, called by the game_manager script
 func setup(data,_controller):
@@ -42,9 +51,12 @@ func setup(data,_controller):
 	visual.set_background_color()
 	var new_texture = load("res://assets/art/" + data['image'])
 	visual.set_card_art(new_texture)
-
+	
 #destroy card in game
 func send_to_grave():
+	# Clear highlight before removal
+	if highlight_manager:
+		highlight_manager.force_clear()
 	TurnManager.waiting_for_input = false
 	if get_parent():
 		get_parent().remove_child(self)
@@ -58,6 +70,16 @@ func send_to_grave():
 	
 
 func _ready():
+	# Add highlight manager if not present
+	if not has_node("HighlightManager"):
+		var hm = CardHighlightManager.new()
+		hm.name = "HighlightManager"
+		add_child(hm)
+		highlight_manager = hm
+	
+
+
+	
 	await get_tree().process_frame
 	visual.add_mana_symbols()
 	visual.set_range()
@@ -65,37 +87,84 @@ func _ready():
 	state.deleted.connect(visual.burnCard)
 	state.attack_signal.connect(visual.attack.start_slam_attack)
 	state.activated_effect.connect(visual.show_effect)
-
 	
-
-
+	# Setup proper mouse filtering
+	mouse_filter = Control.MOUSE_FILTER_PASS
 	
-
-
+	# Ensure buttons container exists and is configured
+	if visual and visual.buttons_container:
+		visual.buttons_container.mouse_filter = Control.MOUSE_FILTER_PASS
+		# Connect button signals AFTER buttons are ready
+		await get_tree().process_frame
+		_connect_button_signals()
 #send data to movement for drag etc and signals if the card is selected
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT :
-			if  event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				# Don't start dragging if clicking on a button
+				if _is_click_on_button(event.global_position):
+					get_viewport().set_input_as_handled()
+					return
 				pressed.emit()
+	
 	movement.on_click(event)
 
+func _on_mouse_entered():
+	if highlight_manager:
+		highlight_manager._on_card_mouse_entered()
 
+func _on_mouse_exited():
+	if highlight_manager:
+		highlight_manager._on_card_mouse_exited()
 
-
+func _is_click_on_button(event_position: Vector2) -> bool:
+	"""Check if the click position is over any button"""
+	if not visual or not visual.buttons_container:
+		return false
+	
+	if not visual.buttons_container.visible:
+		return false
+	
+	for button in visual.buttons_container.get_children():
+		if button is BaseButton and button.visible:
+			var button_rect = Rect2(button.global_position, button.size)
+			if button_rect.has_point(event_position):
+				return true
+	
+	return false
 
 		
 func _process(_delta: float) -> void:
+	# Update button visibility based on game state
+	if highlight_manager and highlight_manager.is_highlighted:
+		highlight_manager._update_button_visibility()
+	
+	# Original process logic
 	if TurnManager.highlighted != self:
-		movement.animate_scale(normal_scale)
-	if  state.summoned_on_turn == TurnManager.turn:
+		#movement.animate_scale(normal_scale)
 		pass
-		#right now i am checking attack script, will uncomment later
-		#has_summoning_sickness = true
+	if state.summoned_on_turn == TurnManager.turn:
+		pass
 	else:
 		state.has_summoning_sickness = false
-	if movement.highlighted and  (state.card_location == state.le.hand or   state.card_location == state.le.field) :
-		z_index = card_index + 10
-	elif TurnManager.highlighted != self:
-		self.z_index = card_index
-		
+	
+	# Keep buttons above card when highlighted
+	if highlight_manager and highlight_manager.is_highlighted and visual.buttons_container:
+		visual.buttons_container.z_index = z_index + 1
+func _connect_button_signals():
+	"""Connect signals for all buttons in the container"""
+	if not visual or not visual.buttons_container:
+		return
+	
+	for button in visual.buttons_container.get_children():
+		if button is BaseButton:
+			# Disconnect existing to avoid duplicates
+			if button.is_connected("mouse_entered", Callable(highlight_manager, "_on_button_mouse_entered")):
+				button.mouse_entered.disconnect(highlight_manager._on_button_mouse_entered)
+			if button.is_connected("mouse_exited", Callable(highlight_manager, "_on_button_mouse_exited")):
+				button.mouse_exited.disconnect(highlight_manager._on_button_mouse_exited)
+			
+			# Connect fresh
+			button.mouse_entered.connect(highlight_manager._on_button_mouse_entered.bind(button))
+			button.mouse_exited.connect(highlight_manager._on_button_mouse_exited.bind(button))

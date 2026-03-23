@@ -15,6 +15,7 @@ var board : Node = null
 var deck : Node = null
 var player_hand : Node = null
 var player_mana_card_nr = 0
+var player_type: GameEnums.PlayerType = GameEnums.PlayerType.HUMAN
 var player_orbs = {
 	"generic": [],
 	"red": [],
@@ -124,7 +125,7 @@ func pay_for_card( card) -> void:
 					break
 	emit_signal("mana_changed",self)
 
-func _request_response_human(game:GameState ):
+func _request_response_human(game:MTGGameState ):
 	var ui = TurnManager.ui
 
 	# Filter cards that can respond right now (instants, traps, etc.)
@@ -165,7 +166,7 @@ func _request_response_human(game:GameState ):
 	}
 func _request_response_ai(_game):
 	return {}
-func request_response(game: GameState) -> Dictionary:
+func request_response(game: MTGGameState) -> Dictionary:
 	# Return a dictionary describing the response or `null` if none
 	if is_human:
 		return await _request_response_human(game)
@@ -201,7 +202,7 @@ func request_target_selection(possible_targets:Array, target_count:int):
 			var rand = possible_targets.pop_at( randi() % possible_targets.size())
 			res.append(rand)
 		return res
-func draw(game:GameState,for_turn:bool = true):
+func draw(game:MTGGameState,for_turn:bool = true):
 	var card := preload("res://scenes/Card.tscn").instantiate()
 	var card_id = game.player_deck.pop_at(0) if is_human else game.enemy_deck.pop_at(0)
 	if card_id == null:
@@ -209,7 +210,7 @@ func draw(game:GameState,for_turn:bool = true):
 		return null
 	var random_card = TurnManager.game_manager.card_database[card_id]
 	card.setup(random_card,self)
-	card.state.card_location = CardState.le.hand
+	card.state.card_location = GameEnums.CardZone.HAND
 	card.state.controller = self
 	game.player_hand.append(card.state)
 	player_hand.add_child(card)

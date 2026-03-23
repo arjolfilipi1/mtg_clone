@@ -12,7 +12,7 @@ func shrink_and_delete(target_node: Node2D):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	if TurnManager.current_phase == TurnManager.TurnEnum.DRAW:
+	if TurnManager.current_phase == GameEnums.TurnEnum.DRAW:
 		#shrink_and_delete(self)
 		pass
 	var parent = get_parent()
