@@ -2,12 +2,12 @@ extends Node
 #parent node
 @onready var card:Card = $".."
 #attach button
-@onready var attack_button = $"../ButtonsContainer/attack"
-@onready var move_button = $"../ButtonsContainer/move"
+
+
 @onready var card_sprite: Sprite2D = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
 @onready var grid = $"../SubViewportContainer/SubViewport/CenterContainer/grid"
 #tooltip container
-@onready var buttons_container = $"../ButtonsContainer"
+
 #color to indicate that card can be attacked
 @onready var target_overlay:ColorRect =$"../target"
 #subviewport to hold the card image, made so that shaders can be applied individualy
@@ -49,11 +49,15 @@ func _exit_tree():
 	if burn_tween and burn_tween.is_valid():
 		burn_tween.kill()
 		burn_tween = null
+
+func show_target_highlight(enabled):
+	tar.visible = enabled
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	tar.visible = false
 	sel.visible = false
-	b_index = buttons_container.z_index
+
 	name_panel.text = card.state.card_name
 	health_panel.text = str(card.state.toughness)
 	power_panel.text = str(card.state.power)
@@ -67,8 +71,7 @@ func _ready() -> void:
 	subvp.material.set_shader_parameter("destroy", false)
 	card.state.pt_changed.connect(update_pt)
 	effect.visible = false
-	if buttons_container:
-		buttons_container.mouse_filter = Control.MOUSE_FILTER_PASS
+
 #show effect overlay
 func show_effect(_effect:Effect_class):
 	print("showing effect of " +card.state.card_name)

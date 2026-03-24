@@ -126,7 +126,7 @@ func pay_for_card( card) -> void:
 	emit_signal("mana_changed",self)
 
 func _request_response_human(game:MTGGameState ):
-	var ui = TurnManager.ui
+	var ui = TurnManager.game_manager.ui
 
 	# Filter cards that can respond right now (instants, traps, etc.)
 	

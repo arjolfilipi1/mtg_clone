@@ -9,7 +9,6 @@ var selected_targets: Array = []
 var c:int =0
 
 func _on_target_clicked(card):
-	var tip = "card" if card is Card else "state"
 	c+=1
 
 	

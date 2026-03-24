@@ -1,0 +1,131 @@
+[gd_scene load_steps=12 format=3 uid="uid://o42j7dwbtocc"]
+
+[ext_resource type="Script" path="res://scripts/UI/ActionPanel.gd" id="1_ctkqn"]
+[ext_resource type="Shader" path="res://assets/shaders/card/button.gdshader" id="2_6fd6r"]
+[ext_resource type="Texture2D" uid="uid://v0u8tnqylcg0" path="res://assets/attackh.png" id="3_xt0re"]
+[ext_resource type="Script" path="res://scripts/card/AttackButton.gd" id="4_ghp8u"]
+[ext_resource type="Shader" path="res://assets/shaders/rounded.gdshader" id="5_di33w"]
+[ext_resource type="Script" path="res://scripts/ActivateEffect.gd" id="6_j2p3p"]
+[ext_resource type="Texture2D" uid="uid://5mlbnhw2ls5i" path="res://assets/move.png" id="7_duc2s"]
+[ext_resource type="Script" path="res://scripts/card/MoveButton.gd" id="8_4dnkr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tocf0"]
+shader = ExtResource("2_6fd6r")
+shader_parameter/base_color = Color(0.8, 1, 0.1, 1)
+shader_parameter/glow_color = Color(0.9, 0, 0.05, 1)
+shader_parameter/glow_intensity = 0.8
+shader_parameter/hover_glow_boost = 1.5
+shader_parameter/pulse_speed = 2.382
+shader_parameter/pulse_amount = 0.1
+shader_parameter/white_threshold = 0.9
+shader_parameter/hover_ratio = 0.427
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q2bk3"]
+shader = ExtResource("5_di33w")
+shader_parameter/corner_scale = 0.348
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lrup2"]
+shader = ExtResource("2_6fd6r")
+shader_parameter/base_color = Color(0.8, 1, 0.1, 1)
+shader_parameter/glow_color = Color(0.9, 0, 0.05, 1)
+shader_parameter/glow_intensity = 0.8
+shader_parameter/hover_glow_boost = 1.5
+shader_parameter/pulse_speed = 3.0
+shader_parameter/pulse_amount = 0.1
+shader_parameter/white_threshold = 0.9
+shader_parameter/hover_ratio = 0.0
+
+[node name="ActionPanel" type="HBoxContainer"]
+custom_minimum_size = Vector2(200, 90)
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -576.0
+offset_top = -648.0
+offset_right = -221.0
+offset_bottom = -548.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 50
+alignment = 1
+script = ExtResource("1_ctkqn")
+
+[node name="attack" type="TextureButton" parent="."]
+z_index = 2
+material = SubResource("ShaderMaterial_tocf0")
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+texture_normal = ExtResource("3_xt0re")
+script = ExtResource("4_ghp8u")
+
+[node name="ColorRect" type="ColorRect" parent="attack"]
+z_index = 1
+material = SubResource("ShaderMaterial_q2bk3")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -5.0
+offset_top = -6.0
+offset_right = 5.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.686275, 0.686275, 0.686275, 0)
+
+[node name="activate" type="Button" parent="."]
+material = SubResource("ShaderMaterial_lrup2")
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+text = "Activate"
+script = ExtResource("6_j2p3p")
+
+[node name="move" type="TextureButton" parent="."]
+z_index = 2
+material = SubResource("ShaderMaterial_tocf0")
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+texture_normal = ExtResource("7_duc2s")
+script = ExtResource("8_4dnkr")
+
+[node name="ColorRect" type="ColorRect" parent="move"]
+z_index = 1
+material = SubResource("ShaderMaterial_q2bk3")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -5.0
+offset_top = -6.0
+offset_right = 5.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.686275, 0.686275, 0.686275, 0)
+
+[connection signal="gui_input" from="attack" to="attack" method="_attack_pressed"]
+[connection signal="mouse_entered" from="attack" to="attack" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="attack" to="attack" method="_on_mouse_exited"]
+[connection signal="gui_input" from="attack/ColorRect" to="attack" method="_on_color_rect_gui_input"]
+[connection signal="mouse_entered" from="attack/ColorRect" to="attack" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="attack/ColorRect" to="attack" method="_on_mouse_exited"]
+[connection signal="visibility_changed" from="attack/ColorRect" to="attack" method="_on_visibility_changed"]
+[connection signal="button_down" from="activate" to="activate" method="pressed"]
+[connection signal="gui_input" from="activate" to="activate" method="_on_gui_input"]
+[connection signal="mouse_entered" from="activate" to="activate" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="activate" to="activate" method="_on_mouse_exited"]
+[connection signal="gui_input" from="move" to="move" method="_attack_pressed"]
+[connection signal="mouse_entered" from="move" to="move" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="move" to="move" method="_on_mouse_exited"]
+[connection signal="gui_input" from="move/ColorRect" to="move" method="_on_color_rect_gui_input"]
+[connection signal="mouse_entered" from="move/ColorRect" to="move" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="move/ColorRect" to="move" method="_on_mouse_exited"]
+[connection signal="visibility_changed" from="move/ColorRect" to="move" method="_on_visibility_changed"]

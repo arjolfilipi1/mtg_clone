@@ -3,6 +3,13 @@ class_name MTGGameState
 
 var player_hand:Array[CardState]
 var enemy_hand:Array[CardState]
+enum TargetState {
+	IDLE,
+	TARGETING_ATTACK
+}
+
+var target_state = TargetState.IDLE
+var pending_card = null
 
 var player_deck:Array[int] = []
 var enemy_deck:Array[int] = []
@@ -26,6 +33,19 @@ var board_e  ={
 
 }
 
+func get_available_actions(card:Card) -> Array:
+	var actions = []
+	if card.state.controller.is_human:
+		if card.state.can_attack(TurnManager.game_manager.gamestate):
+			actions.append("attack")
+
+		if card.state.can_move(TurnManager.game_manager.gamestate):
+			actions.append("move")
+
+		if card.state.can_activate_effect(TurnManager.game_manager.gamestate):
+			actions.append("activate")
+
+	return actions
 
 
 func push_to_stack(effect_data: Dictionary):

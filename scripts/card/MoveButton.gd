@@ -1,13 +1,14 @@
 extends TextureButton
 class_name MoveButton
 
-@onready var card: Card = $"../.."
+@onready var parent: ActionPanel = $".."
+@onready var card: Card
 var highlight: float = 0.0
 
 func _ready():
 	var unique_material := material.duplicate()
 	material = unique_material
-	
+	card = parent.current_card
 	# Set proper mouse filtering
 	mouse_filter = Control.MOUSE_FILTER_PASS
 	
@@ -38,14 +39,17 @@ func _on_mouse_exited():
 		material.set_shader_parameter("hover_ratio", 0.0)
 
 func _process(_delta: float) -> void:
-	_update_visibility()
+	if visible:
+		if not card:
+			card = parent.current_card
+		_update_visibility()
 	
 	if highlight > 0:
 		highlight = max(0, highlight - _delta / 5)
 		material.set_shader_parameter("hover_ratio", highlight)
 
 func _update_visibility() -> void:
-	if TurnManager.current_phase == GameEnums.TurnEnum.MAIN and not TurnManager.waiting_for_input:
+	if visible and TurnManager.current_phase == GameEnums.TurnEnum.MAIN and not TurnManager.waiting_for_input:
 		var can_move = card.state.can_move(TurnManager.game_manager.gamestate)
 		visible = not can_move.is_empty()
 	else:

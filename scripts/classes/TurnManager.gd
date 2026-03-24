@@ -6,7 +6,7 @@ signal end_phase
 var orb_list = []
 var turn = 1
 var players: Array[Player] = []
-var ui = UIManager.new()
+
 var debug : Label
 var game_manager:GameManager
 var players_passed: int = 0

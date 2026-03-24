@@ -1,4 +1,4 @@
-[gd_scene load_steps=71 format=3 uid="uid://ciikqwfm6mbci"]
+[gd_scene load_steps=72 format=3 uid="uid://ciikqwfm6mbci"]
 
 [ext_resource type="Script" path="res://scripts/classes/GameManager.gd" id="1_qqfnl"]
 [ext_resource type="Script" path="res://scripts/board/Fan.gd" id="2_x817q"]
@@ -49,6 +49,7 @@
 [ext_resource type="Texture2D" uid="uid://d4f1dkt45n3bs" path="res://assets/field/3-5.png" id="37_uoigk"]
 [ext_resource type="Script" path="res://scripts/board/ConfirmOverlay.gd" id="47_oseo6"]
 [ext_resource type="PackedScene" uid="uid://bwx7svabthek7" path="res://scenes/CardListViewer.tscn" id="49_b040d"]
+[ext_resource type="PackedScene" uid="uid://o42j7dwbtocc" path="res://scenes/ActionPanel.tscn" id="50_a5tf8"]
 [ext_resource type="PackedScene" uid="uid://biwqjj2ylbwr6" path="res://scenes/StackViewer.tscn" id="50_hbw05"]
 [ext_resource type="Script" path="res://scripts/UI/UIManager.gd" id="50_rvoge"]
 
@@ -944,6 +945,13 @@ offset_top = 13.0
 offset_right = 3.0
 offset_bottom = 13.0
 scale = Vector2(0.5, 0.5)
+metadata/_edit_use_anchors_ = true
+
+[node name="ActionPanel" parent="." instance=ExtResource("50_a5tf8")]
+offset_left = 186.0
+offset_top = 247.0
+offset_right = 541.0
+offset_bottom = 347.0
 
 [node name="UIManager" type="Node" parent="."]
 script = ExtResource("50_rvoge")

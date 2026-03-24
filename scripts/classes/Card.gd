@@ -91,26 +91,20 @@ func _ready():
 	# Setup proper mouse filtering
 	mouse_filter = Control.MOUSE_FILTER_PASS
 	
-	# Ensure buttons container exists and is configured
-	if visual and visual.buttons_container:
-		visual.buttons_container.mouse_filter = Control.MOUSE_FILTER_PASS
-		# Connect button signals AFTER buttons are ready
-		await get_tree().process_frame
-		_connect_button_signals()
+
 #send data to movement for drag etc and signals if the card is selected
 func _on_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				# Don't start dragging if clicking on a button
-				if _is_click_on_button(event.global_position):
-					get_viewport().set_input_as_handled()
-					return
+				
 				pressed.emit()
 	
 	movement.on_click(event)
 
 func _on_mouse_entered():
+	TurnManager.game_manager.select_card(self)
 	if highlight_manager:
 		highlight_manager._on_card_mouse_entered()
 
@@ -118,28 +112,11 @@ func _on_mouse_exited():
 	if highlight_manager:
 		highlight_manager._on_card_mouse_exited()
 
-func _is_click_on_button(event_position: Vector2) -> bool:
-	"""Check if the click position is over any button"""
-	if not visual or not visual.buttons_container:
-		return false
-	
-	if not visual.buttons_container.visible:
-		return false
-	
-	for button in visual.buttons_container.get_children():
-		if button is BaseButton and button.visible:
-			var button_rect = Rect2(button.global_position, button.size)
-			if button_rect.has_point(event_position):
-				return true
-	
-	return false
+
 
 		
 func _process(_delta: float) -> void:
-	# Update button visibility based on game state
-	if highlight_manager and highlight_manager.is_highlighted:
-		highlight_manager._update_button_visibility()
-	
+
 	# Original process logic
 	if TurnManager.highlighted != self:
 		#movement.animate_scale(normal_scale)
@@ -149,9 +126,7 @@ func _process(_delta: float) -> void:
 	else:
 		state.has_summoning_sickness = false
 	
-	# Keep buttons above card when highlighted
-	if highlight_manager and highlight_manager.is_highlighted and visual.buttons_container:
-		visual.buttons_container.z_index = z_index + 1
+
 func _connect_button_signals():
 	"""Connect signals for all buttons in the container"""
 	if not visual or not visual.buttons_container:

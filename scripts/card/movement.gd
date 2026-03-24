@@ -43,11 +43,7 @@ func attack_target():
 func on_click(event):
 	if event is InputEventMouseButton:
 		var s: CardState = card.state
-		
-		# Don't process drag if mouse is over a button
-		if _is_mouse_over_button():
-			return
-		
+
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			# Mana selection
 			if s.player_controled and TurnManager.is_selecting_mana and not TurnManager.waiting_for_input and not s.controller.mana_selected and s.card_location == GameEnums.CardZone.HAND and event.pressed:
@@ -74,23 +70,7 @@ func on_click(event):
 		card.global_position = get_global_mouse_position() - card.offset
 		rotation = 0
 
-func _is_mouse_over_button() -> bool:
-	"""Check if mouse is currently over any button"""
-	if not card.visual or not card.visual.buttons_container:
-		return false
-	
-	if not card.visual.buttons_container.visible:
-		return false
-	
-	var mouse_pos = card.get_global_mouse_position()
-	
-	for button in card.visual.buttons_container.get_children():
-		if button is BaseButton and button.visible:
-			var button_rect = Rect2(button.global_position, button.size)
-			if button_rect.has_point(mouse_pos):
-				return true
-	
-	return false
+
 #calls the attack animation
 func attack_card():
 	

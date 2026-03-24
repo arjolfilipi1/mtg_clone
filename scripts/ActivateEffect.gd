@@ -1,24 +1,24 @@
 extends Button
 class_name ActivateEffectButton
 
-@onready var card: Card = $"../.."
+@onready var parent: ActionPanel = $".."
+@onready var card: Card
 
 func _ready() -> void:
 	visible = false
-	
+	card = parent.current_card
 	# Duplicate material for individual shader control
 	var unique_material := material.duplicate()
 	material = unique_material
 	
 	# Set proper mouse filtering
-	mouse_filter = Control.MOUSE_FILTER_PASS
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	
 	# IMPORTANT: Connect to prevent event propagation
 	pressed.connect(_on_button_pressed)
 	button_down.connect(_on_button_down)
 	button_up.connect(_on_button_up)
-	
-	_update_visibility()
+
 
 func _on_button_pressed():
 	# Mark event as handled to prevent card from receiving it
@@ -53,13 +53,3 @@ func _on_mouse_entered():
 func _on_mouse_exited():
 	if visible:
 		material.set_shader_parameter("hover_ratio", 0.0)
-
-func _update_visibility() -> void:
-	if card.state.effects:
-		var can_activate = card.state.can_activate_effect(TurnManager.game_manager.gamestate)
-		visible = not can_activate.is_empty()
-	else:
-		visible = false
-
-func _process(_delta: float) -> void:
-	_update_visibility()

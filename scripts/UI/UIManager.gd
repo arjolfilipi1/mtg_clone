@@ -3,7 +3,29 @@ class_name UIManager
 var selected:String =""
 var done = false
 var selected_card: CardState = null
+var affected_b_slots: Array[Card]
+var targeting_arrow
+const _TARGETING_SCENE = preload("res://scenes/TargetingArrow.tscn")
 
+func _ready() -> void:
+	targeting_arrow = _TARGETING_SCENE.instantiate()
+func attack_target():
+
+	targeting_arrow.initiate_targeting()
+	var sn:String = TurnManager.targeting.board_pos.name
+	var origin = sn.split("-")
+	for player:Player in TurnManager.players:
+		for slot in  (player.board.board_slots):
+			if slot.card_list:
+				var ranges :Array = TurnManager.targeting.card_data['range']
+				for r in ranges :
+					var parts = r.split(".")
+					if slot.name == str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) ):
+						for c:Card in slot.card_list:
+							c.visual.valid_target = true
+							affected.append(c)
+
+	card.board_pos.color_range(false)
 func select_slot(valid_slots: Array[String]) -> String:
 	TurnManager.selecting_slot = true
 	TurnManager.highlight_valid_slots(valid_slots)
@@ -29,6 +51,7 @@ func select_effect(effects: Array[Effect_class],card_name:String):
 		return null
 	var index = options.find(choice)
 	return effects[index]
+	
 func ask_choice(options:Array,title:String = "Choose")->String:
 	print(options)
 	var dialog = preload("res://scenes/ChoiceDialog.tscn").instantiate()
@@ -51,6 +74,7 @@ func show_stack(stack):
 
 func show_message(message):
 	print(message)
+	
 func select_card_from(cards: Array, title: String = "Select a card") -> CardState:
 	var preview_scene = preload("res://scenes/CardListViewer.tscn").instantiate()
 	TurnManager.game_manager.get_tree().root.add_child(preview_scene)

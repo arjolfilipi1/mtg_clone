@@ -1,4 +1,4 @@
-[gd_scene load_steps=55 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=45 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/classes/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/card/playable.gdshader" id="1_6a0q4"]
@@ -19,17 +19,10 @@
 [ext_resource type="Texture2D" uid="uid://mwqabb0ir18g" path="res://assets/attack.png" id="15_plbfy"]
 [ext_resource type="Script" path="res://scripts/card/Movement.gd" id="16_fj7vn"]
 [ext_resource type="Script" path="res://scripts/card/Visual.gd" id="17_rvavj"]
-[ext_resource type="Shader" path="res://assets/shaders/card/button.gdshader" id="18_8tvem"]
-[ext_resource type="Script" path="res://scripts/card/ButtonsContainer.gd" id="18_j83j1"]
 [ext_resource type="Script" path="res://scripts/card/Attack.gd" id="18_ye35g"]
-[ext_resource type="Script" path="res://scripts/card/AttackButton.gd" id="19_0p84n"]
-[ext_resource type="Texture2D" uid="uid://v0u8tnqylcg0" path="res://assets/attackh.png" id="21_h2m4k"]
 [ext_resource type="Shader" path="res://assets/shaders/card/target.gdshader" id="22_m58xb"]
-[ext_resource type="Script" path="res://scripts/ActivateEffect.gd" id="23_xadkh"]
 [ext_resource type="Shader" path="res://assets/shaders/outline.gdshader" id="26_g4vjj"]
-[ext_resource type="Texture2D" uid="uid://5mlbnhw2ls5i" path="res://assets/move.png" id="26_xytre"]
 [ext_resource type="Texture2D" uid="uid://cjxcykcq7mcfv" path="res://tar.png" id="27_7bcrs"]
-[ext_resource type="Script" path="res://scripts/card/MoveButton.gd" id="27_nw2fs"]
 [ext_resource type="Texture2D" uid="uid://o866i4nie6d8" path="res://sel.png" id="28_k3r52"]
 [ext_resource type="Shader" path="res://assets/shaders/card/effect.gdshader" id="30_w1es4"]
 [ext_resource type="Script" path="res://scripts/systems/HighlightManager.gd" id="33_map77"]
@@ -96,32 +89,6 @@ shader_parameter/ss = false
 shader_parameter/overlay_color = Color(1, 0, 0, 0.4)
 shader_parameter/pulse_speed = 2.0
 shader_parameter/pulse_strength = 0.3
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_85fdt"]
-shader = ExtResource("18_8tvem")
-shader_parameter/base_color = Color(0.8, 1, 0.1, 1)
-shader_parameter/glow_color = Color(0.9, 0, 0.05, 1)
-shader_parameter/glow_intensity = 0.8
-shader_parameter/hover_glow_boost = 1.5
-shader_parameter/pulse_speed = 2.382
-shader_parameter/pulse_amount = 0.1
-shader_parameter/white_threshold = 0.9
-shader_parameter/hover_ratio = 0.427
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_23tgi"]
-shader = ExtResource("6_r5pbg")
-shader_parameter/corner_scale = 0.348
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_yw0vi"]
-shader = ExtResource("18_8tvem")
-shader_parameter/base_color = Color(0.8, 1, 0.1, 1)
-shader_parameter/glow_color = Color(0.9, 0, 0.05, 1)
-shader_parameter/glow_intensity = 0.8
-shader_parameter/hover_glow_boost = 1.5
-shader_parameter/pulse_speed = 3.0
-shader_parameter/pulse_amount = 0.1
-shader_parameter/white_threshold = 0.9
-shader_parameter/hover_ratio = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_arkvt"]
 shader = ExtResource("22_m58xb")
@@ -514,85 +481,6 @@ script = ExtResource("17_rvavj")
 [node name="attack" type="Node2D" parent="vizual"]
 script = ExtResource("18_ye35g")
 
-[node name="ButtonsContainer" type="HBoxContainer" parent="."]
-z_index = 10
-custom_minimum_size = Vector2(200, 90)
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -100.0
-offset_top = -387.0
-offset_right = 100.0
-offset_bottom = -287.0
-grow_horizontal = 2
-grow_vertical = 0
-pivot_offset = Vector2(100, 100)
-theme_override_constants/separation = 50
-alignment = 1
-script = ExtResource("18_j83j1")
-
-[node name="attack" type="TextureButton" parent="ButtonsContainer"]
-z_index = 2
-material = SubResource("ShaderMaterial_85fdt")
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-mouse_filter = 1
-texture_normal = ExtResource("21_h2m4k")
-script = ExtResource("19_0p84n")
-
-[node name="ColorRect" type="ColorRect" parent="ButtonsContainer/attack"]
-z_index = 1
-material = SubResource("ShaderMaterial_23tgi")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -5.0
-offset_top = -6.0
-offset_right = 5.0
-offset_bottom = 4.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.686275, 0.686275, 0.686275, 0)
-
-[node name="activate" type="Button" parent="ButtonsContainer"]
-material = SubResource("ShaderMaterial_yw0vi")
-custom_minimum_size = Vector2(80, 80)
-layout_mode = 2
-text = "Activate"
-script = ExtResource("23_xadkh")
-
-[node name="move" type="TextureButton" parent="ButtonsContainer"]
-z_index = 2
-material = SubResource("ShaderMaterial_85fdt")
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-mouse_filter = 1
-texture_normal = ExtResource("26_xytre")
-script = ExtResource("27_nw2fs")
-
-[node name="ColorRect" type="ColorRect" parent="ButtonsContainer/move"]
-z_index = 1
-material = SubResource("ShaderMaterial_23tgi")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -5.0
-offset_top = -6.0
-offset_right = 5.0
-offset_bottom = 4.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.686275, 0.686275, 0.686275, 0)
-
 [node name="target" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_arkvt")
 layout_mode = 0
@@ -639,22 +527,3 @@ script = ExtResource("33_map77")
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
 [connection signal="pressed" from="." to="." method="_on_pressed"]
-[connection signal="mouse_entered" from="ButtonsContainer" to="ButtonsContainer" method="_on_mouse_entered"]
-[connection signal="gui_input" from="ButtonsContainer/attack" to="ButtonsContainer/attack" method="_attack_pressed"]
-[connection signal="mouse_entered" from="ButtonsContainer/attack" to="ButtonsContainer/attack" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="ButtonsContainer/attack" to="ButtonsContainer/attack" method="_on_mouse_exited"]
-[connection signal="gui_input" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_color_rect_gui_input"]
-[connection signal="mouse_entered" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_mouse_exited"]
-[connection signal="visibility_changed" from="ButtonsContainer/attack/ColorRect" to="ButtonsContainer/attack" method="_on_visibility_changed"]
-[connection signal="button_down" from="ButtonsContainer/activate" to="ButtonsContainer/activate" method="pressed"]
-[connection signal="gui_input" from="ButtonsContainer/activate" to="ButtonsContainer/activate" method="_on_gui_input"]
-[connection signal="mouse_entered" from="ButtonsContainer/activate" to="ButtonsContainer/activate" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="ButtonsContainer/activate" to="ButtonsContainer/activate" method="_on_mouse_exited"]
-[connection signal="gui_input" from="ButtonsContainer/move" to="ButtonsContainer/move" method="_attack_pressed"]
-[connection signal="mouse_entered" from="ButtonsContainer/move" to="ButtonsContainer/move" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="ButtonsContainer/move" to="ButtonsContainer/move" method="_on_mouse_exited"]
-[connection signal="gui_input" from="ButtonsContainer/move/ColorRect" to="ButtonsContainer/move" method="_on_color_rect_gui_input"]
-[connection signal="mouse_entered" from="ButtonsContainer/move/ColorRect" to="ButtonsContainer/move" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="ButtonsContainer/move/ColorRect" to="ButtonsContainer/move" method="_on_mouse_exited"]
-[connection signal="visibility_changed" from="ButtonsContainer/move/ColorRect" to="ButtonsContainer/move" method="_on_visibility_changed"]

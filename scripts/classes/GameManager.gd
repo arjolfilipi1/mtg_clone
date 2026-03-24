@@ -17,6 +17,7 @@ class_name GameManager
 @onready var sp:Label = $"../debug2/pos"
 @onready var sl:Label = $"../debug2/selected"
 @onready var stack_view = $"../StackListViewer"
+var ui = UIManager.new()
 var player1 : Player
 var player2 : Player
 var card_database = []
@@ -25,6 +26,8 @@ var is_player_turn = true
 var current_player : Player
 var cm:CombatManager
 var gamestate:MTGGameState
+var selected_card = null
+@onready var action_panel = $"../ActionPanel"
 
 var player_deck_init:Array[int] = [2,3,4,5,6,0,1,5]
 var enemy_deck_init:Array[int] = [0,1,2,3,4,5,6,3]
@@ -33,6 +36,25 @@ func store_gamestate():
 	print(gamestate.player_hand+gamestate.player_mana+gamestate.player_grave)
 	print(gamestate.enemy_hand+gamestate.enemy_mana+gamestate.enemy_grave)
 	pass
+
+func start_attack_targeting(card):
+	gamestate.target_state = gamestate.TargetState.TARGETING_ATTACK
+	gamestate.pending_card = card
+	
+	highlight_attack_targets(card)
+
+func highlight_attack_targets(card:Card):
+	var targets = card.state.can_attack(gamestate)
+
+	for t:CardState in targets:
+		if t.card_node:
+			t.card_node.visual.show_target_highlight(true)
+
+func select_card(card):
+	selected_card = card
+
+	var actions = gamestate.get_available_actions(card)
+	action_panel.show_actions(card, actions)
 
 func _ready():
 	TurnManager.game_manager = self
