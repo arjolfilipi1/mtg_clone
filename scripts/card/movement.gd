@@ -34,10 +34,7 @@ func attack_target():
 					var parts = r.split(".")
 					if slot.name == str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) ):
 						for c:Card in slot.card_list:
-							c.visual.valid_target = true
-							affected.append(c)
-
-	card.board_pos.color_range(false)
+							pass
 
 
 func on_click(event):
@@ -73,8 +70,8 @@ func on_click(event):
 
 #calls the attack animation
 func attack_card():
-	
-	card.visual.attack.start_slam_attack(TurnManager.targeting,card)
+	print("move",TurnManager.targeting.card_data["name"],card.card_data["name"])
+	card.visual.attack.start_slam_attack(TurnManager.targeting,pending_target)
 #check if the drop area can accept the card
 func check_drop_area():
 	var mouse_pos = card.get_global_mouse_position()
@@ -124,7 +121,7 @@ func play_card_to_board(area: Node, rot = 0):
 	TurnManager.dragging = null
 	TurnManager.reset_highlited()
 	print("dropped " + card.state.card_name + " on area " + area.name)
-	card.state.play_to_board(area.name, TurnManager.game_manager.gamestate, card)
+	card.state.play_to_board(area.name, TurnManager.game_manager.gamestate)
 	card.get_parent().remove_child(card)
 	area.get_parent().add_child(card)
 	

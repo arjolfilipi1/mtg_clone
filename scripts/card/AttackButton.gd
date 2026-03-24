@@ -56,7 +56,8 @@ func _attack_pressed(event: InputEvent) -> void:
 				var can_attack = card.state.can_attack(TurnManager.game_manager.gamestate)
 				if can_attack:
 					TurnManager.current_phase = GameEnums.TurnEnum.ATTACK
-					card.movement.attack_target()
+					print("start_attack_targeting")
+					TurnManager.game_manager.ui.start_attack_targeting(card)
 					# Mark event as handled
 					get_viewport().set_input_as_handled()
 

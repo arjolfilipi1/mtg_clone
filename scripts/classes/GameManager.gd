@@ -33,8 +33,8 @@ var player_deck_init:Array[int] = [2,3,4,5,6,0,1,5]
 var enemy_deck_init:Array[int] = [0,1,2,3,4,5,6,3]
 
 func store_gamestate():
-	print(gamestate.player_hand+gamestate.player_mana+gamestate.player_grave)
-	print(gamestate.enemy_hand+gamestate.enemy_mana+gamestate.enemy_grave)
+	print(gamestate.board_e)
+	#print(gamestate.enemy_hand+gamestate.enemy_mana+gamestate.enemy_grave)
 	pass
 
 func start_attack_targeting(card):
@@ -221,7 +221,7 @@ func _process(_delta: float) -> void:
 		$"../ButtonContainer/Cancel attack".disabled = true
 	prio.text = current_player.player_name
 	turn.text = GameEnums.TurnEnum.keys()[ TurnManager.current_phase]
-	high.text = TurnManager.highlighted.state.card_name+ str(snappedf( TurnManager.highlighted.highlight_manager.is_hovered,0)) if TurnManager.highlighted else "No focus"
+	high.text = TurnManager.highlighted.state.card_name+ " " + TurnManager.highlighted.state.pos if TurnManager.highlighted else "No focus"
 func _on_cancel_attack_pressed() -> void:
 	if TurnManager.targeting:
 		TurnManager.targeting.movement.targeting_arrow.is_targeting = false

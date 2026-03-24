@@ -3,29 +3,58 @@ class_name UIManager
 var selected:String =""
 var done = false
 var selected_card: CardState = null
+var penting_target: CardState = null
 var affected_b_slots: Array[Card]
 var targeting_arrow
+var all_board_nodes:Array[Node] = []
 const _TARGETING_SCENE = preload("res://scenes/TargetingArrow.tscn")
 
 func _ready() -> void:
 	targeting_arrow = _TARGETING_SCENE.instantiate()
-func attack_target():
+	all_board_nodes = get_tree().get_nodes_in_group("slots")
+func get_attack_targets(card) -> Array:
+	var targets = []
+	
+	var origin = card.board_pos.name  # ← FIX THIS (see below)
+	var b = TurnManager.game_manager.gamestate.board_e
+	for slot in b:
+		if b[slot]:
+			for c in b[slot]:
+				targets.append(c)
 
+	return targets
+
+func get_ranges(card:Card,slot):
+	var ranges = card.state.card_range
+	var aplied : Array[String] = []
+	for node in all_board_nodes:
+		var origin = name.split("-")
+		for r in ranges :
+			var parts = r.split(".")
+			if node.name == str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) ):
+				node.set_color(Vector4(0.8,0,0,0.75))
+				node.og_color = Vector4(0.8,0,0,0.75)
+				aplied.append(node.name)
+
+			elif node.name not in aplied:
+				node.og_color = (Vector4(0,0,0,0))
+func start_attack_targeting(card):
+	var targets = get_attack_targets(card)
+	if targeting_arrow == null:
+		targeting_arrow = _TARGETING_SCENE.instantiate()
+	card.add_child(targeting_arrow)
 	targeting_arrow.initiate_targeting()
-	var sn:String = TurnManager.targeting.board_pos.name
-	var origin = sn.split("-")
-	for player:Player in TurnManager.players:
-		for slot in  (player.board.board_slots):
-			if slot.card_list:
-				var ranges :Array = TurnManager.targeting.card_data['range']
-				for r in ranges :
-					var parts = r.split(".")
-					if slot.name == str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) ):
-						for c:Card in slot.card_list:
-							c.visual.valid_target = true
-							affected.append(c)
+	var selector = TargetSelector.new()
+	add_child(selector)
 
-	card.board_pos.color_range(false)
+	selector.start_selection(targets)
+
+	selector.completed.connect(func(selected):
+		if selected.size() > 0:
+			#TurnManager.game_manager.request_attack(card, selected[0])
+			card.movement.pending_target = selected[0].card_node
+			TurnManager.game_manager.request_confirmation("Attack "+card.state.card_name+"?", card.movement.attack_card)
+	)
 func select_slot(valid_slots: Array[String]) -> String:
 	TurnManager.selecting_slot = true
 	TurnManager.highlight_valid_slots(valid_slots)
@@ -53,7 +82,6 @@ func select_effect(effects: Array[Effect_class],card_name:String):
 	return effects[index]
 	
 func ask_choice(options:Array,title:String = "Choose")->String:
-	print(options)
 	var dialog = preload("res://scenes/ChoiceDialog.tscn").instantiate()
 	dialog.created = true
 	TurnManager.game_manager.get_tree().root.add_child(dialog)

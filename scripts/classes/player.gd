@@ -99,8 +99,8 @@ func create_mana():
 func pay_for_card( card) -> void:
 	#return 
 	TurnManager.debug.text += "Paying for card by "+ player_name +" \n"
-	for color in card.state.mana_cost.keys():
-		var required = card.state.mana_cost[color]
+	for color in card.mana_cost.keys():
+		var required = card.mana_cost[color]
 		var available = mana_pool.get(color, 0)
 		
 		if available >= required:

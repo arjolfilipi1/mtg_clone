@@ -261,22 +261,21 @@ func on_summon():
 func get_power():
 	return card_data.get("power", 0)
 
-func play_to_board(area_name:String,game:MTGGameState,card:Card=null):
+func play_to_board(area_name:String,game:MTGGameState):
 	if is_creature:
 		pos = area_name
-		if controller.is_human:
-			game.player_hand.erase(card.state)
-		else:
-			game.enemy_hand.erase(card.state)
+		
 		summoned_on_turn = game.turn
 		controller.board.reset_higlight()
 		if card_location == GameEnums.CardZone.HAND:
 			if player_controled:
 				game.player_hand.erase(self)
+				game.board[area_name].append(self)
 			else:
+				game.board_e[area_name].append(self)
 				game.enemy_hand.erase(self)
 		card_location = GameEnums.CardZone.FIELD
-		controller.pay_for_card(card)
+		controller.pay_for_card(self)
 		face_up = true
 		game.board[pos].append(self)
 		on_summon()
