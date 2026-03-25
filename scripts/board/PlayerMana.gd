@@ -63,7 +63,7 @@ func _process(_delta: float) -> void:
 func _on_gui_input(event: InputEvent) -> void:
 	
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		prev.show_cards(TurnManager.game_manager.gamestate.player_mana, "Mana")
+		prev.show_cards(Game_Manager.gamestate.player_mana, "Mana")
 		print("mana pressed")
 
 func _area_pressed(_node: Node,event: InputEvent,  _shape_idx: int)->void:

@@ -36,14 +36,7 @@ var cd:float = 0.0
 var burn_tween: Tween = null
 #node that has the attack animation logic
 @onready var attack = $attack
-const _MANA_COLORS = {
-	"generic": Color(0.7, 0.7, 0.7),
-	"white": Color(1, 1, 1),
-	"black": Color(0.4, 0.4, 0.4),
-	"green": Color(0.1, 0.8, 0.1),
-	"blue": Color(0.1, 0.6, 1),
-	"red": Color(1, 0.2, 0.2),
-	"earth": Color(0.6, 0.4, 0.2)}
+
 func _exit_tree():
 	"""Clean up burn tween"""
 	if burn_tween and burn_tween.is_valid():
@@ -125,10 +118,10 @@ func set_background_color():
 			#bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[0]])
 			#bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
 		if  multi_color > 1:
-			bg_unique_material.set_shader_parameter("mana_color2" ,_MANA_COLORS[color_list[1]])
+			bg_unique_material.set_shader_parameter("mana_color2" ,GameEnums._MANA_COLORS[color_list[1]])
 			bg_unique_material.set_shader_parameter("weight2" ,1.0/multi_color)
 		if  multi_color > 2 :
-			bg_unique_material.set_shader_parameter("mana_color3" ,_MANA_COLORS[color_list[2]])
+			bg_unique_material.set_shader_parameter("mana_color3" ,GameEnums._MANA_COLORS[color_list[2]])
 			bg_unique_material.set_shader_parameter("weight3" ,1.0/multi_color)
 		pass
 #each card has range, the card has a little square that it is shown when the card can attack that range
@@ -202,8 +195,8 @@ func scale_sprite_preserving_center(sprite: Sprite2D, frame_size: Vector2 = Vect
 func set_drag_visuals(is_dragging: bool):
 	subvp.material.set_shader_parameter("grayscale_amount",  1.0 if is_dragging else 0.0)
 	subvp.material.set_shader_parameter("alpha_override", 0.5 if is_dragging else 1.0)
-	if card.state.can_be_payed(TurnManager.game_manager.gamestate,card.state.mana_cost) and is_dragging:
-		card.state.controller.board.check_card(card,TurnManager.game_manager.gamestate)
+	if card.state.can_be_payed(Game_Manager.gamestate,card.state.mana_cost) and is_dragging:
+		card.state.controller.board.check_card(card,Game_Manager.gamestate)
 
 
 
@@ -253,7 +246,7 @@ func _process(_delta: float) -> void:
 	
 	# Playable glow effect (hand cards only)
 	if card.state.player_controled and TurnManager.current_phase == GameEnums.TurnEnum.MAIN:
-		var can_pay = card.state.can_be_payed(TurnManager.game_manager.gamestate, card.state.mana_cost)
+		var can_pay = card.state.can_be_payed(Game_Manager.gamestate, card.state.mana_cost)
 		var in_hand = card.state.card_location == GameEnums.CardZone.HAND
 		var has_effect = card.state.is_creature or card.state.can_activate_effect
 		

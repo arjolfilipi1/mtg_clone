@@ -15,7 +15,7 @@ var pending_target:Card
 
 #attack visuals
 func move_target():
-	for pos in card.state.can_move(TurnManager.game_manager.gamestate):
+	for pos in card.state.can_move(Game_Manager.gamestate):
 		print(pos)
 #attack visuals
 func attack_target():
@@ -61,7 +61,7 @@ func on_click(event):
 			# Attack targeting
 			elif TurnManager.targeting and card.visual.valid_target and TurnManager.current_phase == GameEnums.TurnEnum.ATTACK and s.card_location == GameEnums.CardZone.FIELD and event.pressed:
 				TurnManager.targeting.movement.pending_target = card
-				TurnManager.game_manager.request_confirmation("Attack "+card.state.card_name+"?", attack_card)
+				Game_Manager.request_confirmation("Attack "+card.state.card_name+"?", attack_card)
 	
 	elif event is InputEventMouseMotion and card.dragging and card.state.card_location == GameEnums.CardZone.HAND:
 		card.global_position = get_global_mouse_position() - card.offset
@@ -70,11 +70,11 @@ func on_click(event):
 
 #calls the attack animation
 func attack_card():
-	print("move",TurnManager.targeting.card_data["name"],card.card_data["name"])
+	print("move",TurnManager.targeting.card_data["name"])
 	card.visual.attack.start_slam_attack(TurnManager.targeting,pending_target)
 #check if the drop area can accept the card
 func check_drop_area():
-	if not card.state.can_be_payed(TurnManager.game_manager.gamestate,card.state.mana_cost):
+	if not card.state.can_be_payed(Game_Manager.gamestate,card.state.mana_cost):
 		return false
 	var mouse_pos = card.get_global_mouse_position()
 	var space_state = card.get_world_2d().direct_space_state
@@ -98,7 +98,7 @@ func check_drop_area():
 #dragging
 func check_and_return_to_hand():
 	card.state.controller.board.reset_higlight()
-	TurnManager.game_manager.ui.reset_highlited()
+	UI_Manager.reset_highlited()
 	card.dragging = false
 	position = Vector2(0,0)
 	TurnManager.dragging = null
@@ -119,9 +119,9 @@ func animate_scale(target_scale: Vector2) -> void:
 func play_card_to_board(area: Node, rot = 0):
 	card.board_pos = area
 	TurnManager.dragging = null
-	TurnManager.game_manager.ui.reset_highlited()
+	UI_Manager.reset_highlited()
 	print("dropped " + card.state.card_name + " on area " + area.name)
-	card.state.play_to_board(area.name, TurnManager.game_manager.gamestate)
+	card.state.play_to_board(area.name, Game_Manager.gamestate)
 	card.get_parent().remove_child(card)
 	area.get_parent().add_child(card)
 	
@@ -149,7 +149,7 @@ func move_to_mana_zone():
 		mana_index = TurnManager.enemy_mana_card_nr
 	
 	var start_pos = card.global_position
-	card.state.to_mana(TurnManager.game_manager.gamestate)
+	card.state.to_mana(Game_Manager.gamestate)
 	
 	card.get_parent().remove_child(card)
 	card.state.controller.player_mana_zone.add_child(card)

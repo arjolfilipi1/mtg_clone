@@ -82,12 +82,12 @@ func color_range(dragging = true):
 				altered.append(node)
 			elif node.name not in aplied:
 				node.og_color = (Vector4(0,0,0,0))
-	TurnManager.game_manager.ui.highlighted_slots = altered
+	UI_Manager.highlighted_slots = altered
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func highlight_range() -> void:
 	if TurnManager.dragging:
 		if TurnManager.dragging.state.is_creature:
-			if TurnManager.dragging.state.can_be_payed(TurnManager.game_manager.gamestate,TurnManager.dragging.state.mana_cost):
+			if TurnManager.dragging.state.can_be_payed(Game_Manager.gamestate,TurnManager.dragging.state.mana_cost):
 				color_range()
 func _process(_delta: float) -> void:
 
@@ -100,7 +100,7 @@ func _process(_delta: float) -> void:
 		highlight_range()
 	else:
 		if TurnManager.dragging:
-			if accepts_card(TurnManager.dragging,TurnManager.game_manager.gamestate):
+			if accepts_card(TurnManager.dragging,Game_Manager.gamestate):
 				set_color(Vector4(0,1,0,0.75))
 		is_hovered = false
 	if is_hovered and card_list:

@@ -50,7 +50,7 @@ func _process(_delta: float) -> void:
 
 func _update_visibility() -> void:
 	if visible and TurnManager.current_phase == GameEnums.TurnEnum.MAIN and not TurnManager.waiting_for_input:
-		var can_move = card.state.can_move(TurnManager.game_manager.gamestate)
+		var can_move = card.state.can_move(Game_Manager.gamestate)
 		visible = not can_move.is_empty()
 	else:
 		visible = false
@@ -59,7 +59,7 @@ func _move_pressed(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if TurnManager.current_phase == GameEnums.TurnEnum.MAIN and not TurnManager.waiting_for_input:
-				var can_move = card.state.can_move(TurnManager.game_manager.gamestate)
+				var can_move = card.state.can_move(Game_Manager.gamestate)
 				if can_move:
 					card.movement.move_target()
 					get_viewport().set_input_as_handled()

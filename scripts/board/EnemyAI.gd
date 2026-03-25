@@ -103,12 +103,12 @@ func eval_board():
 	var score = 0
 	return score
 func can_attack():
-	for key in TurnManager.game_manager.gamestate.board:
-		var arr = TurnManager.game_manager.gamestate.board[key]
+	for key in Game_Manager.gamestate.board:
+		var arr = Game_Manager.gamestate.board[key]
 		if len(arr) > 0:
 			for card:CardState in arr:
 				if card.controller.is_human == false:
-					var targets:Array[CardState] = card.can_attack(TurnManager.game_manager.gamestate)
+					var targets:Array[CardState] = card.can_attack(Game_Manager.gamestate)
 					if targets:
 						attacker = card
 						defender = targets[0]
@@ -116,6 +116,9 @@ func can_attack():
 					
 	
 func _process(_delta):
+	if not Game_Manager.setup_finished :
+		print(pl)
+		return 
 	if TurnManager.is_selecting_mana and not pl.mana_selected:
 		print("enemy playing mana")
 		select_mana()
@@ -142,13 +145,13 @@ func enemy_play_card():
 	var area = null
 	
 	for card in pl.player_hand.get_children():
-		if card.state.can_be_payed(TurnManager.game_manager.gamestate,card.state.mana_cost) and not card_played:
+		if card.state.can_be_payed(Game_Manager.gamestate,card.state.mana_cost) and not card_played:
 			var area_list = pl.board.get_children()
 			area_list.shuffle()
 			for all_area in area_list:
 				if all_area.is_in_group("enemy_slots"):
 
-					if all_area.accepts_card(card,TurnManager.game_manager.gamestate):
+					if all_area.accepts_card(card,Game_Manager.gamestate):
 						area = all_area
 						break
 			if area:

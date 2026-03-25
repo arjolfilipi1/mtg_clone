@@ -50,7 +50,7 @@ func _init(_pn,_pmz,_ph,_b,_d):
 	board = _b
 	deck = _d
 	mana_changed.connect(mana_match_visual)
-	pass
+
 func cost_to_list(raw_list_string):
 		# Convert single quotes to double quotes (JSON uses double quotes)
 	raw_list_string = raw_list_string.replace("'", '"')

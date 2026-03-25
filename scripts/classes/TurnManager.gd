@@ -5,7 +5,6 @@ signal end_phase
 var turn = 1
 var players: Array[Player] = []
 var debug : Label
-var game_manager:GameManager
 var players_passed: int = 0
 var player_mana_count = {
 	"generic": 0,
@@ -64,10 +63,10 @@ var selected_slot_name: String = ""
 
 func end_turn():
 	print("end_phase")
-	await  game_manager.gamestate.end_phase_triggers()
+	await  Game_Manager.gamestate.end_phase_triggers()
 	emit_signal("end_of_turn")
 	
-	await  game_manager.gamestate.on_turn_end_triggers()
+	await  Game_Manager.gamestate.on_turn_end_triggers()
 	
 	turn += 1
 	current_phase = GameEnums.TurnEnum.DRAW
@@ -100,7 +99,7 @@ func finish_draw():
 	_pass_priority()
 	
 func handle_stack_phase():
-	var game = game_manager.gamestate
+	var game = Game_Manager.gamestate
 	if len(game.stack) == 0:
 		return
 

@@ -53,11 +53,11 @@ func _attack_pressed(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if TurnManager.current_phase == GameEnums.TurnEnum.MAIN and not TurnManager.waiting_for_input:
-				var can_attack = card.state.can_attack(TurnManager.game_manager.gamestate)
+				var can_attack = card.state.can_attack(Game_Manager.gamestate)
 				if can_attack:
 					TurnManager.current_phase = GameEnums.TurnEnum.ATTACK
 					print("start_attack_targeting")
-					TurnManager.game_manager.ui.start_attack_targeting(card)
+					UI_Manager.start_attack_targeting(card)
 					# Mark event as handled
 					get_viewport().set_input_as_handled()
 

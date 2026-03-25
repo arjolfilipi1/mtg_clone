@@ -36,13 +36,13 @@ var board_e  ={
 func get_available_actions(card:Card) -> Array:
 	var actions = []
 	if card.state.controller.is_human:
-		if card.state.can_attack(TurnManager.game_manager.gamestate):
+		if card.state.can_attack(Game_Manager.gamestate):
 			actions.append("attack")
 
-		if card.state.can_move(TurnManager.game_manager.gamestate):
+		if card.state.can_move(Game_Manager.gamestate):
 			actions.append("move")
 
-		if card.state.can_activate_effect(TurnManager.game_manager.gamestate):
+		if card.state.can_activate_effect(Game_Manager.gamestate):
 			actions.append("activate")
 
 	return actions

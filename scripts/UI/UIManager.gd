@@ -11,15 +11,15 @@ var all_board_nodes:Array[Node] = []
 const _TARGETING_SCENE = preload("res://scenes/TargetingArrow.tscn")
 var selector:TargetSelector
 
-func _ready() -> void:
+func setup() -> void:
 	targeting_arrow = _TARGETING_SCENE.instantiate()
-	all_board_nodes = TurnManager.game_manager.get_tree().get_nodes_in_group("slots")
+	all_board_nodes = Game_Manager.tree.get_nodes_in_group("slots")
 	
 func get_attack_targets(card) -> Array:
 	var targets = []
 	
 	var origin = card.board_pos.name  # ← FIX THIS (see below)
-	var b = TurnManager.game_manager.gamestate.board_e
+	var b = Game_Manager.gamestate.board_e
 	for slot in b:
 		if b[slot]:
 			for c in b[slot]:
@@ -30,9 +30,9 @@ func get_attack_targets(card) -> Array:
 func get_ranges(card:Card):
 	var ranges = card.state.card_range
 	var aplied : Array[String] = []
-	print(all_board_nodes)
 	for node in all_board_nodes:
-		var origin = name.split("-")
+		var origin = card.board_pos.name.split("-")
+		print(origin)
 		for r in ranges :
 			var parts = r.split(".")
 			if node.name == str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) ):
@@ -45,7 +45,6 @@ func get_ranges(card:Card):
 func cancel_attack():
 	if selector and is_instance_valid(selector):
 		selector.cancel()
-		selector.clear_selection()
 		attacker.remove_child(selector)
 		selector.queue_free()
 
@@ -72,9 +71,9 @@ func start_attack_targeting(card:Card):
 
 	selector.completed.connect(func(selected):
 		if selected.size() > 0:
-			#TurnManager.game_manager.request_attack(card, selected[0])
+			#Game_Manager.request_attack(card, selected[0])
 			card.movement.pending_target = selected[0].card_node
-			TurnManager.game_manager.request_confirmation("Attack "+card.state.card_name+"?", card.movement.attack_card)
+			Game_Manager.request_confirmation("Attack "+card.state.card_name+"?", card.movement.attack_card)
 	)
 func start_attack():
 	attacker.movement.attack_card()
@@ -95,7 +94,7 @@ func select_slot(valid_slots: Array[String]) -> String:
 			if slot.is_hovered and Input.is_action_just_pressed("click_left"):
 				chosen = slot.name
 				break
-		await TurnManager.game_manager.get_tree().process_frame
+		await Game_Manager.get_tree().process_frame
 
 	clear_slot_highlights()
 	TurnManager.selecting_slot = false
@@ -114,7 +113,7 @@ func select_effect(effects: Array[Effect_class],card_name:String):
 func ask_choice(options:Array,title:String = "Choose")->String:
 	var dialog = preload("res://scenes/ChoiceDialog.tscn").instantiate()
 	dialog.created = true
-	TurnManager.game_manager.get_tree().root.add_child(dialog)
+	Game_Manager.get_tree().root.add_child(dialog)
 	dialog.callv("show_confirm", [title]+options)
 	
 	dialog.choice_selected.connect(func(choice):
@@ -123,7 +122,7 @@ func ask_choice(options:Array,title:String = "Choose")->String:
 		dialog.queue_free()
 		)
 	while  not done:
-		await TurnManager.game_manager.get_tree().process_frame
+		await Game_Manager.get_tree().process_frame
 	done = false
 	return selected
 
@@ -135,13 +134,10 @@ func show_message(message):
 	
 func select_card_from(cards: Array, title: String = "Select a card") -> CardState:
 	var preview_scene = preload("res://scenes/CardListViewer.tscn").instantiate()
-	TurnManager.game_manager.get_tree().root.add_child(preview_scene)
+	Game_Manager.get_tree().root.add_child(preview_scene)
 	preview_scene.allow_selection = true
 	preview_scene.show_cards(cards,title)  # existing method in your list
 
-
-	
-	var finished := false
 
 	preview_scene.card_selected.connect(func(card):
 		self.selected_card = card
@@ -152,7 +148,7 @@ func select_card_from(cards: Array, title: String = "Select a card") -> CardStat
 
 	# Wait for player selection
 	while not done:
-		await TurnManager.game_manager.get_tree().process_frame
+		await Game_Manager.get_tree().process_frame
 	preview_scene.queue_free()
 	done = false
 	return selected_card

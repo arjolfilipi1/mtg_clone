@@ -1,6 +1,6 @@
 [
   {
-	"id": 00001,
+	"id": 1,
 	"name": "Fire Elemental",
 	"mana_cost": {
 	  "generic": 1,
@@ -26,7 +26,7 @@
 	]
   },
   {
-	"id": 00002,
+	"id": 2,
 	"name": "Water Sprite",
 	"mana_cost": {
 	  "generic": 0,
@@ -52,7 +52,7 @@
 	]
   },
   {
-	"id": 00002,
+	"id": 3,
 	"name": "Earth Golem",
 	"mana_cost": {
 	  "generic": 0,
@@ -78,7 +78,7 @@
 	]
   },
   {
-	"id": 00003,
+	"id": 4,
 	"name": "Wind Crow",
 	"mana_cost": {
 	  "generic": 0,
@@ -101,7 +101,7 @@
 	]
   },
   {
-	"id": 00004,
+	"id": 5,
 	"name": "Skeleton",
 	"mana_cost": {
 	  "generic": 0,
@@ -138,7 +138,7 @@
 	]
   },
   {
-	"id": 00005,
+	"id": 6,
 	"name": "Cat Wizard",
 	"mana_cost": {
 	  "generic": 0,
@@ -190,7 +190,7 @@
 	]
   },
   {
-	"id": 00006,
+	"id": 7,
 	"name": "Healing potion",
 	"mana_cost": {
 	  "generic": 0,

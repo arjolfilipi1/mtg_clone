@@ -73,10 +73,10 @@ func setup_from_card_state(data: CardState):
 				#bg_unique_material.set_shader_parameter("mana_color1" ,_MANA_COLORS[color_list[0]])
 				#bg_unique_material.set_shader_parameter("weight1" ,1.0/multi_color)
 			if  multi_color > 1:
-				bg_unique_material.set_shader_parameter("mana_color2" ,Card_event._MANA_COLORS[ color_list[1]])
+				bg_unique_material.set_shader_parameter("mana_color2" ,GameEnums._MANA_COLORS[ color_list[1]])
 				bg_unique_material.set_shader_parameter("weight2" ,1.0/multi_color)
 			if  multi_color > 2 :
-				bg_unique_material.set_shader_parameter("mana_color3" ,Card_event._MANA_COLORS[color_list[2]])
+				bg_unique_material.set_shader_parameter("mana_color3" ,GameEnums._MANA_COLORS[color_list[2]])
 				bg_unique_material.set_shader_parameter("weight3" ,1.0/multi_color)
 func _gui_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:

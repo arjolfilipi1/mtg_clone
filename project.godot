@@ -18,6 +18,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 TurnManager="*res://scripts/classes/TurnManager.gd"
+Game_Manager="*res://scripts/classes/GameManager.gd"
+UI_Manager="*res://scripts/UI/UIManager.gd"
 EffectParser="*res://scripts/systems/EffectParser.gd"
 EffectRunner="*res://scripts/systems/EffectRunner.gd"
 EffectRegistry="*res://scripts/systems/EffectRegistry.gd"

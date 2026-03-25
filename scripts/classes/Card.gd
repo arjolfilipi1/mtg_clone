@@ -104,7 +104,7 @@ func _on_gui_input(event: InputEvent) -> void:
 	movement.on_click(event)
 
 func _on_mouse_entered():
-	TurnManager.game_manager.select_card(self)
+	Game_Manager.select_card(self)
 	if highlight_manager:
 		highlight_manager._on_card_mouse_entered()
 

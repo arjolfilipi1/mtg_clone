@@ -1,23 +1,24 @@
 extends Node
 class_name GameManager
-@onready var player_deck := $"../PlayerDeck"
-@onready var enemy_deck := $"../EnemyDeck"
-@onready var player_hand = $"../PlayerHand"
-@onready var enemy_hand = $"../EnemyHand"
-@onready var player_board = $"../PlayerBoard"
-@onready var enemy_board = $"../EnemyBoard"
-@onready var player_mana_zone = $"../PlayerMana"
-@onready var enemy_mana_zone = $"../EnemyMana"
-@onready var enemy_ai = $"../EnemyAI"
-@onready var prio = $"../debug2/Priority"
-@onready var debug = $"../ScrollContainer/debug"
-@onready var turn = $"../debug2/turn"
-@onready var high = $"../debug2/high"
-@onready var confirm_overlay = $"../ConfirmOverlay"
-@onready var sp:Label = $"../debug2/pos"
-@onready var sl:Label = $"../debug2/selected"
-@onready var stack_view = $"../StackListViewer"
-var ui = UIManager.new()
+var player_deck :Node= null
+var enemy_deck :Node= null
+var player_hand :Node= null
+var enemy_hand :Node= null
+var player_board:Node= null
+var enemy_board:Node= null
+var player_mana_zone :Node= null
+var enemy_mana_zone :Node= null
+var enemy_ai :Node= null
+var prio :Node= null
+var debug :Node= null
+var turn :Node= null
+var high :Node= null
+var confirm_overlay :Node= null
+var sp:Node= null
+var sl:Node= null
+var stack_view :Node= null
+var initialPosition 
+
 var player1 : Player
 var player2 : Player
 var card_database = []
@@ -27,13 +28,16 @@ var current_player : Player
 var cm:CombatManager
 var gamestate:MTGGameState
 var selected_card = null
-@onready var action_panel = $"../ActionPanel"
-
+var action_panel:Node= null
+var tree:SceneTree
+var p_overlay:Node
+var e_overlay:Node
 var player_deck_init:Array[int] = [2,3,4,5,6,0,1,5]
 var enemy_deck_init:Array[int] = [0,1,2,3,4,5,6,3]
+var setup_finished:=false
 
 func store_gamestate():
-	print(gamestate.board_e)
+	print(confirm_overlay)
 	#print(gamestate.enemy_hand+gamestate.enemy_mana+gamestate.enemy_grave)
 
 
@@ -44,8 +48,7 @@ func select_card(card):
 	var actions = gamestate.get_available_actions(card)
 	action_panel.show_actions(card, actions)
 
-func _ready():
-	TurnManager.game_manager = self
+func setup():
 	gamestate = MTGGameState.new()
 	gamestate.stack_changed.connect(await  TurnManager.handle_stack_phase)
 	spawn_players()
@@ -62,16 +65,19 @@ func _ready():
 
 	cm = CombatManager.new()
 	# Connect overlay signals
-	
+	setup_finished = true
 	
 func request_confirmation(action_message: String, on_confirm_callback: Callable) -> void:
 	# Store the callback for later execution
 	TurnManager.waiting_for_input = true
 	confirm_overlay.meta = on_confirm_callback
 	confirm_overlay.show_confirm(action_message)
-	
+	print("requested",confirm_overlay)
 func _on_overlay_confirmed() -> void:
 	# Execute the pending callback if it exists
+	if confirm_overlay == null:
+		push_error("GameManager: _on_overlay_confirmed called but confirm_overlay is null")
+		return
 	TurnManager.waiting_for_input = false
 	var callback = confirm_overlay.meta
 	if callback != confirm_overlay.null_meta:
@@ -96,6 +102,7 @@ func spawn_players():
 
 	#player2.is_active = false
 	player2.is_human = false
+	
 	enemy_ai.pl = player2
 	TurnManager.players = [player1,player2]
 	#Player.add_child(player1)
@@ -109,8 +116,33 @@ func spawn_players():
 func load_cards():
 	var file = FileAccess.open("res://data/card.json", FileAccess.READ)
 	card_database = JSON.parse_string(file.get_as_text())
-	
-@onready var initialPosition =  $"../PlayerDeck".global_position
+func register_main(n:Node):
+	tree = n.get_tree()
+	initialPosition =  n.get_node("PlayerDeck").global_position
+	player_deck =n.get_node("PlayerDeck")
+	enemy_deck = n.get_node("EnemyDeck")
+	player_hand =n.get_node("PlayerHand")
+	enemy_hand = n.get_node("EnemyHand")
+	player_board = n.get_node("PlayerBoard")
+	enemy_board = n.get_node("EnemyBoard")
+	player_mana_zone = n.get_node("PlayerMana")
+	enemy_mana_zone = n.get_node("EnemyMana")
+	enemy_ai = n.get_node("EnemyAI")
+	prio =n.get_node("debug2/Priority") 
+	debug = n.get_node("ScrollContainer/debug")
+	turn = n.get_node("debug2/turn")
+	high = n.get_node("debug2/high")
+	confirm_overlay = n.get_node("ConfirmOverlay")
+	confirm_overlay.get_node("VBoxContainer/ButtonContainer/ConfirmButton").pressed.connect(_on_overlay_confirmed)
+	confirm_overlay.get_node("VBoxContainer/ButtonContainer/CancelButton").pressed.connect(_on_overlay_cancelled)
+	sp = n.get_node("debug2/pos")
+	sl = n.get_node("debug2/selected")
+	stack_view = n.get_node("StackListViewer")
+	action_panel =n.get_node("ActionPanel")
+	p_overlay =n.get_node("PlayerBoard/sprite/OverlayEffect")
+	e_overlay =n.get_node("EnemyBoard/sprite/OverlayEffect")
+	setup()
+	UI_Manager.setup()
 func start_game():
 	#Engine.time_scale = 0.1
 	TurnManager.current_phase = GameEnums.TurnEnum.DRAW
@@ -168,6 +200,10 @@ func _input(event: InputEvent) -> void:
 
 			get_viewport().set_input_as_handled()  # Prevent other nodes from processing
 func _process(_delta: float) -> void:
+	if not setup_finished:
+		return
+	if not confirm_overlay:
+		print("deleted",_delta)
 	if  len(gamestate.stack) > 0 :
 		
 		stack_view.show_cards(gamestate.stack)
@@ -181,11 +217,11 @@ func _process(_delta: float) -> void:
 		#sl.text = "eh:"+str( len(gamestate.enemy_hand ))+"em:"+str( len(gamestate.enemy_mana )) + "eg:"+str( len(gamestate.enemy_grave ))
 	if TurnManager.priority:
 		current_player = player1
-		$"../PlayerBoard/sprite/OverlayEffect".visible = true
-		$"../EnemyBoard/sprite/OverlayEffect".visible = false
+		p_overlay.visible = true
+		e_overlay.visible = false
 	else:
-		$"../EnemyBoard/sprite/OverlayEffect".visible = true
-		$"../PlayerBoard/sprite/OverlayEffect".visible = false
+		e_overlay.visible = true
+		p_overlay.visible = false
 		current_player = player2 
 	if TurnManager.current_phase == GameEnums.TurnEnum.MANA_CREATE:
 		current_player.reset_mana()
@@ -198,14 +234,7 @@ func _process(_delta: float) -> void:
 		
 		TurnManager.debug.text += current_player.player_name+" drawing \n"
 		current_player.draw(gamestate)
-	if TurnManager.current_phase == GameEnums.TurnEnum.MAIN and TurnManager.priority:
-		$"../ButtonContainer/EndTurnButton".disabled = false
-	else:
-		$"../ButtonContainer/EndTurnButton".disabled = true
-	if TurnManager.current_phase == GameEnums.TurnEnum.ATTACK and TurnManager.priority:
-		$"../ButtonContainer/Cancel attack".disabled = false
-	else:
-		$"../ButtonContainer/Cancel attack".disabled = true
+	
 	prio.text = current_player.player_name
 	turn.text = GameEnums.TurnEnum.keys()[ TurnManager.current_phase]
 	high.text = TurnManager.highlighted.state.card_name+ " " + str(TurnManager.targeting) if TurnManager.highlighted else "No focus"
@@ -213,9 +242,9 @@ func _process(_delta: float) -> void:
 func _on_cancel_attack_pressed() -> void:
 	if TurnManager.targeting:
 		TurnManager.targeting.movement.targeting_arrow.is_targeting = false
-		ui.targeting_arrow.complete_targeting()
+		UI_Manager.targeting_arrow.complete_targeting()
 	confirm_overlay.hide()
-	ui.reset_highlited()
+	UI_Manager.reset_highlited()
 	TurnManager.targeting = null
 	TurnManager.current_phase = GameEnums.TurnEnum.MAIN
 
