@@ -82,7 +82,7 @@ func color_range(dragging = true):
 				altered.append(node)
 			elif node.name not in aplied:
 				node.og_color = (Vector4(0,0,0,0))
-	TurnManager.highlighted_slots = altered
+	TurnManager.game_manager.ui.highlighted_slots = altered
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func highlight_range() -> void:
 	if TurnManager.dragging:

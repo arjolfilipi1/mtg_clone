@@ -13,6 +13,8 @@ func show_actions(card:Card, actions: Array):
 	current_card = card
 	z_index = card.z_index +1
 	global_position = card.global_position + Vector2(0,-100)
+	self.get_parent().remove_child(self)
+	card.add_child(self)
 	if "activate" in actions:
 		activate.card = current_card
 		activate.visible = true

@@ -10,7 +10,7 @@ func _ready():
 	pass
 
 func execute_attack(attacker:Card,defender:Card,game:MTGGameState):
-	TurnManager.game_manager._on_cancel_attack_pressed()
+	TurnManager.game_manager.ui.cancel_attack()
 	attacker.state.take_damage(defender.state.power,defender.state,game)
 	defender.state.take_damage(attacker.state.power,attacker.state,game)
 	

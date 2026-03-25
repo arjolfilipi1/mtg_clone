@@ -2,11 +2,8 @@ extends Node
 signal end_of_turn
 signal end_phase
 
-
-var orb_list = []
 var turn = 1
 var players: Array[Player] = []
-
 var debug : Label
 var game_manager:GameManager
 var players_passed: int = 0
@@ -18,6 +15,7 @@ var player_mana_count = {
 	"earth": 0,
 	"white": 0,
 	"black": 0}
+	
 var enemy_mana_count = {
 	"generic": 0,
 	"red": 1,
@@ -26,6 +24,7 @@ var enemy_mana_count = {
 	"earth": 0,
 	"white": 0,
 	"black": 0}
+	
 var is_selecting_mana = false
 var dragging: Card
 var targeting: Card
@@ -51,29 +50,18 @@ var enemy_orbs = {"generic": [],
 	"earth": [],
 	"white": [],
 	"black": []}
-var highlighted_slots : Array[Area2D] = []
+
 var highlighted: Card
-
-
 
 var target_kind: GameEnums.TargetKind = GameEnums.TargetKind.ATTACK
 var selecting_slot: bool = false
 var selected_slot_name: String = ""
 
-func highlight_valid_slots(valid_slots: Array[String]):
-	for node in get_tree().get_nodes_in_group("slots"):
-		if node.name in valid_slots:
-			node.set_color(Vector4(0, 1, 0, 0.75)) # green for valid
-		else:
-			node.reset_higlight()
 
-func clear_slot_highlights():
-	for node in get_tree().get_nodes_in_group("slots"):
-		node.reset_higlight()
 
-func reset_highlited():
-	for node:Area2D in highlighted_slots:
-		node.og_color = Vector4(0,0,0,0)
+
+
+
 func end_turn():
 	print("end_phase")
 	await  game_manager.gamestate.end_phase_triggers()

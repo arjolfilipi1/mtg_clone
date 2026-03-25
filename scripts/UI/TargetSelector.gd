@@ -21,6 +21,15 @@ func _on_target_clicked(card):
 
 	if selected_targets.size() >= max_count:
 		_finalize_selection()
+func cancel():
+	for t:CardState in valid_targets:
+		_unhighlight(t)
+		if t.card_node and t.card_node.is_connected("pressed", Callable(self, "_on_target_clicked")):
+			t.card_node.pressed.disconnect(_on_target_clicked)
+
+
+	print("selection complete")
+	queue_free()
 func _finalize_selection():
 	for t:CardState in valid_targets:
 		_unhighlight(t)

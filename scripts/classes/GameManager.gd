@@ -35,20 +35,8 @@ var enemy_deck_init:Array[int] = [0,1,2,3,4,5,6,3]
 func store_gamestate():
 	print(gamestate.board_e)
 	#print(gamestate.enemy_hand+gamestate.enemy_mana+gamestate.enemy_grave)
-	pass
 
-func start_attack_targeting(card):
-	gamestate.target_state = gamestate.TargetState.TARGETING_ATTACK
-	gamestate.pending_card = card
-	
-	highlight_attack_targets(card)
 
-func highlight_attack_targets(card:Card):
-	var targets = card.state.can_attack(gamestate)
-
-	for t:CardState in targets:
-		if t.card_node:
-			t.card_node.visual.show_target_highlight(true)
 
 func select_card(card):
 	selected_card = card
@@ -172,7 +160,6 @@ func draw_card(card: Card, from_pos: Vector2, to_pos: Vector2, duration: float =
 	card.state.controller.player_hand.reset()
 
 
-	
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
@@ -221,22 +208,20 @@ func _process(_delta: float) -> void:
 		$"../ButtonContainer/Cancel attack".disabled = true
 	prio.text = current_player.player_name
 	turn.text = GameEnums.TurnEnum.keys()[ TurnManager.current_phase]
-	high.text = TurnManager.highlighted.state.card_name+ " " + TurnManager.highlighted.state.pos if TurnManager.highlighted else "No focus"
+	high.text = TurnManager.highlighted.state.card_name+ " " + str(TurnManager.targeting) if TurnManager.highlighted else "No focus"
+
 func _on_cancel_attack_pressed() -> void:
 	if TurnManager.targeting:
 		TurnManager.targeting.movement.targeting_arrow.is_targeting = false
-		TurnManager.targeting.movement.targeting_arrow.complete_targeting()
-		
-	TurnManager.reset_highlited()
-	#TurnManager.targeting = null
+		ui.targeting_arrow.complete_targeting()
+	confirm_overlay.hide()
+	ui.reset_highlited()
+	TurnManager.targeting = null
 	TurnManager.current_phase = GameEnums.TurnEnum.MAIN
-	pass # Replace with function body.
+
 func _on_end_turn_button_pressed() -> void:
 	TurnManager.end_turn()
-	pass # Replace with function body.
-
 
 func mana_on_area_2d_input_event(_viewport: Node, _event: InputEvent, _shape_idx: int) -> void:
 	if _event is InputEventMouseButton and _event.pressed and _event.button_index == MOUSE_BUTTON_LEFT:
 		$"../CardListViewer".show_cards(gamestate.player_mana, "Mana")
-	pass # Replace with function body.

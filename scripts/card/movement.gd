@@ -74,11 +74,11 @@ func attack_card():
 	card.visual.attack.start_slam_attack(TurnManager.targeting,pending_target)
 #check if the drop area can accept the card
 func check_drop_area():
+	if not card.state.can_be_payed(TurnManager.game_manager.gamestate,card.state.mana_cost):
+		return false
 	var mouse_pos = card.get_global_mouse_position()
 	var space_state = card.get_world_2d().direct_space_state
 	var parameters = PhysicsPointQueryParameters2D.new()
-	if not card.state.can_be_payed(TurnManager.game_manager.gamestate,card.state.mana_cost):
-		return false
 	parameters.position= mouse_pos
 	parameters.collide_with_areas = true
 	parameters.collide_with_bodies = false
@@ -98,7 +98,7 @@ func check_drop_area():
 #dragging
 func check_and_return_to_hand():
 	card.state.controller.board.reset_higlight()
-	TurnManager.reset_highlited()
+	TurnManager.game_manager.ui.reset_highlited()
 	card.dragging = false
 	position = Vector2(0,0)
 	TurnManager.dragging = null
@@ -119,7 +119,7 @@ func animate_scale(target_scale: Vector2) -> void:
 func play_card_to_board(area: Node, rot = 0):
 	card.board_pos = area
 	TurnManager.dragging = null
-	TurnManager.reset_highlited()
+	TurnManager.game_manager.ui.reset_highlited()
 	print("dropped " + card.state.card_name + " on area " + area.name)
 	card.state.play_to_board(area.name, TurnManager.game_manager.gamestate)
 	card.get_parent().remove_child(card)

@@ -3,15 +3,18 @@ class_name UIManager
 var selected:String =""
 var done = false
 var selected_card: CardState = null
-var penting_target: CardState = null
+var pending_target: CardState = null
 var affected_b_slots: Array[Card]
 var targeting_arrow
+var attacker:Card
 var all_board_nodes:Array[Node] = []
 const _TARGETING_SCENE = preload("res://scenes/TargetingArrow.tscn")
+var selector:TargetSelector
 
 func _ready() -> void:
 	targeting_arrow = _TARGETING_SCENE.instantiate()
-	all_board_nodes = get_tree().get_nodes_in_group("slots")
+	all_board_nodes = TurnManager.game_manager.get_tree().get_nodes_in_group("slots")
+	
 func get_attack_targets(card) -> Array:
 	var targets = []
 	
@@ -24,9 +27,10 @@ func get_attack_targets(card) -> Array:
 
 	return targets
 
-func get_ranges(card:Card,slot):
+func get_ranges(card:Card):
 	var ranges = card.state.card_range
 	var aplied : Array[String] = []
+	print(all_board_nodes)
 	for node in all_board_nodes:
 		var origin = name.split("-")
 		for r in ranges :
@@ -38,15 +42,32 @@ func get_ranges(card:Card,slot):
 
 			elif node.name not in aplied:
 				node.og_color = (Vector4(0,0,0,0))
-func start_attack_targeting(card):
+func cancel_attack():
+	if selector and is_instance_valid(selector):
+		selector.cancel()
+		selector.clear_selection()
+		attacker.remove_child(selector)
+		selector.queue_free()
+
+func highlight_valid_slots(valid_slots: Array[String]):
+	for node in all_board_nodes:
+		if node.name in valid_slots:
+			node.set_color(Vector4(0, 1, 0, 0.75)) # green for valid
+		else:
+			node.reset_higlight()
+			
+func start_attack_targeting(card:Card):
+	attacker = card
 	var targets = get_attack_targets(card)
 	if targeting_arrow == null:
 		targeting_arrow = _TARGETING_SCENE.instantiate()
-	card.add_child(targeting_arrow)
+		card.add_child(targeting_arrow)
 	targeting_arrow.initiate_targeting()
-	var selector = TargetSelector.new()
-	add_child(selector)
-
+	if not selector:
+		selector = TargetSelector.new()
+		add_child(selector)
+	card.board_pos.color_range(false)
+	get_ranges(card)
 	selector.start_selection(targets)
 
 	selector.completed.connect(func(selected):
@@ -55,9 +76,18 @@ func start_attack_targeting(card):
 			card.movement.pending_target = selected[0].card_node
 			TurnManager.game_manager.request_confirmation("Attack "+card.state.card_name+"?", card.movement.attack_card)
 	)
+func start_attack():
+	attacker.movement.attack_card()
+var highlighted_slots : Array[Area2D] = []
+func reset_highlited():
+	for node:Area2D in highlighted_slots:
+		node.og_color = Vector4(0,0,0,0)
+func clear_slot_highlights():
+	for node in all_board_nodes:
+		node.reset_higlight()
 func select_slot(valid_slots: Array[String]) -> String:
 	TurnManager.selecting_slot = true
-	TurnManager.highlight_valid_slots(valid_slots)
+	highlight_valid_slots(valid_slots)
 
 	var chosen := ""
 	while TurnManager.selecting_slot and chosen == "":
@@ -67,7 +97,7 @@ func select_slot(valid_slots: Array[String]) -> String:
 				break
 		await TurnManager.game_manager.get_tree().process_frame
 
-	TurnManager.clear_slot_highlights()
+	clear_slot_highlights()
 	TurnManager.selecting_slot = false
 	return chosen
 
