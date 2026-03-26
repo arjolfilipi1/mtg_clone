@@ -28,7 +28,7 @@ func cancel():
 			t.card_node.pressed.disconnect(_on_target_clicked)
 
 
-	print("selection complete")
+	print("selection canceled")
 	queue_free()
 func _finalize_selection():
 	for t:CardState in valid_targets:
@@ -51,8 +51,8 @@ func _highlight(cs:CardState):
 func _unhighlight(cs:CardState):
 	if cs.card_node:
 		cs.card_node.visual.valid_target = false
-	cs.card_node.visual.tar.visible = false
-	cs.card_node.visual.sel.visible = false
+		cs.card_node.visual.tar.visible = false
+		cs.card_node.visual.sel.visible = false
 func _selhighlight(cs:CardState):
 	cs.card_node.visual.sel.visible = true
 func is_empty():

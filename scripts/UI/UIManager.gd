@@ -17,6 +17,58 @@ var enemy_mana_card_nr = 0
 var selecting_slot: bool = false
 var _effect_queue:Array = []
 var _effect_playing := false
+var _hover_timer: SceneTreeTimer = null
+var _hovered_card: Card = null
+
+func on_card_hovered(card: Card):
+	if _hover_timer:
+		_hover_timer.timeout.disconnect(_on_hover_timeout)
+		_hover_timer = null
+
+	if highlighted == card:
+		return  # already highlighted, nothing to do
+
+	if highlighted and highlighted != card:
+		_clear_card_highlight(highlighted)
+
+	highlighted = card
+	_hovered_card = card
+	_apply_card_highlight(card)
+
+func on_card_unhovered(card: Card):
+	_hovered_card = null
+	var delay = 1.0 if card.state.card_location == GameEnums.CardZone.FIELD else 0.3
+	_hover_timer = get_tree().create_timer(delay)
+	_hover_timer.timeout.connect(_on_hover_timeout.bind(card))
+
+func _on_hover_timeout(card: Card):
+	_hover_timer = null
+	if highlighted == card and _hovered_card != card:
+		_clear_card_highlight(card)
+		highlighted = null
+
+func _apply_card_highlight(card: Card):
+	card.parts_highlighted = true
+	card.z_index = card.card_index + 10
+	var tween = card.create_tween()
+	tween.tween_property(card, "scale", card.hover_scale, 0.2)\
+		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+
+func _clear_card_highlight(card: Card):
+	card.parts_highlighted = false
+	card.z_index = card.card_index
+	var tween = card.create_tween()
+	tween.tween_property(card, "scale", card.normal_scale, 0.2)\
+		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+func request_attack():
+	#card = action_panel.current_card
+	var valid_targets: Array = Game_Manager.selected_card.state.can_attack(Game_Manager.gamestate)
+	if valid_targets.is_empty():
+		return
+
+	get_viewport().set_input_as_handled()
+	AttackManager.begin_attack(Game_Manager.selected_card, valid_targets)
+
 
 func queue_effect(card:Card)-> void:
 	_effect_queue.append(card)
@@ -55,7 +107,6 @@ func get_ranges(card:Card):
 	var aplied : Array[String] = []
 	for node in all_board_nodes:
 		var origin = card.board_pos.name.split("-")
-		print(origin)
 		for r in ranges :
 			var parts = r.split(".")
 			if node.name == str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) ):
@@ -150,9 +201,11 @@ func ask_choice(options:Array,title:String = "Choose")->String:
 	return selected
 
 func show_stack(stack):
+	#todo
 	print(stack)
 
 func show_message(message):
+	#todo
 	print(message)
 	
 func select_card_from(cards: Array, title: String = "Select a card") -> CardState:

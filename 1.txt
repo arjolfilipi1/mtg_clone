@@ -1,371 +1,305 @@
-Great question! You're right that drag-and-drop detection with complex UI elements needs special handling. Here's a better approach using Godot's built-in drag system and hover detection:
+Here's a thorough critique across the files you've shared:
 
-## Solution: Use Godot's Drag & Drop System
+card.json — Data Design
+Mana_creation is a string, not an array.
+json"Mana_creation": "['red','red']"
+This stores a Python-style list as a raw string. It will need to be parsed manually everywhere it's used and is prone to bugs. It should be a proper JSON array: ["red", "red"].
+range uses encoded strings instead of structured data.
+json"range": ["1.0", "2.0", "2.1", "2.-1"]
+Encoding two integers as a dot-separated string ("row.col") is fragile. It would be cleaner as [{"row": 1, "col": 0}, ...] or at minimum a 2-element array [[1, 0], [2, 0]].
+Inconsistent effects field type. Most cards have either an array or an empty string "" for effects. An empty array [] is the correct default — mixing types makes every consumer check if effects is Array.
+Trailing comma in JSON (line 173): },] is invalid JSON. It may work in some lenient parsers, but it's a bug.
+power/toughness values seem arbitrary and inconsistent. Wind Crow has 200 toughness vs Skeleton's 10. If these represent HP or combat stats, some design documentation or constants would help maintainability.
+Hardcoded "earth" mana type exists in the mana cost object alongside standard MTG colors, but never appears as an actual mana card background ("background": "earth" on Earth Golem but "blue", "red" etc. elsewhere). Standardize color naming.
 
-### Step 1: Enable Drag on Cards
+UIManager.gd — Logic & Structure
+done and selected are shared state used by multiple async flows. Both ask_choice and select_card_from read and write the same done and selected/selected_card variables. If two UI operations overlap (unlikely but possible), they'll corrupt each other. A proper async pattern using a signal or a Promise-like wrapper per operation would be safer.
+select_slot is a busy-wait loop:
+gdscriptwhile selecting_slot and chosen == "":
+    ...
+    await Game_Manager.get_tree().process_frame
+This is technically functional in Godot with await, but it's an anti-pattern. A signal-based approach (emit when slot is clicked, await that signal) is cleaner and more Godot-idiomatic.
+show_stack and show_message are stub methods:
+gdscriptfunc show_stack(stack):
+    print(stack)
+func show_message(message):
+    print(message)
+These are clearly placeholders left in production code. They should either be implemented or marked with a TODO comment.
+get_attack_targets ignores its card parameter entirely. The function accepts a card but doesn't use it to filter targets by range or validity.
+get_ranges has a print left in: print(origin) on line 7533 is debug output that should be removed.
+highlighted_slots is declared but reset_highlited (typo: should be reset_highlighted) is defined separately from clear_slot_highlights, which does the same thing via a different path. These should be unified.
 
-In `Movement.gd`, modify the drag handling to use Godot's built-in drag system:
+TargetSelector (bottom of file)
+cancel() has misplaced code:
+gdscriptfunc cancel():
+    for t:CardState in valid_targets:
+        _unhighlight(t)
+        ...
+    print("selection complete")   # ← this is OUTSIDE the loop but inside cancel
+    queue_free()
+The print and queue_free() appear to be copy-pasted from _finalize_selection and don't belong in cancel. A cancellation should not print "selection complete."
+_unhighlight has a null-guard inconsistency:
+gdscriptfunc _unhighlight(cs:CardState):
+    if cs.card_node:
+        cs.card_node.visual.valid_target = false
+    cs.card_node.visual.tar.visible = false  # ← no guard here
+Lines after the if block access cs.card_node without checking it, which will crash if card_node is null.
 
-```gdscript
-# In Movement.gd
+TweenHelper.gd
+_on_tween_finished uses Array.erase() incorrectly. find_custom returns an index (integer), not the element itself. Array.erase() removes by value, not by index — so it would try to erase the integer, not the dictionary. The correct approach is remove_at(index) after bounds-checking.
+active_tweens is a static Dictionary keyed by Node references. This is a memory leak risk: if a node is freed without calling kill_all_tweens, the dictionary holds a dead reference forever. You should connect to the node's tree_exiting signal to auto-clean, or use weak references.
 
-func on_click(event):
-	if event is InputEventMouseButton:
-		var s: CardState = card.state
-		
-		if _is_mouse_over_button():
-			return
-		
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			# Mana selection
-			if s.player_controled and TurnManager.is_selecting_mana and not TurnManager.waiting_for_input and not s.controller.mana_selected and s.card_location == GameEnums.CardZone.HAND and event.pressed:
-				move_to_mana_zone()
-			
-			# Dragging from hand - Use Godot's drag system
-			elif s.player_controled and TurnManager.current_phase == GameEnums.TurnEnum.MAIN and not TurnManager.waiting_for_input and s.card_location == GameEnums.CardZone.HAND:
-				if event.pressed:
-					# Start drag with custom data
-					var drag_data = {
-						"card": card,
-						"card_state": s,
-						"original_position": card.global_position
-					}
-					
-					# Set up drag preview
-					var preview = Control.new()
-					preview.size = card.size
-					card.visual.set_drag_visuals(true)
-					
-					# Start the drag
-					var drag_result = card.control.start_drag(preview, drag_data)
-					card.dragging = true
-					card.offset = get_global_mouse_position() - card.global_position
-					raise()
-				else:
-					# Handle drop
-					check_and_return_to_hand()
+project.godot
+unused_signal warning suppressed globally:
+inigdscript/warnings/unused_signal=0
+Suppressing this engine-wide hides real bugs. Better to fix the unused signals or suppress per-file.
+Autoload naming is inconsistent — TurnManager, Game_Manager (with underscore), UI_Manager (with underscore), AttackManager (no underscore). Pick a convention and stick to it.
 
-func _is_mouse_over_button() -> bool:
-	"""Check if mouse is currently over any button"""
-	if not card.visual or not card.visual.buttons_container:
-		return false
-	
-	if not card.visual.buttons_container.visible:
-		return false
-	
-	var mouse_pos = card.get_global_mouse_position()
-	
-	for button in card.visual.buttons_container.get_children():
-		if button is BaseButton and button.visible:
-			var button_rect = Rect2(button.global_position, button.size)
-			if button_rect.has_point(mouse_pos):
-				return true
-	
-	return false
+Summary
+AreaSeverityIssuecard.jsonHighMana_creation stored as string, not arraycard.jsonHighTrailing comma (invalid JSON)UIManagerMediumShared done/selected mutable state across async flowsTargetSelectorHigh_unhighlight null-dereference crashTargetSelectorMediumcancel() copy-paste bugTweenHelperHigherase(find_custom(...)) — wrong API usageTweenHelperMediumMemory leak risk with dead node keysGeneralLowDebug print() calls left in production pathsGeneralLowAutoload naming inconsistency
+Overall the architecture is reasonable for a game jam or prototype — the effect/trigger system and tween helper show good design thinking. The main concerns are the data format issues in JSON, the null-safety gap in _unhighlight, and the TweenHelper bug which would silently fail to clean up tweens.I get an error if i register the autoload as UIManager, for example. That is the reason i named them like that. What steps do I need to take to move the highlightmanager for a node on each card to something that is used once per scene? Likely connected to the UI_manager.9:05 PMGood context on the naming — that's a known Godot 4 conflict where the autoload name clashes with the class_name. The fix is simple: either remove the class_name from the script, or give the autoload a different name (which you're already doing).
+For the HighlightManager migration, let me look at how it's currently used before recommending steps.Viewed 2 files, ran a commandViewed 2 files, ran a commandGood, I have a clear picture now. Here's what CardHighlightManager actually does and what needs to change:
+
+What the current design does
+Each Card node owns a CardHighlightManager child. That child manages:
+
+Hover state — tracking if the mouse is over the card or its buttons
+Scale tween — animating the card's scale up/down on hover
+UI_Manager.highlighted — setting/clearing the global "which card is hovered" reference
+A debounce timer — so moving from card to button doesn't flicker
+
+The reason it's per-card is that the tween and hover state are naturally local to each card. The problem is cost — N cards = N nodes, N tweens potentially allocated, N sets of signal connections.
+
+The migration plan
+Step 1 — Move hover detection to UI_Manager, keep tweens lightweight
+UI_Manager already has all_board_nodes and highlighted. The cleanest approach is to handle hover events centrally rather than having each card manage its own highlight node.
+Add to UIManager.gd:
+gdscriptvar _hover_timer: SceneTreeTimer = null
+var _hovered_card: Card = null
+
+func on_card_hovered(card: Card):
+    if _hover_timer:
+        _hover_timer.timeout.disconnect(_on_hover_timeout)
+        _hover_timer = null
+
+    if highlighted == card:
+        return  # already highlighted, nothing to do
+
+    if highlighted and highlighted != card:
+        _clear_card_highlight(highlighted)
+
+    highlighted = card
+    _hovered_card = card
+    _apply_card_highlight(card)
+
+func on_card_unhovered(card: Card):
+    _hovered_card = null
+    var delay = 1.0 if card.state.card_location == GameEnums.CardZone.FIELD else 0.3
+    _hover_timer = get_tree().create_timer(delay)
+    _hover_timer.timeout.connect(_on_hover_timeout.bind(card))
+
+func _on_hover_timeout(card: Card):
+    _hover_timer = null
+    if highlighted == card and _hovered_card != card:
+        _clear_card_highlight(card)
+        highlighted = null
+
+func _apply_card_highlight(card: Card):
+    card.parts_highlighted = true
+    card.z_index = card.card_index + 10
+    var tween = card.create_tween()
+    tween.tween_property(card, "scale", card.hover_scale, 0.2)\
+        .set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+
+func _clear_card_highlight(card: Card):
+    card.parts_highlighted = false
+    card.z_index = card.card_index
+    var tween = card.create_tween()
+    tween.tween_property(card, "scale", card.normal_scale, 0.2)\
+        .set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+Note: the current_scale_tween tracking from the old manager isn't needed here — Godot automatically kills a card.create_tween() if the node is freed, and since each hover event creates a new tween it will interrupt the previous one naturally. If you want to be explicit, you can store one tween per card in a Dictionary keyed by card instance ID.
+
+Step 2 — Simplify Card.gd
+In Card.gd, replace all the highlight_manager wiring:
+gdscript# REMOVE these:
+@onready var highlight_manager: CardHighlightManager = $HighlightManager
+# and the setup block that does has_node("HighlightManager") etc.
+# and the button signal connections to highlight_manager
+
+# REPLACE mouse entered/exited handlers with:
+func _on_mouse_entered():
+    UI_Manager.on_card_hovered(self)
+
+func _on_mouse_exited():
+    UI_Manager.on_card_unhovered(self)
 ```
 
-### Step 2: Make Board Slots Accept Drag Data
+For the **button hover** problem (moving from card to button would trigger unhover), you have two options:
 
-In `BoardSlot.gd`, implement drag detection:
+**Option A — Simpler:** Set `mouse_filter = MOUSE_FILTER_PASS` on the action panel buttons so mouse events pass through to the card's area and the card never technically "unhover".
 
-```gdscript
-extends Area2D
+**Option B — Explicit:** Connect each button's `mouse_entered`/`mouse_exited` to the same `UI_Manager` functions and track a `_button_hovered` flag inside `UI_Manager` alongside `_hovered_card`.
 
-# Add drag detection properties
-var is_drag_hovered := false
-var drag_data: Dictionary = {}
+Option A is less code and usually works unless your button sits outside the card's collision area.
 
-func _ready() -> void:
-	pos = pos_dict[self.name] + sp.position + Vector2(-100, -127)
-	
-	# Connect signals
-	mouse_entered.connect(_on_mouse_entered)
-	mouse_exited.connect(_on_mouse_exited)
-	
-	# Enable drag monitoring
-	set_process(true)
-	
-	# For drag detection - we need to monitor mouse position during drag
-	# This is much lighter than full collision detection
+---
 
-func _process(_delta: float) -> void:
-	# Only check drag hover if something is being dragged
-	if TurnManager.dragging:
-		_update_drag_hover()
-	
-	# Visual updates
-	if og_color:
-		set_color(og_color)
-	elif og_color == null or og_color == Vector4(0,0,0,0):
-		reset_higlight()
-	
-	# Card hover handling (existing)
-	if is_hovered and card_list:
-		card_list[0].movement.highlighted = true
-		TurnManager.highlighted = card_list[0]
-		card_list[0].movement.animate_scale(card_list[0].hover_scale)
-	elif is_hovered == false and len(card_list) > 0:
-		var card = card_list[0]
-		if is_instance_valid(card) and card.movement:
-			card.movement.highlighted = false
-			card.movement.animate_scale(card.normal_scale)
-		else:
-			card_list.erase(card)
+### Step 3 — Remove `HighlightManager` from `Card.tscn`
 
-func _update_drag_hover():
-	"""Lightweight drag hover detection"""
-	if not TurnManager.dragging:
-		is_drag_hovered = false
-		return
-	
-	# Get mouse position in global coordinates
-	var mouse_pos = get_global_mouse_position()
-	
-	# Check if mouse is inside this slot's area
-	# Instead of physics query, use simple rect check with collision polygon
-	var is_inside = _is_point_in_collision_polygon(mouse_pos)
-	
-	if is_inside != is_drag_hovered:
-		is_drag_hovered = is_inside
-		if is_drag_hovered:
-			_on_drag_hover_enter()
-		else:
-			_on_drag_hover_exit()
+In the scene file, delete:
+```
+[ext_resource type="Script" path="res://scripts/systems/HighlightManager.gd" id="33_map77"]
+...
+[node name="HighlightManager" type="Node" parent="."]
+And remove load_steps=45 → load_steps=44 (or let Godot recalculate it on next save).
 
-func _is_point_in_collision_polygon(point: Vector2) -> bool:
-	"""Check if a point is inside the collision polygon - faster than physics query"""
-	# Transform point to local coordinates
-	var local_point = to_local(point)
-	
-	# Get the collision polygon
-	var collision_shape = $CollisionPolygon2D
-	if collision_shape and collision_shape.polygon:
-		return Geometry2D.is_point_in_polygon(local_point, collision_shape.polygon)
-	
-	# Fallback to simple bounding box
-	return get_rect().has_point(point)
+Step 4 — Delete (or repurpose) HighlightManager.gd
+Once the above is done, HighlightManager.gd can be deleted. If you want to keep the force_clear concept, add a force_clear_highlight(card: Card) method to UI_Manager that calls _clear_card_highlight directly — useful when a card is destroyed or moves zones.
 
-func _on_drag_hover_enter():
-	"""Called when a dragged card enters this slot"""
-	if TurnManager.dragging and accepts_card(TurnManager.dragging, TurnManager.game_manager.gamestate):
-		set_color(Vector4(0, 1, 0, 0.75))
-		# Also highlight attack range if needed
-		highlight_range()
-	else:
-		set_color(Vector4(1, 0, 0, 0.75))
+What you gain
 
-func _on_drag_hover_exit():
-	"""Called when a dragged card exits this slot"""
-	reset_higlight()
-	
-	# Restore any range highlighting
-	if TurnManager.dragging:
-		highlight_range()
+One set of timer/tween logic instead of one per card
+Hover state is authoritative in one place (UI_Manager.highlighted) rather than being partially managed there and partially in each card
+Fewer nodes in the scene tree per card (small but real CPU/memory saving at scale)
+Easier to add future effects like "highlight all cards of the same type on hover" since the central manager has context about all cards
+**Option B — Explicit:** Connect each button's mouse_entered/mouse_exited to the same UI_Manager functions and track a _button_hovered flag inside UI_Manager alongside _hovered_card. I want this10:56 PMLet me look at how the buttons are currently connected and what the Card.gd setup looks like.Reading Card.gd setup and button connection codeReading Card.gd setup and button connection codeGood, I have everything I need. Here are all the changes, file by file:
 
-func accepts_card(_card: Control, game: MTGGameState) -> bool:
-	"""Check if slot can accept the card"""
-	if _card.state.controller.board != self.get_parent():
-		return false
-	if not _card.state.can_be_payed(game, _card.state.mana_cost):
-		return false
-	if not card_list.is_empty():
-		return false
-	return true
+UIManager.gd — add the highlight system
+Add these variables at the top with the others:
+gdscriptvar _hovered_card: Card = null
+var _button_hovered: bool = false
+var _hover_timer: SceneTreeTimer = null
+var _hover_timer_card: Card = null  # which card the timer is counting down for
+Then add these functions:
+gdscriptfunc on_card_hovered(card: Card):
+    if _hover_timer and _hover_timer_card == card:
+        _hover_timer.timeout.disconnect(_on_hover_timeout)
+        _hover_timer = null
+        _hover_timer_card = null
 
-# Keep your existing hover methods for non-drag hover
-func _on_mouse_entered() -> void:
-	is_hovered = true
-	if not TurnManager.dragging:  # Only show hover if not dragging
-		if not overlay:
-			overlay = $overlay
-		if overlay and overlay.material is ShaderMaterial:
-			overlay.material.set_shader_parameter("Enable_Effects", true)
-			overlay.material.set_shader_parameter("Border_Color", Vector4(0, 0, 1, 1))
+    _hovered_card = card
 
-func _on_mouse_exited() -> void:
-	is_hovered = false
-	if not TurnManager.dragging:  # Only clear if not dragging
-		if not overlay:
-			overlay = $overlay
-		if overlay and overlay.material is ShaderMaterial:
-			overlay.material.set_shader_parameter("Enable_Effects", false)
-			overlay.material.set_shader_parameter("Border_Color", Vector4(0, 0, 1, 0))
+    if highlighted == card:
+        return
+
+    if highlighted and highlighted != card:
+        _clear_card_highlight(highlighted)
+
+    highlighted = card
+    _apply_card_highlight(card)
+
+func on_card_unhovered(card: Card):
+    _hovered_card = null
+    _schedule_clear(card)
+
+func on_button_hovered(card: Card):
+    _button_hovered = true
+    # Cancel any pending clear for this card
+    if _hover_timer and _hover_timer_card == card:
+        _hover_timer.timeout.disconnect(_on_hover_timeout)
+        _hover_timer = null
+        _hover_timer_card = null
+
+func on_button_unhovered(card: Card):
+    _button_hovered = false
+    # Only schedule clear if the mouse has also left the card itself
+    if _hovered_card != card:
+        _schedule_clear(card)
+
+func _schedule_clear(card: Card):
+    if _hover_timer:
+        _hover_timer.timeout.disconnect(_on_hover_timeout)
+    var delay = 1.0 if card.state.card_location == GameEnums.CardZone.FIELD else 0.3
+    _hover_timer = get_tree().create_timer(delay)
+    _hover_timer_card = card
+    _hover_timer.timeout.connect(_on_hover_timeout.bind(card))
+
+func _on_hover_timeout(card: Card):
+    _hover_timer = null
+    _hover_timer_card = null
+    if highlighted == card and _hovered_card != card and not _button_hovered:
+        _clear_card_highlight(card)
+        highlighted = null
+
+func _apply_card_highlight(card: Card):
+    card.parts_highlighted = true
+    card.z_index = card.card_index + 10
+    var tween = card.create_tween()
+    tween.tween_property(card, "scale", card.hover_scale, 0.2) \
+        .set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+
+func _clear_card_highlight(card: Card):
+    card.parts_highlighted = false
+    card.z_index = card.card_index
+    var tween = card.create_tween()
+    tween.tween_property(card, "scale", card.normal_scale, 0.2) \
+        .set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+
+func force_clear_highlight(card: Card):
+    if _hover_timer and _hover_timer_card == card:
+        _hover_timer.timeout.disconnect(_on_hover_timeout)
+        _hover_timer = null
+        _hover_timer_card = null
+    _hovered_card = null
+    _button_hovered = false
+    _clear_card_highlight(card)
+    if highlighted == card:
+        highlighted = null
+
+Card.gd — remove highlight_manager, rewire signals
+Remove:
+gdscript@onready var highlight_manager: CardHighlightManager = $HighlightManager
+In _exit_tree, replace:
+gdscriptif highlight_manager:
+    if highlight_manager.current_scale_tween and highlight_manager.current_scale_tween.is_valid():
+        highlight_manager.current_scale_tween.kill()
+With:
+gdscriptUI_Manager.force_clear_highlight(self)
+In _ready, remove the entire has_node("HighlightManager") block:
+gdscript# DELETE this whole block:
+if not has_node("HighlightManager"):
+    var hm = CardHighlightManager.new()
+    hm.name = "HighlightManager"
+    add_child(hm)
+    highlight_manager = hm
+Replace _on_mouse_entered and _on_mouse_exited:
+gdscriptfunc _on_mouse_entered():
+    Game_Manager.select_card(self)
+    UI_Manager.on_card_hovered(self)
+
+func _on_mouse_exited():
+    UI_Manager.on_card_unhovered(self)
+Replace _connect_button_signals:
+gdscriptfunc _connect_button_signals():
+    if not visual or not visual.buttons_container:
+        return
+
+    for button in visual.buttons_container.get_children():
+        if not button is BaseButton:
+            continue
+
+        if button.is_connected("mouse_entered", Callable(UI_Manager, "on_button_hovered")):
+            button.mouse_entered.disconnect(UI_Manager.on_button_hovered)
+        if button.is_connected("mouse_exited", Callable(UI_Manager, "on_button_unhovered")):
+            button.mouse_exited.disconnect(UI_Manager.on_button_unhovered)
+
+        button.mouse_entered.connect(UI_Manager.on_button_hovered.bind(self))
+        button.mouse_exited.connect(UI_Manager.on_button_unhovered.bind(self))
+Note the .bind(self) passes the card (not the button) to the handler, since UI_Manager needs to know which card's highlight to manage, not which button was hovered.
+In send_to_grave, replace:
+gdscriptif highlight_manager:
+    highlight_manager.force_clear()
+With:
+gdscriptUI_Manager.force_clear_highlight(self)
 ```
 
-### Step 3: Optimize Range Highlighting
+---
 
-Create a separate system for range highlighting that only updates when needed:
+## `Card.tscn` — remove the node
 
-```gdscript
-# In BoardSlot.gd
-
-# Cache the range slots for faster lookup
-var _cached_range_slots: Array[Area2D] = []
-var _range_dirty: bool = true
-
-func color_range(dragging = true):
-	"""Optimized range highlighting"""
-	all_nodes = get_tree().get_nodes_in_group("slots")
-	var ranges: Array
-	
-	if dragging:
-		ranges = TurnManager.dragging.card_data.get('range', [])
-	elif TurnManager.targeting and TurnManager.targeting.state.card_location == GameEnums.CardZone.FIELD:
-		ranges = TurnManager.targeting.card_data.get('range', [])
-	else:
-		return
-	
-	# Cache the result for this slot/range combination
-	if _range_dirty or ranges != _cached_ranges:
-		_cached_ranges = ranges
-		_cached_range_slots.clear()
-		
-		var origin = name.split("-")
-		var origin_x = int(origin[0])
-		var origin_y = int(origin[1])
-		
-		for node in all_nodes:
-			var slot_name = node.name
-			var in_range = false
-			
-			for r in ranges:
-				var parts = r.split(".")
-				var target_x = origin_x - int(parts[0])
-				var target_y = origin_y - int(parts[1])
-				if slot_name == str(target_x) + "-" + str(target_y):
-					in_range = true
-					break
-			
-			if in_range:
-				_cached_range_slots.append(node)
-				node.set_color(Vector4(0.8, 0, 0, 0.75))
-				node.og_color = Vector4(0.8, 0, 0, 0.75)
-			else:
-				if node.og_color == Vector4(0.8, 0, 0, 0.75):
-					node.og_color = Vector4(0, 0, 0, 0)
-		
-		_range_dirty = false
-	
-	TurnManager.highlighted_slots = _cached_range_slots
-
-func highlight_range() -> void:
-	"""Called when drag enters slot - update range if needed"""
-	if TurnManager.dragging and TurnManager.dragging.state.is_creature:
-		if TurnManager.dragging.state.can_be_payed(TurnManager.game_manager.gamestate, TurnManager.dragging.state.mana_cost):
-			_range_dirty = true
-			color_range()
-
-func reset_higlight():
-	"""Reset highlight"""
-	if not overlay:
-		overlay = $overlay
-	if overlay and overlay.material is ShaderMaterial:
-		overlay.material.set_shader_parameter("Enable_Effects", false)
-		overlay.material.set_shader_parameter("Border_Color", Vector4(0, 0, 0, 0))
-	is_drag_hovered = false
+Delete these two lines from the scene file:
 ```
-
-### Step 4: Create a Global Drag Manager (Optional but Recommended)
-
-Create `scripts/systems/DragManager.gd`:
-
-```gdscript
-extends Node
-class_name DragManager
-
-static var is_dragging: bool = false
-static var dragged_card: Card = null
-static var current_hover_slot: Area2D = null
-
-static func start_drag(card: Card):
-	is_dragging = true
-	dragged_card = card
-	current_hover_slot = null
-
-static func end_drag():
-	is_dragging = false
-	dragged_card = null
-	current_hover_slot = null
-
-static func update_hover_slot(slot: Area2D):
-	if current_hover_slot == slot:
-		return
-	
-	# Exit previous slot
-	if current_hover_slot:
-		current_hover_slot._on_drag_hover_exit()
-	
-	# Enter new slot
-	current_hover_slot = slot
-	if slot:
-		slot._on_drag_hover_enter()
-```
-
-### Step 5: Update Movement.gd to Use Drag Manager
-
-```gdscript
-# In Movement.gd, replace on_click with:
-
-func on_click(event):
-	if event is InputEventMouseButton:
-		var s: CardState = card.state
-		
-		if _is_mouse_over_button():
-			return
-		
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			# Mana selection
-			if s.player_controled and TurnManager.is_selecting_mana and not TurnManager.waiting_for_input and not s.controller.mana_selected and s.card_location == GameEnums.CardZone.HAND and event.pressed:
-				move_to_mana_zone()
-			
-			# Dragging from hand
-			elif s.player_controled and TurnManager.current_phase == GameEnums.TurnEnum.MAIN and not TurnManager.waiting_for_input and s.card_location == GameEnums.CardZone.HAND:
-				if event.pressed:
-					DragManager.start_drag(card)
-					TurnManager.dragging = card
-					card.dragging = true
-					card.offset = get_global_mouse_position() - card.global_position
-					card.visual.set_drag_visuals(true)
-					raise()
-				else:
-					# Check drop with DragManager
-					if DragManager.current_hover_slot:
-						var slot = DragManager.current_hover_slot
-						if slot.accepts_card(card, TurnManager.game_manager.gamestate):
-							play_card_to_board(slot, slot.scew_dict[slot.name])
-							DragManager.end_drag()
-						else:
-							check_and_return_to_hand()
-					else:
-						check_and_return_to_hand()
-	
-	elif event is InputEventMouseMotion and card.dragging and card.state.card_location == GameEnums.CardZone.HAND:
-		card.global_position = get_global_mouse_position() - card.offset
-		rotation = 0
-		
-		# Update drag hover - check all slots
-		var mouse_pos = card.get_global_mouse_position()
-		for slot in card.state.controller.board.board_slots:
-			if slot._is_point_in_collision_polygon(mouse_pos):
-				DragManager.update_hover_slot(slot)
-				return
-		DragManager.update_hover_slot(null)
-```
-
-## Benefits of This Approach:
-
-1. **No frame-by-frame collision checks** - Uses Godot's built-in drag system with point-in-polygon checks only when dragging
-2. **Cleaner separation** - Drag logic is isolated from regular hover logic
-3. **Cached range calculations** - Range highlighting only recomputes when needed
-4. **Better performance** - `_process()` is now extremely lightweight
-5. **Works with complex UI** - Button detection remains separate from slot detection
-
-## How It Works:
-
-1. **Dragging**: When a card is clicked, we store it in `DragManager` and start dragging
-2. **Hover Detection**: During drag, we check the mouse position against each slot's collision polygon
-3. **Range Caching**: Range calculations are cached and only recomputed when the drag enters a new slot
-4. **Visual Feedback**: Slots change color based on whether they can accept the card
-5. **Drop**: When releasing, we check the currently hovered slot and play the card there
-
-This approach is much more efficient than checking every frame for collision, while still providing responsive visual feedback during drag!
+[ext_resource type="Script" path="res://scripts/systems/HighlightManager.gd" id="33_map77"]
+...
+[node name="HighlightManager" type="Node" parent="."]
+Then delete HighlightManager.gd entirely. The _connect_button_signals call site doesn't change — wherever it's called from in your code stays the same, since the function still exists on Card, just rewired internally.

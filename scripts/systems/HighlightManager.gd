@@ -9,6 +9,7 @@ var is_hovered: bool = false
 var is_highlighted: bool = false
 var current_scale_tween: Tween
 var _clear_timer: SceneTreeTimer = null
+
 func _exit_tree():
 	"""Clean up when highlight manager is destroyed"""
 	if current_scale_tween and current_scale_tween.is_valid():
@@ -24,11 +25,6 @@ func _ready():
 	
 	# Find references - try multiple paths
 	visual = card.get_node_or_null("vizual")
-	
-
-
-
-
 
 
 

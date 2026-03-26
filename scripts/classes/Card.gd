@@ -5,7 +5,7 @@ var card_index = 10
 signal pressed(Node)
 #data of the card
 #store data from card database
-var card_data = {}
+
 var state:CardState
 #location hand,mana,field etc
 var board_pos:Area2D = null
@@ -46,7 +46,6 @@ func setup(data,_controller):
 	state.controller = _controller
 	state.card_node = self
 	state.player_controled = true if state.controller.is_human else false
-	card_data = data
 	state.setup(data)
 	visual.set_background_color()
 	var new_texture = load("res://assets/art/" + data['image'])

@@ -230,7 +230,7 @@ func _process(_delta: float) -> void:
 	
 	prio.text = current_player.player_name
 	turn.text = GameEnums.TurnEnum.keys()[ TurnManager.current_phase]
-	high.text = UI_Manager.highlighted.state.card_name+ " " + str(TurnManager.targeting) if UI_Manager.highlighted else "No focus"
+	high.text = UI_Manager.selected+ " " + str(TurnManager.targeting) if UI_Manager.highlighted else "No focus"
 
 func _on_cancel_attack_pressed() -> void:
 	AttackManager.cancel_attack()

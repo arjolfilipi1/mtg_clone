@@ -65,10 +65,10 @@ func color_range(dragging = true):
 	var _coloring_type: String = ""
 	if dragging:
 		_coloring_type = "to_play"
-		ranges  = (TurnManager.dragging.card_data['range'])
+		ranges  = (TurnManager.dragging.state.card_range)
 	elif TurnManager.targeting:
 		if TurnManager.targeting.state.card_location == GameEnums.CardZone.FIELD:
-			ranges = (TurnManager.targeting.card_data['range'])
+			ranges = (TurnManager.targeting.state.card_range)
 	var aplied : Array[String] = []
 	var altered: Array[Area2D] = []
 	for node in all_nodes:
@@ -115,7 +115,7 @@ func _process(_delta: float) -> void:
 		else:
 		# Remove invalid card from list
 			card_list.erase(card)
-	pass
+
 func reset_higlight():
 	if  not overlay:overlay = $overlay
 	if overlay:
@@ -127,6 +127,7 @@ func set_color(color:Vector4):
 	if  not overlay:overlay = $overlay
 	overlay.material.set_shader_parameter("Enable_Effects",  true)
 	overlay.material.set_shader_parameter("Border_Color",  color)
+	
 func _on_input_event(_viewport: Node, _event: InputEvent, _shape_idx: int) -> void:
 	pass # Replace with function body.
 
