@@ -62,8 +62,8 @@ func send_to_grave():
 		get_parent().remove_child(self)
 	if board_pos:
 		board_pos.card_list.erase(self)
-	if TurnManager.highlighted == self:
-		TurnManager.highlighted = null
+	if UI_Manager.highlighted == self:
+		UI_Manager.highlighted = null
 	queue_free()
 
 
@@ -86,7 +86,7 @@ func _ready():
 	scale = normal_scale
 	state.deleted.connect(visual.burnCard)
 	state.attack_signal.connect(visual.attack.start_slam_attack)
-	state.activated_effect.connect(visual.show_effect)
+	state.activated_effect.connect(func(_eff):UI_Manager.queue_effect(self))
 	
 	# Setup proper mouse filtering
 	mouse_filter = Control.MOUSE_FILTER_PASS
@@ -117,10 +117,6 @@ func _on_mouse_exited():
 		
 func _process(_delta: float) -> void:
 
-	# Original process logic
-	if TurnManager.highlighted != self:
-		#movement.animate_scale(normal_scale)
-		pass
 	if state.summoned_on_turn == TurnManager.turn:
 		pass
 	else:

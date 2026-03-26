@@ -18,23 +18,7 @@ func move_target():
 	for pos in card.state.can_move(Game_Manager.gamestate):
 		print(pos)
 #attack visuals
-func attack_target():
-	if card.is_ancestor_of(targeting_arrow):
-		pass
-	else:
-		card.add_child(targeting_arrow)
-	targeting_arrow.initiate_targeting()
-	var sn:String = TurnManager.targeting.board_pos.name
-	var origin = sn.split("-")
-	for player:Player in TurnManager.players:
-		for slot in  (player.board.board_slots):
-			if slot.card_list:
-				var ranges :Array = TurnManager.targeting.card_data['range']
-				for r in ranges :
-					var parts = r.split(".")
-					if slot.name == str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) ):
-						for c:Card in slot.card_list:
-							pass
+
 
 
 func on_click(event):
@@ -59,9 +43,11 @@ func on_click(event):
 					check_and_return_to_hand()
 			
 			# Attack targeting
-			elif TurnManager.targeting and card.visual.valid_target and TurnManager.current_phase == GameEnums.TurnEnum.ATTACK and s.card_location == GameEnums.CardZone.FIELD and event.pressed:
-				TurnManager.targeting.movement.pending_target = card
-				Game_Manager.request_confirmation("Attack "+card.state.card_name+"?", attack_card)
+			elif TurnManager.current_phase == GameEnums.TurnEnum.ATTACK \
+			and card.visual.valid_target \
+			and s.card_location == GameEnums.CardZone.FIELD and event.pressed:
+				AttackManager.on_target_clicked(card)
+				get_viewport().set_input_as_handled()
 	
 	elif event is InputEventMouseMotion and card.dragging and card.state.card_location == GameEnums.CardZone.HAND:
 		card.global_position = get_global_mouse_position() - card.offset
@@ -69,9 +55,7 @@ func on_click(event):
 
 
 #calls the attack animation
-func attack_card():
-	print("move",TurnManager.targeting.card_data["name"])
-	card.visual.attack.start_slam_attack(TurnManager.targeting,pending_target)
+
 #check if the drop area can accept the card
 func check_drop_area():
 	if not card.state.can_be_payed(Game_Manager.gamestate,card.state.mana_cost):
@@ -142,11 +126,11 @@ func move_to_mana_zone():
 	card.state.controller.mana_selected = true
 	
 	if card.state.player_controled:
-		TurnManager.player_mana_card_nr += 1
-		mana_index = TurnManager.player_mana_card_nr
+		UI_Manager.player_mana_card_nr += 1
+		mana_index = UI_Manager.player_mana_card_nr
 	else:
-		TurnManager.enemy_mana_card_nr += 1
-		mana_index = TurnManager.enemy_mana_card_nr
+		UI_Manager.enemy_mana_card_nr += 1
+		mana_index = UI_Manager.enemy_mana_card_nr
 	
 	var start_pos = card.global_position
 	card.state.to_mana(Game_Manager.gamestate)

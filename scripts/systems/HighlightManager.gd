@@ -70,7 +70,7 @@ func _delayed_clear_check():
 
 func _delayed_clear():
 	_clear_timer = null
-	if not is_hovered  and TurnManager.highlighted != card:
+	if not is_hovered  and UI_Manager.highlighted != card:
 		_clear_highlight()
 
 func _update_highlight():
@@ -98,7 +98,7 @@ func _update_highlight():
 	
 	# Set global highlighted reference
 	if card.state and card.state.controller and card.state.controller.is_human:
-		TurnManager.highlighted = card
+		UI_Manager.highlighted = card
 
 func _clear_highlight():
 	if not is_highlighted:
@@ -120,8 +120,8 @@ func _clear_highlight():
 
 	
 	# Clear global reference if this card was highlighted
-	if TurnManager.highlighted == card:
-		TurnManager.highlighted = null
+	if UI_Manager.highlighted == card:
+		UI_Manager.highlighted = null
 
 
 func force_clear():

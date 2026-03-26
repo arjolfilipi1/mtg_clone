@@ -123,13 +123,13 @@ func effect_targets(gs:MTGGameState, eff:Effect_class):
 	return res
 
 #runs the effect
-func apply_effect(effect:Effect_class,game = TurnManager):
+func apply_effect(effect:Effect_class,game:MTGGameState = Game_Manager.gamestate):
 	if real:
 		TurnManager.waiting_for_input = true
 	if effect:
-		var targets = effect_targets(game.game_manager.gamestate,effect)
+		var targets = effect_targets(game,effect)
 		var ctx = {
-		"game": game.game_manager.gamestate,
+		"game": game,
 		"controller": controller,
 		"source": self,
 		"targets": targets
@@ -146,18 +146,18 @@ func apply_effect(effect:Effect_class,game = TurnManager):
 				return
 			ctx.targets = chosen_targets
 		activated_effect.emit(effect)
-		game.game_manager.gamestate.push_to_stack({
+		game.push_to_stack({
 		"effect":effect,
 		"source":self,
 		"controller":self.controller,
 		"context":ctx
 	})
-		await game.game_manager.gamestate.on_card_event( Card_event.e.ON_EFFECT_ACTIVATED,self, ctx.targets)
+		await game.on_card_event( Card_event.e.ON_EFFECT_ACTIVATED,self, ctx.targets)
 		
 		#await EffectRunner.apply_effect(effect,ctx)
 		TurnManager.waiting_for_input = false
 		if card_type == GameEnums.CardType.SPELL and effect.trigger_spec == "on_play":
-			destroy_card(game.game_manager.gamestate)
+			destroy_card(game)
 
 func can_respond(game:MTGGameState,index:int)-> bool:
 	var eff = effects[index]

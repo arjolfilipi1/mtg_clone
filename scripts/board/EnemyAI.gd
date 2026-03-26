@@ -53,7 +53,7 @@ func get_best_mana_card(hand: Array, mana_need: Mana) -> Card:
 	return best_card
 func select_mana():
 	
-	TurnManager.debug.text += "Enemy is playing card to mana \n"
+	UI_Manager.debug.text += "Enemy is playing card to mana \n"
 	pl.mana_selected = true
 	#await get_tree().create_timer(1.0).timeout
 	var all_nodes = pl.player_hand.get_children()
@@ -130,7 +130,7 @@ func _process(_delta):
 		if TurnManager.current_phase==GameEnums.TurnEnum.MAIN and card_played == false and thinking == false:
 			thinking = true
 			print("Enemy is thinking of playing card to field")
-			TurnManager.debug.text += "Enemy is playing card to field \n"
+			UI_Manager.debug.text += "Enemy is playing card to field \n"
 			enemy_play_card()
 		elif TurnManager.current_phase==GameEnums.TurnEnum.ATTACK:
 			attacker.attack(attacker,defender)

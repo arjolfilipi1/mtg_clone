@@ -163,7 +163,7 @@ func _on_attack_complete() -> void:
 	
 	card.position = original_position
 	card.scale = original_scale
-	TurnManager.game_manager.cm.execute_attack(card, target, TurnManager.game_manager.gamestate)
+	Game_Manager.cm.execute_attack(card, target, Game_Manager.gamestate)
 	can_attack = true
 	
 	# Clean up tweens

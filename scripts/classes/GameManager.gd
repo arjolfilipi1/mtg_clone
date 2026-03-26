@@ -50,19 +50,12 @@ func select_card(card):
 
 func setup():
 	gamestate = MTGGameState.new()
-	gamestate.stack_changed.connect(await  TurnManager.handle_stack_phase)
+	gamestate.stack_changed.connect(TurnManager.handle_stack_phase)
 	spawn_players()
 	load_cards()
 	start_game()
 	TurnManager.end_phase.connect(gamestate.end_phase_triggers)
 	TurnManager.end_of_turn.connect(gamestate.on_turn_end_triggers)
-	for c in enemy_board.get_children():
-		if c.is_in_group("enemy_slots"):
-			TurnManager.board_slots[c.name] = c
-	for c in player_board.get_children():
-		if c.is_in_group("player_slots"):
-			TurnManager.board_slots[c.name] = c
-
 	cm = CombatManager.new()
 	# Connect overlay signals
 	setup_finished = true
@@ -146,7 +139,7 @@ func register_main(n:Node):
 func start_game():
 	#Engine.time_scale = 0.1
 	TurnManager.current_phase = GameEnums.TurnEnum.DRAW
-	TurnManager.debug = debug
+	UI_Manager.debug = debug
 	for i in range(5):
 		var card_id = player_deck_init.pop_at(0)
 		initial_draw_card(player1,card_id)
@@ -195,10 +188,10 @@ func draw_card(card: Card, from_pos: Vector2, to_pos: Vector2, duration: float =
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			if TurnManager.targeting and TurnManager.target_kind == GameEnums.TargetKind.ATTACK:
+			if TurnManager.current_phase == GameEnums.TurnEnum.ATTACK:
 				_on_cancel_attack_pressed()
-
-			get_viewport().set_input_as_handled()  # Prevent other nodes from processing
+				get_viewport().set_input_as_handled()
+				
 func _process(_delta: float) -> void:
 	if not setup_finished:
 		return
@@ -210,7 +203,7 @@ func _process(_delta: float) -> void:
 	else:
 		stack_view.clear()
 	#debug putton size
-	if TurnManager.highlighted:
+	if UI_Manager.highlighted:
 
 		sp.text = "vt" + str(gamestate.player_mana )
 		sl.text = str(gamestate.enemy_deck )
@@ -232,21 +225,16 @@ func _process(_delta: float) -> void:
 		TurnManager.is_selecting_mana = true
 	if TurnManager.current_phase == GameEnums.TurnEnum.DRAW and current_player.did_draw == false:
 		
-		TurnManager.debug.text += current_player.player_name+" drawing \n"
+		UI_Manager.debug.text += current_player.player_name+" drawing \n"
 		current_player.draw(gamestate)
 	
 	prio.text = current_player.player_name
 	turn.text = GameEnums.TurnEnum.keys()[ TurnManager.current_phase]
-	high.text = TurnManager.highlighted.state.card_name+ " " + str(TurnManager.targeting) if TurnManager.highlighted else "No focus"
+	high.text = UI_Manager.highlighted.state.card_name+ " " + str(TurnManager.targeting) if UI_Manager.highlighted else "No focus"
 
 func _on_cancel_attack_pressed() -> void:
-	if TurnManager.targeting:
-		TurnManager.targeting.movement.targeting_arrow.is_targeting = false
-		UI_Manager.targeting_arrow.complete_targeting()
+	AttackManager.cancel_attack()
 	confirm_overlay.hide()
-	UI_Manager.reset_highlited()
-	TurnManager.targeting = null
-	TurnManager.current_phase = GameEnums.TurnEnum.MAIN
 
 func _on_end_turn_button_pressed() -> void:
 	TurnManager.end_turn()

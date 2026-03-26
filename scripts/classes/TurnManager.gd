@@ -4,61 +4,17 @@ signal end_phase
 
 var turn = 1
 var players: Array[Player] = []
-var debug : Label
 var players_passed: int = 0
-var player_mana_count = {
-	"generic": 0,
-	"red": 0,
-	"blue": 0,
-	"green": 0,
-	"earth": 0,
-	"white": 0,
-	"black": 0}
-	
-var enemy_mana_count = {
-	"generic": 0,
-	"red": 1,
-	"blue": 0,
-	"green": 0,
-	"earth": 0,
-	"white": 0,
-	"black": 0}
-	
 var is_selecting_mana = false
 var dragging: Card
 var targeting: Card
-var player_mana_card_nr = 0
-var enemy_mana_card_nr = 0
 var waiting_for_input:bool = false
-var board_slots: Dictionary
-
 var current_phase :GameEnums.TurnEnum = GameEnums.TurnEnum.DRAW
 var priority = true
-var player_orbs = {
-	"generic": [],
-	"red": [],
-	"blue": [],
-	"green": [],
-	"earth": [],
-	"white": [],
-	"black": []}
-var enemy_orbs = {"generic": [],
-	"red": [],
-	"blue": [],
-	"green": [],
-	"earth": [],
-	"white": [],
-	"black": []}
-
-var highlighted: Card
 
 var target_kind: GameEnums.TargetKind = GameEnums.TargetKind.ATTACK
-var selecting_slot: bool = false
+
 var selected_slot_name: String = ""
-
-
-
-
 
 
 func end_turn():
@@ -135,7 +91,7 @@ func handle_priority(game: MTGGameState):
 			waiting_for_input = false
 	else:
 		# Player responded with a new effect → push it
-		response.source.apply_effect(response.effect,TurnManager)
+		response.source.apply_effect(response.effect,Game_Manager.gamestate)
 		priority = not priority # other player gets chance next
 func finish_mana_selection():
 	var i = 0

@@ -105,7 +105,7 @@ func _process(_delta: float) -> void:
 		is_hovered = false
 	if is_hovered and card_list:
 		card_list[0].movement.highlighted = true
-		TurnManager.highlighted = card_list[0]
+		UI_Manager.highlighted = card_list[0]
 		card_list[0].movement.animate_scale(card_list[0].hover_scale)
 	elif is_hovered == false and len(card_list) > 0:
 		var card = card_list[0]

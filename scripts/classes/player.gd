@@ -60,7 +60,7 @@ func cost_to_list(raw_list_string):
 	return result
 
 func reset_mana():
-	TurnManager.debug.text += "reseting mana \n"
+	UI_Manager.debug.text += "reseting mana \n"
 	mana_pool = {
 	"generic": 0,
 	"red": 0,
@@ -98,7 +98,7 @@ func create_mana():
 #pay for card
 func pay_for_card( card) -> void:
 	#return 
-	TurnManager.debug.text += "Paying for card by "+ player_name +" \n"
+	UI_Manager.debug.text += "Paying for card by "+ player_name +" \n"
 	for color in card.mana_cost.keys():
 		var required = card.mana_cost[color]
 		var available = mana_pool.get(color, 0)
@@ -126,7 +126,7 @@ func pay_for_card( card) -> void:
 	emit_signal("mana_changed",self)
 
 func _request_response_human(game:MTGGameState ):
-	var ui = TurnManager.game_manager.ui
+	
 
 	# Filter cards that can respond right now (instants, traps, etc.)
 	
@@ -138,22 +138,22 @@ func _request_response_human(game:MTGGameState ):
 					response_cards.append(c)
 
 	if response_cards.is_empty():
-		await ui.show_message("No valid responses. Passing priority...")
+		await UI_Manager.show_message("No valid responses. Passing priority...")
 		return {}
 
 	# Ask the user what to do
-	var choice = await ui.ask_choice(["Play a card" , "Pass"],"Activate a card in response to "+ game.stack[-1].source.card_name)
+	var choice = await UI_Manager.ask_choice(["Play a card" , "Pass"],"Activate a card in response to "+ game.stack[-1].source.card_name)
 	if choice == "Pass":
 		return {}
 
 	# Ask them to pick which card to play
-	var selected_card = await ui.select_card_from(response_cards, "Select card to respond")
+	var selected_card = await UI_Manager.select_card_from(response_cards, "Select card to respond")
 	print("selected_card:",selected_card)
 	if selected_card == null:
 		return {}
 	print("selected_effect")
 	#  New step: choose which effect
-	var selected_effect = await ui.select_effect(selected_card.effects, selected_card.card_name)
+	var selected_effect = await UI_Manager.select_effect(selected_card.effects, selected_card.card_name)
 	if selected_effect == null:
 		return null
 	
@@ -174,7 +174,7 @@ func request_response(game: MTGGameState) -> Dictionary:
 		return _request_response_ai(game)
 func mana_match_visual(pl):
 	if pl == self:
-		TurnManager.debug.text += "Seting mana visuals for "+ player_name +" \n"
+		UI_Manager.debug.text += "Seting mana visuals for "+ player_name +" \n"
 		for color in player_orbs.keys():
 			while len(player_orbs[color]) > mana_pool[color] :
 				var  node = player_orbs[color][-1]
@@ -208,13 +208,13 @@ func draw(game:MTGGameState,for_turn:bool = true):
 	if card_id == null:
 		print("%s has lost the game!" % player_name)
 		return null
-	var random_card = TurnManager.game_manager.card_database[card_id]
+	var random_card = Game_Manager.card_database[card_id]
 	card.setup(random_card,self)
 	card.state.card_location = GameEnums.CardZone.HAND
 	card.state.controller = self
 	game.player_hand.append(card.state)
 	player_hand.add_child(card)
-	TurnManager.game_manager.draw_card(card, deck.position, player_hand.position)
+	Game_Manager.draw_card(card, deck.position, player_hand.position)
 	print("%s draws %s" % [player_name, card.name])
 	if for_turn:
 		did_draw = true

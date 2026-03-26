@@ -7,10 +7,34 @@ var pending_target: CardState = null
 var affected_b_slots: Array[Card]
 var targeting_arrow
 var attacker:Card
+var debug : Label
 var all_board_nodes:Array[Node] = []
 const _TARGETING_SCENE = preload("res://scenes/TargetingArrow.tscn")
 var selector:TargetSelector
+var highlighted: Card
+var player_mana_card_nr = 0
+var enemy_mana_card_nr = 0
+var selecting_slot: bool = false
+var _effect_queue:Array = []
+var _effect_playing := false
 
+func queue_effect(card:Card)-> void:
+	_effect_queue.append(card)
+	if not _effect_playing:
+		_play_next_effect()
+func _play_next_effect()-> void:
+	if _effect_queue.is_empty():
+		_effect_playing = false
+		return
+	_effect_playing = true
+	var card:Card =_effect_queue.pop_front()
+	if not is_instance_valid(card) or not is_instance_valid(card.visual):
+		_play_next_effect()
+		return
+	card.visual.effect_activation_finished.connect(_on_effect_finished,CONNECT_ONE_SHOT)
+	card.visual.show_effect(null)
+func _on_effect_finished() -> void:
+	_play_next_effect()
 func setup() -> void:
 	targeting_arrow = _TARGETING_SCENE.instantiate()
 	all_board_nodes = Game_Manager.tree.get_nodes_in_group("slots")
@@ -18,7 +42,6 @@ func setup() -> void:
 func get_attack_targets(card) -> Array:
 	var targets = []
 	
-	var origin = card.board_pos.name  # ← FIX THIS (see below)
 	var b = Game_Manager.gamestate.board_e
 	for slot in b:
 		if b[slot]:
@@ -69,10 +92,10 @@ func start_attack_targeting(card:Card):
 	get_ranges(card)
 	selector.start_selection(targets)
 
-	selector.completed.connect(func(selected):
-		if selected.size() > 0:
+	selector.completed.connect(func(chosen):
+		if chosen.size() > 0:
 			#Game_Manager.request_attack(card, selected[0])
-			card.movement.pending_target = selected[0].card_node
+			card.movement.pending_target = chosen[0].card_node
 			Game_Manager.request_confirmation("Attack "+card.state.card_name+"?", card.movement.attack_card)
 	)
 func start_attack():
@@ -85,11 +108,11 @@ func clear_slot_highlights():
 	for node in all_board_nodes:
 		node.reset_higlight()
 func select_slot(valid_slots: Array[String]) -> String:
-	TurnManager.selecting_slot = true
+	selecting_slot = true
 	highlight_valid_slots(valid_slots)
 
 	var chosen := ""
-	while TurnManager.selecting_slot and chosen == "":
+	while selecting_slot and chosen == "":
 		for slot in get_tree().get_nodes_in_group("slots"):
 			if slot.is_hovered and Input.is_action_just_pressed("click_left"):
 				chosen = slot.name
@@ -97,7 +120,7 @@ func select_slot(valid_slots: Array[String]) -> String:
 		await Game_Manager.get_tree().process_frame
 
 	clear_slot_highlights()
-	TurnManager.selecting_slot = false
+	selecting_slot = false
 	return chosen
 
 func select_effect(effects: Array[Effect_class],card_name:String):

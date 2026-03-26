@@ -1,13 +1,8 @@
 extends Node
 #parent node
 @onready var card:Card = $".."
-#attach button
-
-
 @onready var card_sprite: Sprite2D = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
 @onready var grid = $"../SubViewportContainer/SubViewport/CenterContainer/grid"
-#tooltip container
-
 #color to indicate that card can be attacked
 @onready var target_overlay:ColorRect =$"../target"
 #subviewport to hold the card image, made so that shaders can be applied individualy
@@ -36,7 +31,7 @@ var cd:float = 0.0
 var burn_tween: Tween = null
 #node that has the attack animation logic
 @onready var attack = $attack
-
+signal effect_activation_finished
 func _exit_tree():
 	"""Clean up burn tween"""
 	if burn_tween and burn_tween.is_valid():
@@ -238,7 +233,7 @@ func _process(_delta: float) -> void:
 		else:
 			effect.visible = false
 			effect_progress = 0.0
-	
+			effect_activation_finished.emit()
 	# Card face animation
 	if card.state.face_up:
 		if Flip_animator.current_state == GameEnums.CardSide.BACK:

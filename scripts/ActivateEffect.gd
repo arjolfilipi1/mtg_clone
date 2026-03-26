@@ -37,7 +37,7 @@ func pressed_action() -> void:
 	print("Activate button pressed for: ", card.state.card_name)
 	
 	if card.state.effects:
-		var activatable = card.state.can_activate_effect(TurnManager.game_manager.gamestate)
+		var activatable = card.state.can_activate_effect(Game_Manager.gamestate)
 		if len(activatable) == 1:
 			print("Activating effect: ", activatable[0].spec)
 			card.state.apply_effect(activatable[0])
