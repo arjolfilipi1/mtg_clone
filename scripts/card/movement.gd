@@ -2,7 +2,7 @@ extends Node2D
 #parent
 @onready var card:Card = $".."
 #if is highlighted
-var highlighted = false
+
 var mana_tween: Tween
 var highlight_tween: Tween
 #arrow for attack targeting
@@ -10,7 +10,6 @@ var targeting_arrow
 const _TARGETING_SCENE = preload("res://scenes/TargetingArrow.tscn")
 #stores cards that had the visuals changed (colored yellow to show that they are valid targets
 # so that we can reset the visual
-var affected: Array[Card]
 var pending_target:Card
 
 #attack visuals
@@ -54,7 +53,6 @@ func on_click(event):
 		rotation = 0
 
 
-#calls the attack animation
 
 #check if the drop area can accept the card
 func check_drop_area():
@@ -82,7 +80,7 @@ func check_drop_area():
 #dragging
 func check_and_return_to_hand():
 	card.state.controller.board.reset_higlight()
-	UI_Manager.reset_highlited()
+	UI_Manager.clear_slot_highlights()
 	card.dragging = false
 	position = Vector2(0,0)
 	TurnManager.dragging = null
@@ -103,7 +101,7 @@ func animate_scale(target_scale: Vector2) -> void:
 func play_card_to_board(area: Node, rot = 0):
 	card.board_pos = area
 	TurnManager.dragging = null
-	UI_Manager.reset_highlited()
+	UI_Manager.clear_slot_highlights()
 	print("dropped " + card.state.card_name + " on area " + area.name)
 	card.state.play_to_board(area.name, Game_Manager.gamestate)
 	card.get_parent().remove_child(card)
@@ -120,7 +118,7 @@ func play_card_to_board(area: Node, rot = 0):
 
 #moves the card to the mana pile
 func move_to_mana_zone():
-	highlighted = false
+
 	card.state.face_up = true
 	var mana_index = 0
 	card.state.controller.mana_selected = true

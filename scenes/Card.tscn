@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=44 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/classes/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/card/playable.gdshader" id="1_6a0q4"]
@@ -25,7 +25,6 @@
 [ext_resource type="Texture2D" uid="uid://cjxcykcq7mcfv" path="res://tar.png" id="27_7bcrs"]
 [ext_resource type="Texture2D" uid="uid://o866i4nie6d8" path="res://sel.png" id="28_k3r52"]
 [ext_resource type="Shader" path="res://assets/shaders/card/effect.gdshader" id="30_w1es4"]
-[ext_resource type="Script" path="res://scripts/systems/HighlightManager.gd" id="33_map77"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cd0ai"]
 shader = ExtResource("6_r5pbg")
@@ -483,6 +482,7 @@ script = ExtResource("17_rvavj")
 script = ExtResource("18_ye35g")
 
 [node name="target" type="ColorRect" parent="."]
+visible = false
 material = SubResource("ShaderMaterial_arkvt")
 layout_mode = 0
 offset_right = 200.0
@@ -520,9 +520,6 @@ offset_top = -10.0
 offset_right = 209.0
 offset_bottom = 260.0
 color = Color(1, 1, 1, 0.305882)
-
-[node name="HighlightManager" type="Node" parent="."]
-script = ExtResource("33_map77")
 
 [connection signal="gui_input" from="." to="." method="_on_gui_input"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]

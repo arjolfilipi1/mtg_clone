@@ -234,7 +234,7 @@ func _process(_delta: float) -> void:
 
 func _on_cancel_attack_pressed() -> void:
 	AttackManager.cancel_attack()
-	confirm_overlay.hide()
+	Game_Manager.confirm_overlay.hide()
 
 func _on_end_turn_button_pressed() -> void:
 	TurnManager.end_turn()

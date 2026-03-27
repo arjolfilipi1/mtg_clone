@@ -2,6 +2,7 @@ extends Node
 class_name UIManager
 var selected:String =""
 var done = false
+var ask_choice_done = false
 var selected_card: CardState = null
 var pending_target: CardState = null
 var affected_b_slots: Array[Card]
@@ -20,6 +21,7 @@ var _effect_playing := false
 var _hover_timer: SceneTreeTimer = null
 var _hovered_card: Card = null
 
+#hover logic
 func on_card_hovered(card: Card):
 	if _hover_timer:
 		_hover_timer.timeout.disconnect(_on_hover_timeout)
@@ -60,16 +62,8 @@ func _clear_card_highlight(card: Card):
 	var tween = card.create_tween()
 	tween.tween_property(card, "scale", card.normal_scale, 0.2)\
 		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
-func request_attack():
-	#card = action_panel.current_card
-	var valid_targets: Array = Game_Manager.selected_card.state.can_attack(Game_Manager.gamestate)
-	if valid_targets.is_empty():
-		return
 
-	get_viewport().set_input_as_handled()
-	AttackManager.begin_attack(Game_Manager.selected_card, valid_targets)
-
-
+#effect
 func queue_effect(card:Card)-> void:
 	_effect_queue.append(card)
 	if not _effect_playing:
@@ -90,16 +84,25 @@ func _on_effect_finished() -> void:
 func setup() -> void:
 	targeting_arrow = _TARGETING_SCENE.instantiate()
 	all_board_nodes = Game_Manager.tree.get_nodes_in_group("slots")
-	
-func get_attack_targets(card) -> Array:
+#attack
+func request_attack():
+	#card = action_panel.current_card
+	var valid_targets: Array = Game_Manager.selected_card.state.can_attack(Game_Manager.gamestate)
+	if valid_targets.is_empty():
+		return
+
+	get_viewport().set_input_as_handled()
+	AttackManager.begin_attack(Game_Manager.selected_card, valid_targets)
+func get_attack_targets(card:Card) -> Array:
 	var targets = []
 	
 	var b = Game_Manager.gamestate.board_e
+	var target_card_states = card.state.can_attack(Game_Manager.gamestate)
 	for slot in b:
 		if b[slot]:
 			for c in b[slot]:
-				targets.append(c)
-
+				if c in target_card_states:
+					targets.append(c)
 	return targets
 
 func get_ranges(card:Card):
@@ -113,7 +116,6 @@ func get_ranges(card:Card):
 				node.set_color(Vector4(0.8,0,0,0.75))
 				node.og_color = Vector4(0.8,0,0,0.75)
 				aplied.append(node.name)
-
 			elif node.name not in aplied:
 				node.og_color = (Vector4(0,0,0,0))
 func cancel_attack():
@@ -145,23 +147,21 @@ func start_attack_targeting(card:Card):
 
 	selector.completed.connect(func(chosen):
 		if chosen.size() > 0:
-			#Game_Manager.request_attack(card, selected[0])
 			card.movement.pending_target = chosen[0].card_node
 			Game_Manager.request_confirmation("Attack "+card.state.card_name+"?", card.movement.attack_card)
 	)
 func start_attack():
 	attacker.movement.attack_card()
 var highlighted_slots : Array[Area2D] = []
-func reset_highlited():
-	for node:Area2D in highlighted_slots:
-		node.og_color = Vector4(0,0,0,0)
+
 func clear_slot_highlights():
 	for node in all_board_nodes:
+		node.og_color = Vector4(0,0,0,0)
 		node.reset_higlight()
+#inputs
 func select_slot(valid_slots: Array[String]) -> String:
 	selecting_slot = true
 	highlight_valid_slots(valid_slots)
-
 	var chosen := ""
 	while selecting_slot and chosen == "":
 		for slot in get_tree().get_nodes_in_group("slots"):
@@ -169,7 +169,6 @@ func select_slot(valid_slots: Array[String]) -> String:
 				chosen = slot.name
 				break
 		await Game_Manager.get_tree().process_frame
-
 	clear_slot_highlights()
 	selecting_slot = false
 	return chosen
@@ -192,12 +191,12 @@ func ask_choice(options:Array,title:String = "Choose")->String:
 	
 	dialog.choice_selected.connect(func(choice):
 		self.selected = choice
-		self.done= true
+		self.ask_choice_done= true
 		dialog.queue_free()
 		)
-	while  not done:
+	while  not ask_choice_done:
 		await Game_Manager.get_tree().process_frame
-	done = false
+	ask_choice_done = false
 	return selected
 
 func show_stack(stack):

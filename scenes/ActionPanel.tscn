@@ -37,30 +37,25 @@ shader_parameter/hover_ratio = 0.0
 
 [node name="ActionPanel" type="HBoxContainer"]
 custom_minimum_size = Vector2(200, 90)
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -576.0
-offset_top = -648.0
-offset_right = -221.0
-offset_bottom = -548.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_constants/separation = 50
+offset_left = -150.0
+offset_top = -45.0
+offset_right = 150.0
+offset_bottom = 45.0
+theme_override_constants/separation = 30
 alignment = 1
 script = ExtResource("1_ctkqn")
 
 [node name="attack" type="TextureButton" parent="."]
 z_index = 2
 material = SubResource("ShaderMaterial_tocf0")
-custom_minimum_size = Vector2(32, 32)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_filter = 1
 texture_normal = ExtResource("3_xt0re")
+ignore_texture_size = true
+stretch_mode = 3
 script = ExtResource("4_ghp8u")
 
 [node name="ColorRect" type="ColorRect" parent="attack"]
@@ -80,23 +75,28 @@ color = Color(0.686275, 0.686275, 0.686275, 0)
 
 [node name="activate" type="Button" parent="."]
 material = SubResource("ShaderMaterial_lrup2")
-custom_minimum_size = Vector2(80, 80)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 text = "Activate"
 script = ExtResource("6_j2p3p")
 
 [node name="move" type="TextureButton" parent="."]
 z_index = 2
 material = SubResource("ShaderMaterial_tocf0")
-custom_minimum_size = Vector2(32, 32)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_filter = 1
 texture_normal = ExtResource("7_duc2s")
+ignore_texture_size = true
+stretch_mode = 3
 script = ExtResource("8_4dnkr")
 
 [node name="ColorRect" type="ColorRect" parent="move"]
+visible = false
 z_index = 1
 material = SubResource("ShaderMaterial_q2bk3")
 layout_mode = 1

@@ -12,17 +12,17 @@
 	  "black": 0
 	},
 	"type": "Creature",
-	"effects": "",
+	"effects": [],
 	"background": "red",
 	"power": 40,
 	"image": "fireElemental.jpg",
 	"toughness": 30,
-	"Mana_creation": "['red','red']",
+	"Mana_creation": ["red","red"],
 	"range": [
-	  "1.0",
-	  "2.0",
-	  "2.1",
-	  "2.-1"
+	  [1,0],
+	  [2,0],
+	  [2,1],
+	  [2,-1]
 	]
   },
   {
@@ -38,17 +38,17 @@
 	  "black": 0
 	},
 	"type": "Creature",
-	"effects": "",
+	"effects": [],
 	"background": "blue",
 	"power": 20,
 	"image": "waterSprite.jpg",
 	"toughness": 40,
-	"Mana_creation": "['blue','white']",
+	"Mana_creation": ["blue","white"],
 	"range": [
-	  "1.0",
-	  "2.0",
-	  "1.1",
-	  "1.-1"
+	  [1,0],
+	  [2,0],
+	  [1,1],
+	  [1,-1]
 	]
   },
   {
@@ -64,17 +64,17 @@
 	  "black": 0
 	},
 	"type": "Creature",
-	"effects": "",
+	"effects": [],
 	"background": "earth",
 	"power": 10,
 	"image": "Earthgolem.png",
 	"toughness": 50,
-	"Mana_creation": "['earth','earth']",
+	"Mana_creation": ["earth","earth"],
 	"range": [
-	  "1.0",
-	  "2.0",
-	  "2.1",
-	  "2.-1"
+	  [1,0],
+	  [2,0],
+	  [2,1],
+	  [2,-1]
 	]
   },
   {
@@ -90,14 +90,14 @@
 	  "black": 0
 	},
 	"type": "Creature",
-	"effects": "",
+	"effects": [],
 	"background": "green",
 	"power": 10,
 	"image": "windCrow.jpg",
 	"toughness": 200,
-	"Mana_creation": "['green','green']",
+	"Mana_creation": ["green","green"],
 	"range": [
-	  	  "1.0","2.0","2.1","2.-1","1.-1","1.1","1.2","1.-2","2.2","2.-2","3.2","3.1","3.0","3.-1","3.-2"
+	  	  [1,0],[2,0],[2,1],[2,-1],[1,-1],[1,1],[1,2],[1,-2],[2,2],[2,-2],[3,2],[3,1],[3,0],[3,-1],[3,-2]
 	]
   },
   {
@@ -129,12 +129,12 @@
 	"power": 30,
 	"image": "skeleton.jpg",
 	"toughness": 10,
-	"Mana_creation": "['black','green']",
+	"Mana_creation": ["black","green"],
 	"range": [
-	  "1.0",
-	  "1.1",
-	  "2.0",
-	  "1.-1"
+	  [1,0],
+	  [1,1],
+	  [2,0],
+	  [1,-1]
 	]
   },
   {
@@ -180,13 +180,13 @@
 	"power": 10,
 	"image": "catwizard.jpg",
 	"toughness": 30,
-	"Mana_creation": "['white','green']",
+	"Mana_creation": ["white","green"],
 	"range": [
-	  "1.0",
-	  "2.0",
-	  "3.0",
-	  "3.-1",
-	  "3.1"
+	  [1,0],
+	  [2,0],
+	  [3,0],
+	  [3,-1],
+	  [3,1]
 	]
   },
   {
@@ -220,8 +220,8 @@
 	"power": 0,
 	"image": "healingPotion.jpg",
 	"toughness": 0,
-	"Mana_creation": "['white','green']",
-	"range": null
-  },
+	"Mana_creation": ["white","green"],
+	"range": []
+  }
   
 ]

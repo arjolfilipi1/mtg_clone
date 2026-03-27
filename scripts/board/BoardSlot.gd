@@ -60,7 +60,8 @@ func accepts_card(_card: Control,game:MTGGameState) -> bool:
 		return false
 		
 func color_range(dragging = true):
-	all_nodes = get_tree().get_nodes_in_group("slots")
+	if not all_nodes:
+		all_nodes = get_tree().get_nodes_in_group("slots")
 	var ranges :Array
 	var _coloring_type: String = ""
 	if dragging:
@@ -74,8 +75,7 @@ func color_range(dragging = true):
 	for node in all_nodes:
 		var origin = name.split("-")
 		for r in ranges :
-			var parts = r.split(".")
-			if node.name == str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) ):
+			if node.name == str( int(origin[0]) - int(r[0])) + "-" +str(int(origin[1]) - int(r[1]) ):
 				node.set_color(Vector4(0.8,0,0,0.75))
 				node.og_color = Vector4(0.8,0,0,0.75)
 				aplied.append(node.name)
@@ -104,14 +104,16 @@ func _process(_delta: float) -> void:
 				set_color(Vector4(0,1,0,0.75))
 		is_hovered = false
 	if is_hovered and card_list:
-		card_list[0].movement.highlighted = true
-		UI_Manager.highlighted = card_list[0]
-		card_list[0].movement.animate_scale(card_list[0].hover_scale)
+		pass
+		#UI_Manager.highlighted = card_list[0]
+		#UI_Manager.on_card_hovered(card_list[0])
+		#card_list[0].movement.animate_scale(card_list[0].hover_scale)
 	elif is_hovered == false and len(card_list) > 0:
 		var card = card_list[0]
 		if is_instance_valid(card) and card.movement:
-			card.movement.highlighted = false
-			card.movement.animate_scale(card.normal_scale)
+			pass
+			#UI_Manager.on_card_unhovered(card_list[0])
+			#card.movement.animate_scale(card.normal_scale)
 		else:
 		# Remove invalid card from list
 			card_list.erase(card)

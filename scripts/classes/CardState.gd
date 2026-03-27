@@ -9,7 +9,7 @@ var card_data:Dictionary
 var card_name: String
 var card_range:Array
 var mana_cost :Dictionary
-var mana_creation :String
+var mana_creation :Array
 var is_creature: bool
 var power: int
 var toughness: int
@@ -25,6 +25,7 @@ var has_summoning_sickness: bool = false
 var summoned_on_turn: int = 0
 var face_up: bool = false
 var controller : Player
+var image : String
 #real card for the game, not real used for enemy ai 
 var real:bool = true
 var effects:Array[Effect_class] = []
@@ -46,7 +47,7 @@ func setup(data: Dictionary):
 	card_range = card_data['range'] if card_data['range'] != null else []
 	power = card_data['power']
 	toughness = card_data['toughness']
-	
+	image = card_data['image']
 	# Convert string type to enum
 	match card_data['type'].to_lower():
 		"creature": card_type = GameEnums.CardType.CREATURE
@@ -222,13 +223,13 @@ func get_board_range(di:Dictionary):
 	if not pos:
 		return res
 	for r in card_range:
-		var parts = r.split(".")
+
 		var origin = pos.split("-")
 		var name:String
 		if player_controled:
-			name = str( int(origin[0]) - int(parts[0])) + "-" +str(int(origin[1]) - int(parts[1]) )
+			name = str( int(origin[0]) - int(r[0])) + "-" +str(int(origin[1]) - int(r[1]) )
 		else:
-			name = str( int(origin[0]) + int(parts[0])) + "-" +str(int(origin[1]) + int(parts[1]) )
+			name = str( int(origin[0]) + int(r[0])) + "-" +str(int(origin[1]) + int(r[1]) )
 		if name in di:
 			res.append(di[name])
 		

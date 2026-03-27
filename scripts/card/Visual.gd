@@ -3,6 +3,7 @@ extends Node
 @onready var card:Card = $".."
 @onready var card_sprite: Sprite2D = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
 @onready var grid = $"../SubViewportContainer/SubViewport/CenterContainer/grid"
+@onready var art = $"../SubViewportContainer/SubViewport/Panel/front/art"
 #color to indicate that card can be attacked
 @onready var target_overlay:ColorRect =$"../target"
 #subviewport to hold the card image, made so that shaders can be applied individualy
@@ -50,7 +51,8 @@ func _ready() -> void:
 	health_panel.text = str(card.state.toughness)
 	power_panel.text = str(card.state.power)
 	var unique_material:Material 
-	var sprites = [Playable,subvp,Summoning_sickness,$"../Back/Sprite2D",effect]
+	var sprite2d = $"../Back/Sprite2D"
+	var sprites = [Playable,subvp,Summoning_sickness,sprite2d,effect]
 	for sprite in sprites:
 		var mat = sprite.material
 		if mat and mat is ShaderMaterial:
@@ -89,9 +91,7 @@ func update_pt(c:CardState)->void:
 
 #sets the card background
 func set_background_color():
-	#ShaderMaterial
-	
-	card_sprite = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
+	#card_sprite = $"../SubViewportContainer/SubViewport/Panel/front/backgourd"
 	
 # Duplicate the material (shallow copy still shares the shader, which is fine)
 	var bg_unique_material := card_sprite.material.duplicate()
@@ -123,15 +123,15 @@ func set_background_color():
 func set_range():
 	
 	if card.state.is_creature:
-		for s:String in card.state.card_data['range']:
-			var t = grid.get_node(s.replace(".","_"))
+		for l:Array in card.state.card_data['range']:
+			var t = grid.get_node(str(l[0]) +"_"+ str(l[1]) )
 			t.show()
 	else:
 		grid.hide()
 #sets the card art
 func set_card_art(texture: Texture2D):
-	$"../SubViewportContainer/SubViewport/Panel/front/art".texture = texture
-	scale_sprite_preserving_center($"../SubViewportContainer/SubViewport/Panel/front/art")
+	art.texture = texture
+	scale_sprite_preserving_center(art)
 
 #sets the card mana symbols for the cost
 func add_mana_symbols():

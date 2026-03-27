@@ -24,6 +24,7 @@ AttackManager="*res://scripts/systems/AttackManager.gd"
 EffectParser="*res://scripts/systems/EffectParser.gd"
 EffectRunner="*res://scripts/systems/EffectRunner.gd"
 EffectRegistry="*res://scripts/systems/EffectRegistry.gd"
+MovementManager="*res://scripts/UI/MovementManager.gd"
 
 [debug]
 
