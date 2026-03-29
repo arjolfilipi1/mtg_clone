@@ -516,3 +516,135 @@ Integration Steps
 6. Test all movement types (drag, play, mana, grave, slot-to-slot)
 
 This centralized approach will make your code much cleaner and more maintainable!
+The `HBoxContainer` will auto-size to its visible children, so you just need to make sure its position is anchored to the center of the card. The cleanest way is to set the pivot and position in code whenever you show the panel.
+
+In `ActionPanel.gd`, when you call `show_actions()`, add this after making buttons visible:
+
+```gdscript
+func show_actions(card: Card, actions: Array) -> void:
+    # ... your existing visibility logic ...
+    
+    # Wait one frame so the container has recalculated its size
+    await get_tree().process_frame
+    
+    # Center horizontally over the card, position above it
+    var card_width = card.size.x  # or 200 if you know the fixed size
+    position.x = (card_width - size.x) / 2.0
+    position.y = -size.y - 10  # 10px gap above card
+```
+
+If `ActionPanel` is a child of the card node this is all you need — position is relative to the card automatically.
+
+**If it's not a child of the card**, you need global positioning instead:
+
+```gdscript
+await get_tree().process_frame
+global_position = card.global_position + Vector2(
+    (card.size.x - size.x) / 2.0,
+    -size.y - 10
+)
+```
+
+**In the scene**, make sure the `HBoxContainer` has:
+- `alignment = CENTER` (already in your scene from the original critique)
+- No fixed `custom_minimum_size` width — let it shrink to content
+- `size_flags_horizontal = SHRINK_CENTER` so it doesn't stretch
+
+The `await get_tree().process_frame` is the critical part — without it `size.x` returns the size from the previous frame before the container has hidden/shown children and recalculated, so the centering math will be wrong.
+
+
+Good, I have a full picture now. Here's the critique specific to the effect system as it stands:
+
+---
+
+## The JSON is Still the Old Format
+
+Your card.json still uses `spec` strings — the Skeleton still has `"spec": "buff self -1/0 instant"` and Cat Wizard still has `"spec": "buff self +100/0 instant"`. The new structured format we discussed hasn't been applied yet. This is the most impactful thing to change because everything downstream (EffectParser, EffectRunner, EffectRegistry) gets simpler the moment the JSON is structured.
+
+---
+
+## EffectParser Should Not Exist
+
+Once you migrate the JSON, `EffectParser.gd` can be deleted entirely. Right now it's an autoload that does one thing — parse a string that shouldn't be a string. Every problem found in it earlier (fragile `lstrip`, positional `parts[1]` vs `parts[2]`, no negative number handling) disappears with the new format.
+
+---
+
+## EffectRunner Still Mutates ctx
+
+```gdscript
+ctx.params = parsed.params  # overwrites whatever was in ctx
+```
+
+After the JSON migration this line goes away, but the pattern of passing a mutable shared dictionary through the whole resolution chain is still fragile. Consider making `ctx` immutable after construction — build it once in `apply_effect` and pass it read-only to executors.
+
+---
+
+## EffectRegistry._draw Is Broken
+
+```gdscript
+func _draw(ctx):
+    for i in range(ctx.params.get("n", 1)):
+        await ctx.controller.draw()
+```
+
+`Player.draw()` requires a `MTGGameState` argument. This crashes at runtime. It should be:
+
+```gdscript
+await ctx.controller.draw(ctx.game)
+```
+
+---
+
+## select_effect Uses spec String
+
+```gdscript
+func select_effect(effects: Array[Effect_class], card_name: String):
+    var options = []
+    for eff in effects:
+        options.append(eff.spec)  # ← will break when spec is removed
+```
+
+This should use `eff.description` instead, which you already have on every effect and is human-readable:
+
+```gdscript
+options.append(eff.description)
+```
+
+---
+
+## once_per_turn Is Still Never Checked
+
+The field exists on `Effect_class`, is loaded from JSON, but nothing in `apply_effect`, `can_activate_effect`, or `EffectRunner` ever reads it. If you want "soft" once-per-turn to mean anything you need a `used_this_turn: bool` flag on `Effect_class` that gets reset in `on_turn_end_trigger`.
+
+---
+
+## apply_effect's game Parameter Is Still Misleading
+
+```gdscript
+func apply_effect(effect: Effect_class, game = TurnManager):
+```
+
+The default is `TurnManager` but the function uses `game.game_manager.gamestate` inside. This means passing an actual `MTGGameState` will crash it. It should either always require an explicit `MTGGameState` argument, or just reference `Game_Manager.gamestate` directly and drop the parameter:
+
+```gdscript
+func apply_effect(effect: Effect_class) -> void:
+    var game := Game_Manager.gamestate
+```
+
+---
+
+## Recommended Migration Order
+
+**Step 1** — Migrate card.json to structured actions format for just one card (Cat Wizard is best since it has two effects). Keep the old format for others temporarily.
+
+**Step 2** — Update `Effect_class.gd`: add `actions: Array = []`, keep `spec` temporarily for backward compat.
+
+**Step 3** — Update `CardState.setup()` to load `actions` from JSON.
+
+**Step 4** — Rewrite `EffectRunner.apply_effect()` to iterate `effect.actions` instead of calling `EffectParser`.
+
+**Step 5** — Update `EffectRegistry` executors to accept `(action: Dictionary, ctx: Dictionary)` instead of just `ctx`.
+
+**Step 6** — Migrate remaining cards, delete `EffectParser.gd`, remove `spec` from `Effect_class`.
+
+Each step keeps the game runnable — you're not doing a big bang rewrite.

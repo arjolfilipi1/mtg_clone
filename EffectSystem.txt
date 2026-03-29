@@ -1,0 +1,640 @@
+
+# ================================================================
+# FILE 1: data/card.json  — example cards showing the new schema
+# ================================================================
+#
+# KEY CHANGES FROM OLD FORMAT:
+#   - "spec" string is GONE
+#   - "actions" array replaces it — one entry per thing the effect does
+#   - "target_spec" moves inside each action (different actions can hit different targets)
+#   - "range" is now Array of [int,int] pairs instead of "1.0" strings
+#   - "Mana_creation" is now a plain Array instead of a quoted string
+#
+# FULL SCHEMA REFERENCE:
+#
+# {
+#   "trigger": String,       -- when the effect fires (see trigger list below)
+#   "speed": int,            -- 1=instant 2=sorcery
+#   "mandatory": bool,       -- if true player cannot decline
+#   "once_per_turn": String, -- "soft"=can be reset, "hard"=never resets
+#   "mana_cost": {},         -- cost to activate (empty = free)
+#   "description": String,   -- shown to player in UI
+#   "actions": [             -- array, executed in order
+#     {
+#       "type": String,      -- the action keyword (see action list below)
+#       "target": String,    -- who/what is affected (see target list below)
+#       "amount": int,       -- for damage/draw/mill
+#       "power": int,        -- for buff
+#       "toughness": int,    -- for buff
+#       "duration": String,  -- "instant" | "until_end_of_turn" | "permanent"
+#       "card_id": int,      -- for summon (which card to summon)
+#       "slot": String,      -- for summon/move (destination slot e.g. "5-3")
+#       "filter": {}         -- optional, for filtered targets
+#     }
+#   ]
+# }
+#
+# TRIGGER LIST:
+#   on_play, on_end_phase, on_turn_end, on_attack, on_death,
+#   on_destruction, on_kill, on_mana_create, selected_on_hand,
+#   selected_on_board, selected_on_grave, selected_on_mana,
+#   on_summon, on_move, on_draw, on_defend, on_death_on_field,
+#   on_shield_set, on_effect_declared, on_effect_activated,
+#   on_end_phase_on_field, on_turn_end_on_field, on_stack_buff, true
+#
+# ACTION LIST (implemented now):
+#   damage, buff, draw, destroy, send_to_grave,
+#   gain_control, copy_effect, duplicate, change_effect_to
+#
+# TARGET LIST:
+#   self, player, enemy,
+#   target_creature, target_enemy_creature, target_player_creature,
+#   target_card, target_all_creature, target_spell,
+#   target_card_in_hand, target_card_in_enemy_hand,
+#   target_player, target_stack, target_card_in_deck,
+#   target_card_in_enemy_deck, target_in_range,
+#   target_creature_of_subtype, target_card_with_total_cost,
+#   target_card_with_only_mana_cost_of, target_creature_with_total_cost,
+#   target_creature_with_only_mana_cost_of, none
+#
+# FILTER (used with cost/subtype targets):
+#   { "value": 4 }                    -- for total_cost targets
+#   { "color": "red" }                -- for mana_cost_of targets
+#   { "subtype": "skeleton" }         -- for subtype targets
+
+# ---- EXAMPLE CARDS ----
+
+# Skeleton (was: "spec": "buff self -1/0 instant")
+# {
+#   "id": 5,
+#   "name": "Skeleton",
+#   "mana_cost": { "generic":0,"red":0,"blue":0,"green":0,"earth":0,"white":0,"black":1 },
+#   "type": "Creature",
+#   "effects": [
+#     {
+#       "trigger": "on_stack_buff",
+#       "speed": 2,
+#       "mandatory": false,
+#       "once_per_turn": "soft",
+#       "mana_cost": {},
+#       "description": "Lose 1 power",
+#       "actions": [
+#         { "type": "buff", "target": "self", "power": -1, "toughness": 0, "duration": "instant" }
+#       ]
+#     }
+#   ],
+#   "background": "black",
+#   "power": 30,
+#   "toughness": 10,
+#   "image": "skeleton.jpg",
+#   "Mana_creation": ["black","green"],
+#   "range": [[1,0],[1,1],[2,0],[1,-1]]
+# }
+
+# Cat Wizard (was: two spec strings)
+# {
+#   "id": 6,
+#   "name": "Cat Wizard",
+#   "mana_cost": { "generic":0,"red":0,"blue":0,"green":0,"earth":0,"white":0,"black":1 },
+#   "type": "Creature",
+#   "effects": [
+#     {
+#       "trigger": "selected_on_hand",
+#       "speed": 1,
+#       "mandatory": false,
+#       "once_per_turn": "soft",
+#       "mana_cost": {},
+#       "description": "Gain 100 power",
+#       "actions": [
+#         { "type": "buff", "target": "self", "power": 100, "toughness": 0, "duration": "permanent" }
+#       ]
+#     },
+#     {
+#       "trigger": "on_death",
+#       "speed": 1,
+#       "mandatory": false,
+#       "once_per_turn": "soft",
+#       "mana_cost": {},
+#       "description": "Deal 3 damage to target creature",
+#       "actions": [
+#         { "type": "damage", "target": "target_creature", "amount": 3 }
+#       ]
+#     }
+#   ],
+#   "background": "white",
+#   "power": 10,
+#   "toughness": 30,
+#   "image": "catwizard.jpg",
+#   "Mana_creation": ["white","green"],
+#   "range": [[1,0],[2,0],[3,0],[3,-1],[3,1]]
+# }
+
+# Healing Potion (was: "spec": "buff all_creatures +3/+3 until_end_of_turn")
+# {
+#   "id": 7,
+#   "name": "Healing Potion",
+#   "mana_cost": { "generic":0,"red":0,"blue":0,"green":0,"earth":0,"white":0,"black":0 },
+#   "type": "Spell",
+#   "effects": [
+#     {
+#       "trigger": "selected_on_mana",
+#       "speed": 1,
+#       "mandatory": false,
+#       "once_per_turn": "soft",
+#       "mana_cost": {},
+#       "description": "All creatures gain +3/+3 until end of turn",
+#       "actions": [
+#         { "type": "buff", "target": "target_all_creature", "power": 3, "toughness": 3, "duration": "until_end_of_turn" }
+#       ]
+#     }
+#   ],
+#   "background": "white",
+#   "power": 0,
+#   "toughness": 0,
+#   "image": "healingPotion.jpg",
+#   "Mana_creation": ["white","green"],
+#   "range": []
+# }
+
+
+# ================================================================
+# FILE 2: scripts/systems/Effect.gd  — replace the old version
+# ================================================================
+
+extends Resource
+class_name Effect_class
+
+@export var actions: Array = []          # Array[Dictionary] — the new format
+@export var trigger_spec: String = ""    # when it fires
+@export var target_count: int = 1        # how many targets player picks
+@export var speed: int = 1
+@export var mandatory: bool = false
+@export var mana_cost: Dictionary = {}
+@export var once_per_turn: String = "soft"
+@export var description: String = ""
+@export var used_this_turn: bool = false  # tracks once_per_turn
+
+# Called at end of turn to reset soft once-per-turn effects
+func reset_once_per_turn() -> void:
+	if once_per_turn == "soft":
+		used_this_turn = false
+
+
+# ================================================================
+# FILE 3: scripts/systems/EffectRegistry.gd  — full rewrite
+# ================================================================
+
+extends Node
+class_name Effect_Registry
+
+# ---- Target resolver ----
+# Returns an Array[CardState] based on target string + context.
+# ctx must contain: game (MTGGameState), source (CardState), controller (Player)
+# Some targets also require ctx.filter (Dictionary) for filtered queries.
+
+func resolve_targets(target: String, ctx: Dictionary) -> Array:
+	var game: MTGGameState = ctx.game
+	var source: CardState  = ctx.source
+	var filter: Dictionary = ctx.get("filter", {})
+	var res: Array         = []
+
+	match target:
+
+		# ---- Self / players ----
+		"self":
+			res = [source]
+
+		"player":
+			res = [ctx.controller]
+
+		"enemy":
+			for p in TurnManager.players:
+				if p != ctx.controller:
+					res.append(p)
+
+		# ---- Board creatures ----
+		"target_creature":
+			for slot in game.board.values():
+				for cs in slot:
+					if cs.is_creature:
+						res.append(cs)
+
+		"target_enemy_creature":
+			for slot in game.board.values():
+				for cs in slot:
+					if cs.is_creature and cs.controller != ctx.controller:
+						res.append(cs)
+
+		"target_player_creature":
+			for slot in game.board.values():
+				for cs in slot:
+					if cs.is_creature and cs.controller == ctx.controller:
+						res.append(cs)
+
+		"target_all_creature":
+			for slot in game.board.values():
+				for cs in slot:
+					if cs.is_creature:
+						res.append(cs)
+
+		"target_card":
+			for slot in game.board.values():
+				for cs in slot:
+					res.append(cs)
+
+		"target_spell":
+			for slot in game.board.values():
+				for cs in slot:
+					if not cs.is_creature:
+						res.append(cs)
+
+		# ---- Hand / deck ----
+		"target_card_in_hand":
+			res = game.player_hand.duplicate()
+
+		"target_card_in_enemy_hand":
+			res = game.enemy_hand.duplicate()
+
+		"target_card_in_deck":
+			res = game.player_deck.duplicate()
+
+		"target_card_in_enemy_deck":
+			res = game.enemy_deck.duplicate()
+
+		# ---- Stack ----
+		"target_stack":
+			for entry in game.stack:
+				res.append(entry)
+
+		# ---- Range ----
+		"target_in_range":
+			# Returns only board creatures within the source card's attack range
+			for slot_list in source.get_board_range(game.board):
+				for cs in slot_list:
+					if cs.is_creature and cs.controller != source.controller:
+						res.append(cs)
+
+		# ---- Filtered targets ----
+		"target_creature_of_subtype":
+			var subtype: String = filter.get("subtype", "").to_lower()
+			for slot in game.board.values():
+				for cs in slot:
+					if cs.is_creature and cs.card_data.get("subtype","").to_lower() == subtype:
+						res.append(cs)
+
+		"target_card_with_total_cost":
+			var cost_value: int = filter.get("value", 0)
+			for slot in game.board.values():
+				for cs in slot:
+					var total = 0
+					for v in cs.mana_cost.values():
+						total += v
+					if total == cost_value:
+						res.append(cs)
+
+		"target_creature_with_total_cost":
+			var cost_value: int = filter.get("value", 0)
+			for slot in game.board.values():
+				for cs in slot:
+					if not cs.is_creature:
+						continue
+					var total = 0
+					for v in cs.mana_cost.values():
+						total += v
+					if total == cost_value:
+						res.append(cs)
+
+		"target_card_with_only_mana_cost_of":
+			var color: String = filter.get("color", "")
+			for slot in game.board.values():
+				for cs in slot:
+					var has_only = true
+					for c in cs.mana_cost.keys():
+						if c != color and c != "generic" and cs.mana_cost[c] > 0:
+							has_only = false
+							break
+					if has_only:
+						res.append(cs)
+
+		"target_creature_with_only_mana_cost_of":
+			var color: String = filter.get("color", "")
+			for slot in game.board.values():
+				for cs in slot:
+					if not cs.is_creature:
+						continue
+					var has_only = true
+					for c in cs.mana_cost.keys():
+						if c != color and c != "generic" and cs.mana_cost[c] > 0:
+							has_only = false
+							break
+					if has_only:
+						res.append(cs)
+
+		"none":
+			res = []
+
+		_:
+			push_error("EffectRegistry: unknown target type '%s'" % target)
+
+	return res
+
+
+# ---- Action executors ----
+# Each takes (action: Dictionary, ctx: Dictionary)
+# ctx contains: game, source, controller, targets (resolved for this action)
+
+var executors: Dictionary = {}
+
+func _ready() -> void:
+	executors = {
+		"damage":         _damage,
+		"buff":           _buff,
+		"draw":           _draw,
+		"destroy":        _destroy,
+		"send_to_grave":  _send_to_grave,
+		"gain_control":   _gain_control,
+		"copy_effect":    _copy_effect,
+		"duplicate":      _duplicate,
+		"change_effect_to": _change_effect_to,
+	}
+
+
+# ---- damage ----
+func _damage(action: Dictionary, ctx: Dictionary) -> void:
+	var amount: int = action.get("amount", 0)
+	for t in ctx.targets:
+		if t is CardState:
+			await t.take_damage(amount, ctx.source, ctx.game)
+		elif t is Player:
+			t.take_damage(amount)
+
+
+# ---- buff ----
+func _buff(action: Dictionary, ctx: Dictionary) -> void:
+	var power:      int    = action.get("power", 0)
+	var toughness:  int    = action.get("toughness", 0)
+	var duration:   String = action.get("duration", "instant")
+	for t in ctx.targets:
+		if t is CardState:
+			await t.add_temp_buff(power, toughness, duration, ctx.source)
+
+
+# ---- draw ----
+func _draw(action: Dictionary, ctx: Dictionary) -> void:
+	var amount: int = action.get("amount", 1)
+	for i in range(amount):
+		await ctx.controller.draw(ctx.game)
+
+
+# ---- destroy ----
+# Destroy triggers on_destruction — use this for effects that say "destroy"
+func _destroy(action: Dictionary, ctx: Dictionary) -> void:
+	for t in ctx.targets:
+		if t is CardState:
+			await ctx.game.on_card_event(Card_event.e.ON_DESTRUCTION, t, [])
+			t.destroy_card(ctx.game)
+
+
+# ---- send_to_grave ----
+# Sends directly to grave without triggering on_destruction (e.g. exile-style removal)
+func _send_to_grave(action: Dictionary, ctx: Dictionary) -> void:
+	for t in ctx.targets:
+		if t is CardState:
+			t.destroy_card(ctx.game)
+
+
+# ---- gain_control ----
+func _gain_control(action: Dictionary, ctx: Dictionary) -> void:
+	for t in ctx.targets:
+		if not t is CardState:
+			continue
+		var old_controller: Player = t.controller
+		t.controller = ctx.controller
+		t.player_controled = ctx.controller.is_human
+		# Move in gamestate boards
+		if t.card_location == GameEnums.CardZone.FIELD:
+			ctx.game.board[t.pos].erase(t)
+			if not ctx.game.board.has(t.pos):
+				ctx.game.board[t.pos] = []
+			ctx.game.board[t.pos].append(t)
+		# Update visual controller reference if card node exists
+		if t.card_node and is_instance_valid(t.card_node):
+			t.card_node.movement.play_card_to_board(t.card_node.board_pos, 0)
+
+
+# ---- copy_effect ----
+# Copies all effects from target card onto the source card for this turn
+func _copy_effect(action: Dictionary, ctx: Dictionary) -> void:
+	for t in ctx.targets:
+		if not t is CardState:
+			continue
+		for eff in t.effects:
+			var copy := Effect_class.new()
+			copy.actions       = eff.actions.duplicate(true)
+			copy.trigger_spec  = eff.trigger_spec
+			copy.target_count  = eff.target_count
+			copy.speed         = eff.speed
+			copy.mandatory     = eff.mandatory
+			copy.mana_cost     = eff.mana_cost.duplicate()
+			copy.once_per_turn = "soft"
+			copy.description   = "[Copy] " + eff.description
+			copy.used_this_turn = false
+			ctx.source.effects.append(copy)
+			# Remove at end of turn
+			TurnManager.end_of_turn.connect(
+				func(): ctx.source.effects.erase(copy),
+				CONNECT_ONE_SHOT
+			)
+
+
+# ---- duplicate ----
+# Puts a copy of the source card into the controller's hand
+func _duplicate(action: Dictionary, ctx: Dictionary) -> void:
+	var card_scene = load("res://scenes/Card.tscn").instantiate()
+	card_scene.setup(ctx.source.card_data, ctx.controller)
+	card_scene.state.card_location = GameEnums.CardZone.HAND
+	if ctx.controller.is_human:
+		ctx.game.player_hand.append(card_scene.state)
+	else:
+		ctx.game.enemy_hand.append(card_scene.state)
+	ctx.controller.player_hand.add_child(card_scene)
+	Game_Manager.draw_card(card_scene, Game_Manager.initialPosition,
+		ctx.controller.player_hand.global_position)
+
+
+# ---- change_effect_to ----
+# Replaces all effects on a target card with the source card's effects
+func _change_effect_to(action: Dictionary, ctx: Dictionary) -> void:
+	for t in ctx.targets:
+		if not t is CardState:
+			continue
+		t.effects.clear()
+		for eff in ctx.source.effects:
+			var copy := Effect_class.new()
+			copy.actions       = eff.actions.duplicate(true)
+			copy.trigger_spec  = eff.trigger_spec
+			copy.target_count  = eff.target_count
+			copy.speed         = eff.speed
+			copy.mandatory     = eff.mandatory
+			copy.mana_cost     = eff.mana_cost.duplicate()
+			copy.once_per_turn = eff.once_per_turn
+			copy.description   = eff.description
+			t.effects.append(copy)
+
+
+# ================================================================
+# FILE 4: scripts/systems/EffectRunner.gd  — full rewrite
+# ================================================================
+
+extends Node
+class_name Effect_Runner
+
+# Entry point called from CardState.apply_effect and the stack resolver.
+# effect:   Effect_class
+# base_ctx: Dictionary with at minimum { game, source, controller }
+#           targets are resolved per-action inside here
+
+func apply_effect(effect: Effect_class, base_ctx: Dictionary) -> void:
+	if effect.actions.is_empty():
+		push_error("EffectRunner: effect '%s' has no actions" % effect.description)
+		return
+
+	# Mark once-per-turn
+	if effect.once_per_turn != "":
+		effect.used_this_turn = true
+
+	for action in effect.actions:
+		var action_type: String = action.get("type", "")
+		var executor = EffectRegistry.executors.get(action_type)
+		if executor == null:
+			push_error("EffectRunner: unknown action type '%s'" % action_type)
+			continue
+
+		# Build per-action context with resolved targets
+		var target_str: String = action.get("target", "none")
+		var ctx := base_ctx.duplicate()
+		ctx["filter"] = action.get("filter", {})
+
+		# Resolve candidates
+		var candidates: Array = EffectRegistry.resolve_targets(target_str, ctx)
+
+		# If action needs player selection, ask now
+		var needs_selection: bool = (
+			target_str != "self"
+			and target_str != "none"
+			and not target_str.begins_with("target_all")
+			and target_str != "player"
+			and target_str != "enemy"
+			and target_str != "target_in_range"
+		)
+		if needs_selection and candidates.size() > 1:
+			var count: int = effect.target_count
+			var chosen = await base_ctx.controller.request_target_selection(candidates, count)
+			if chosen == null or chosen.is_empty():
+				push_warning("EffectRunner: no targets chosen for '%s', skipping" % action_type)
+				continue
+			ctx["targets"] = chosen
+		else:
+			ctx["targets"] = candidates
+
+		await executor.call(action, ctx)
+
+
+# ================================================================
+# FILE 5: scripts/classes/CardState.gd  — only the changed methods
+# ================================================================
+
+# Replace setup() effect loading section:
+#
+# OLD:
+#   for effect_spec in effects_spec:
+#       var e = Effect_class.new()
+#       e.spec = effect_spec.spec
+#       ...
+#
+# NEW:
+func _load_effects_from_data(effects_spec: Array) -> void:
+	for effect_spec in effects_spec:
+		var e := Effect_class.new()
+		e.actions       = effect_spec.get("actions", [])
+		e.trigger_spec  = effect_spec.get("trigger", "")
+		e.target_count  = effect_spec.get("target_count", 1)
+		e.speed         = effect_spec.get("speed", 1)
+		e.mandatory     = effect_spec.get("mandatory", false)
+		e.once_per_turn = effect_spec.get("once_per_turn", "soft")
+		e.description   = effect_spec.get("description", "")
+		if effect_spec.has("mana_cost") and effect_spec.mana_cost is Dictionary:
+			e.mana_cost = effect_spec.mana_cost
+		effects.append(e)
+
+# Replace apply_effect — cleaner signature, no misleading default:
+#
+func apply_effect_new(effect: Effect_class) -> void:
+	if real:
+		TurnManager.waiting_for_input = true
+
+	var ctx := {
+		"game":       Game_Manager.gamestate,
+		"controller": controller,
+		"source":     self,
+	}
+
+	# For targeted effects, resolve candidates and ask player if needed
+	# (EffectRunner handles per-action targeting, so here we just push to stack)
+	activated_effect.emit(effect)
+
+	Game_Manager.gamestate.push_to_stack({
+		"effect":     effect,
+		"source":     self,
+		"controller": controller,
+		"context":    ctx,
+	})
+
+	await Game_Manager.gamestate.on_card_event(
+		Card_event.e.ON_EFFECT_ACTIVATED, self, []
+	)
+
+	TurnManager.waiting_for_input = false
+
+	if card_type == GameEnums.CardType.SPELL:
+		destroy_card(Game_Manager.gamestate)
+
+# Replace can_activate_effect — fix the once_per_turn check and the loop bug:
+#
+func can_activate_effect_new(game: MTGGameState, effect: Effect_class = null) -> Array[Effect_class]:
+	var res: Array[Effect_class] = []
+	for eff in effects:
+		if effect != null and eff != effect:
+			continue
+		if eff.used_this_turn and eff.once_per_turn != "":
+			continue
+		if not can_be_payed(game, eff.mana_cost):
+			continue
+		match eff.trigger_spec:
+			"true":
+				res.append(eff)
+			"selected_on_hand":
+				if card_location == GameEnums.CardZone.HAND:
+					res.append(eff)
+			"on_stack_buff":
+				if game.stack.size() > 0 and "buff" in game.stack[-1].effect.description:
+					res.append(eff)
+	return res
+
+# In UIManager.select_effect — replace eff.spec with eff.description:
+#
+# func select_effect(effects: Array[Effect_class], card_name: String):
+#     var options = []
+#     for eff in effects:
+#         options.append(eff.description)   # ← was eff.spec
+#     var choice = await ask_choice(options, "select effect for " + card_name)
+#     if choice == "":
+#         return null
+#     var index = options.find(choice)
+#     return effects[index]
+
+# ================================================================
+# ALSO DELETE: scripts/systems/EffectParser.gd  (no longer needed)
+# ALSO REMOVE from project.godot autoload:
+#   EffectParser="*res://scripts/systems/EffectParser.gd"
+# ================================================================
