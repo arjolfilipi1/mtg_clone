@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=43 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/classes/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/card/playable.gdshader" id="1_6a0q4"]
@@ -17,7 +17,6 @@
 [ext_resource type="Texture2D" uid="uid://bg3gaujkvq44d" path="res://assets/symbol/red.png" id="12_nmeia"]
 [ext_resource type="Texture2D" uid="uid://dhl14vtpkwk3w" path="res://assets/grid.png" id="14_44mby"]
 [ext_resource type="Texture2D" uid="uid://mwqabb0ir18g" path="res://assets/attack.png" id="15_plbfy"]
-[ext_resource type="Script" path="res://scripts/card/Movement.gd" id="16_fj7vn"]
 [ext_resource type="Script" path="res://scripts/card/Visual.gd" id="17_rvavj"]
 [ext_resource type="Script" path="res://scripts/card/Attack.gd" id="18_ye35g"]
 [ext_resource type="Shader" path="res://assets/shaders/card/target.gdshader" id="22_m58xb"]
@@ -171,16 +170,11 @@ shader_parameter/progress = 0.0
 material = SubResource("ShaderMaterial_cd0ai")
 custom_minimum_size = Vector2(200, 250)
 layout_mode = 3
-anchor_left = 0.087
-anchor_top = 0.193
-anchor_right = 0.087
-anchor_bottom = 0.193
-offset_left = -100.224
-offset_top = -125.064
-offset_right = 99.776
-offset_bottom = 124.936
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_left = -100.0
+offset_top = -125.0
+offset_right = 100.0
+offset_bottom = 125.0
 pivot_offset = Vector2(100, 125)
 script = ExtResource("1_1cqby")
 
@@ -470,10 +464,6 @@ color = Color(0.787599, 0.0141668, 0.365911, 1)
 
 [node name="Flip_animator" type="Node" parent="."]
 script = ExtResource("12_leg65")
-
-[node name="movement" type="Node2D" parent="."]
-visible = false
-script = ExtResource("16_fj7vn")
 
 [node name="vizual" type="Node" parent="."]
 script = ExtResource("17_rvavj")

@@ -100,7 +100,7 @@ func _start_drag():
 	dragging = true
 	offset = get_global_mouse_position() - global_position
 	TurnManager.dragging = self
-	visual.set_drag_visuals(true)
+	visual.set_drag_visuals(true,0.7)
 
 func _on_mouse_entered():
 	Game_Manager.select_card(self)

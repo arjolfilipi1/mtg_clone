@@ -147,9 +147,15 @@ func start_attack_targeting(card:Card):
 
 	selector.completed.connect(func(chosen):
 		if chosen.size() > 0:
-			card.movement.pending_target = chosen[0].card_node
-			Game_Manager.request_confirmation("Attack "+card.state.card_name+"?", card.movement.attack_card)
+			var target_card = chosen[0].card_node
+			Game_Manager.request_confirmation(
+				"Attack " + card.state.card_name + "?",
+				func(): _execute_attack(card, target_card)
+			)
 	)
+func _execute_attack(attacker: Card, defender: Card):
+	# Let AttackManager handle the attack with visual movement
+	AttackManager.execute_attack(attacker, defender)
 func start_attack():
 	attacker.movement.attack_card()
 var highlighted_slots : Array[Area2D] = []

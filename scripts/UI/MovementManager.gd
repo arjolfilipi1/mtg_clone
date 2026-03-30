@@ -56,7 +56,8 @@ func move_card_to_mana(card: Card, is_player: bool, mana_zone_index: int,
 	# Calculate target position in mana zone
 	var mana_zone = card.state.controller.player_mana_zone
 	var target_pos = Vector2(-40.0, -50.0)  # Relative position
-	
+	card.state.controller.mana_selected = true
+	card.state.to_mana(Game_Manager.gamestate)
 	var move_data = {
 		"type": MoveType.MOVE_TO_MANA,
 		"card": card,
@@ -132,7 +133,7 @@ func end_card_drag(card: Card, drop_position: Vector2) -> void:
 		return
 	
 	card.dragging = false
-	card.visual.set_drag_visuals(false)
+	card.visual.set_drag_visuals(false,1.0)
 	
 	# Find valid drop target
 	var target_slot = _find_drop_target(card, drop_position)
@@ -256,12 +257,12 @@ func _handle_board_reparenting(card: Card, target_slot: Area2D) -> void:
 	"""Reparent card to board during movement"""
 	# Don't reparent immediately, wait for movement to finish
 	# Store that we need to reparent after movement
-	card._pending_reparent = {"target": target_slot.get_parent(), "slot": target_slot}
-
+	#card._pending_reparent = {"target": target_slot.get_parent(), "slot": target_slot}
+	card.set_meta("pending_reparent", {"target": target_slot.get_parent(), "slot": target_slot})
 func _handle_mana_reparenting(card: Card, mana_zone: Node) -> void:
 	"""Reparent card to mana zone during movement"""
-	card._pending_reparent = {"target": mana_zone}
-
+	#card._pending_reparent = {"target": mana_zone}
+	card.set_meta("pending_reparent", {"target": mana_zone})
 func _post_play_to_board(card: Card, move_data: Dictionary) -> void:
 	"""Handle post-movement logic for playing to board"""
 	if card.has_meta("pending_reparent"):
@@ -286,15 +287,15 @@ func _post_move_to_mana(card: Card, move_data: Dictionary) -> void:
 		card.get_parent().remove_child(card)
 		reparent_data.target.add_child(card)
 		card.remove_meta("pending_reparent")
-	
+		TurnManager.finish_mana_selection()
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.z_index = extra.index
 	
-	# Spawn mana orbs based on card's mana creation
-	for mana_type in card.state.mana_creation:
-		var orb = extra.mana_zone.spawn_mana_orb(mana_type, Vector2(100, 125), extra.mana_zone)
-		orb.mana_type = mana_type
-		extra.mana_zone.player_orbs[mana_type].append(orb)
+	## Spawn mana orbs based on card's mana creation
+	#for mana_type in card.state.mana_creation:
+		#var orb = extra.mana_zone.spawn_mana_orb(mana_type, Vector2(100, 125), extra.mana_zone)
+		#orb.mana_type = mana_type
+		#extra.mana_zone.player_orbs[mana_type].append(orb)
 
 func _post_move_to_grave(card: Card, move_data: Dictionary) -> void:
 	"""Handle post-movement logic for moving to graveyard"""

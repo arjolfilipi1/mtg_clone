@@ -29,3 +29,7 @@ func _on_cancel_attack_pressed() -> void:
 
 func store_gamestate() -> void:
 	Game_Manager.store_gamestate()
+
+
+func _on_end_turn_button_pressed() -> void:
+	TurnManager.end_turn()

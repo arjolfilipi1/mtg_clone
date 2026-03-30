@@ -78,7 +78,10 @@ func select_mana():
 		var best := get_best_mana_card(all_nodes, need)
 		var chosen_random_node = all_nodes[randi()% all_nodes.size()]
 		if best:
-			best.movement.move_to_mana_zone()
+			MovementManager.move_card_to_mana(best, best.state.player_controled, 
+				UI_Manager.player_mana_card_nr + 1)
+			best.state.to_mana(Game_Manager.gamestate)
+			#best.movement.move_to_mana_zone()
 		else:
 			chosen_random_node.movement.move_to_mana_zone()
 			TurnManager.finish_mana_selection()
@@ -144,7 +147,7 @@ func enemy_play_card():
 	#await get_tree().create_timer(1.0).timeout  # Small delay
 	var area = null
 	
-	for card in pl.player_hand.get_children():
+	for card:Card in pl.player_hand.get_children():
 		if card.state.can_be_payed(Game_Manager.gamestate,card.state.mana_cost) and not card_played:
 			var area_list = pl.board.get_children()
 			area_list.shuffle()
@@ -156,7 +159,10 @@ func enemy_play_card():
 						break
 			if area:
 				var rot = area.scew_dict[area.name]
-				card.movement.play_card_to_board(area,180 - rot )
+				#card.movement.play_card_to_board(area,180 - rot )
+				MovementManager.move_card_to_board(card, area, area.scew_dict.get(area.name, 0) + 180 )
+				card.state.play_to_board(area.name, Game_Manager.gamestate)
+				area.card_list.append(card)
 				print("Enemy is playing card " + card.state.card_name +" to field slot " + area.name)
 			else:
 				print("Enemy passes. No playable cards.")

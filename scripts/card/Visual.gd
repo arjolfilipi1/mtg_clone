@@ -187,9 +187,9 @@ func scale_sprite_preserving_center(sprite: Sprite2D, frame_size: Vector2 = Vect
 
 	sprite.scale = Vector2.ONE * scale_factor
 	#sprite.offset = -tex_size / 2  # Center the texture visually
-func set_drag_visuals(is_dragging: bool):
+func set_drag_visuals(is_dragging: bool,alpha:float):
 	subvp.material.set_shader_parameter("grayscale_amount",  1.0 if is_dragging else 0.0)
-	subvp.material.set_shader_parameter("alpha_override", 0.5 if is_dragging else 1.0)
+	subvp.material.set_shader_parameter("alpha_override", alpha if is_dragging else 1.0)
 	if card.state.can_be_payed(Game_Manager.gamestate,card.state.mana_cost) and is_dragging:
 		card.state.controller.board.check_card(card,Game_Manager.gamestate)
 

@@ -110,13 +110,9 @@ func _process(_delta: float) -> void:
 		#card_list[0].movement.animate_scale(card_list[0].hover_scale)
 	elif is_hovered == false and len(card_list) > 0:
 		var card = card_list[0]
-		if is_instance_valid(card) and card.movement:
-			pass
-			#UI_Manager.on_card_unhovered(card_list[0])
-			#card.movement.animate_scale(card.normal_scale)
-		else:
-		# Remove invalid card from list
-			card_list.erase(card)
+		
+		
+		card_list.erase(card)
 
 func reset_higlight():
 	if  not overlay:overlay = $overlay

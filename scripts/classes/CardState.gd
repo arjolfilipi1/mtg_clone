@@ -169,7 +169,7 @@ func can_respond(game:MTGGameState,index:int)-> bool:
 	
 	return false
 func can_move(game:MTGGameState) -> Array:
-	if card_location != GameEnums.CardZone.FIELD:
+	if card_location != GameEnums.CardZone.FIELD or not pos:
 		return []
 	var res:Array = []
 	var origin = pos.split("-")
