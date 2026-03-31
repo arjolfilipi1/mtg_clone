@@ -3,6 +3,7 @@ class_name CardState
 signal pt_changed(CardState)
 signal deleted(CardState)
 signal activated_effect(Effect_class)
+signal flip(bool)
 signal attack_signal(attacker:CardState, defender:CardState)
 # --- Core immutable data (copied from database) ---
 var card_data:Dictionary
@@ -38,11 +39,13 @@ func attack(attacker:CardState, defender:CardState):
 
 #setup and store data from the json database
 # Setup with type-safe enums
+func flip_up():
+	if not face_up:
+		face_up = true
+		emit_signal("flip",true)
 func setup(data: Dictionary):
 	card_data = data
-	if controller.is_human:
-		face_up = true
-	
+	face_up = controller.is_human
 	card_name = card_data['name']
 	card_range = card_data['range'] if card_data['range'] != null else []
 	power = card_data['power']
@@ -277,7 +280,7 @@ func play_to_board(area_name:String,game:MTGGameState):
 				game.enemy_hand.erase(self)
 		card_location = GameEnums.CardZone.FIELD
 		controller.pay_for_card(self)
-		face_up = true
+		flip_up()
 		game.board[pos].append(self)
 		on_summon()
 	if effects.size() > 0:

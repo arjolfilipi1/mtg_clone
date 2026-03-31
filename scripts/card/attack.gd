@@ -62,7 +62,7 @@ func start_slam_attack(attacker, defender, direction: Vector2 = Vector2.RIGHT) -
 	TurnManager._pass_priority()
 	target = target if not defender else defender
 	card = TurnManager.targeting if not attacker else attacker
-	card.movement.targeting_arrow.complete_targeting()
+	UI_Manager.targeting_arrow.complete_targeting()
 	print("attacked " + card.state.card_name + " defender " + target.state.card_name)
 	
 	original_position = card.position

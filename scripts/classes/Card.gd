@@ -12,6 +12,7 @@ var board_pos:Area2D = null
 #if fase up for visual
 #if is dragging
 var dragging = false
+var moving = false
 #stores offset during movement
 var offset: Vector2 = Vector2.ZERO 
 #if any of the cildren is highlighted
@@ -60,8 +61,10 @@ func _ready():
 	visual.set_range()
 	scale = normal_scale
 	state.deleted.connect(visual.burnCard)
+	state.flip.connect(visual.flip)
 	state.attack_signal.connect(visual.attack.start_slam_attack)
 	state.activated_effect.connect(func(_eff):UI_Manager.queue_effect(self))
+	
 	visual.set_background_color()
 	# Setup proper mouse filtering
 	mouse_filter = Control.MOUSE_FILTER_PASS

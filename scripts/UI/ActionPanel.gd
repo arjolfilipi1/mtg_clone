@@ -16,9 +16,10 @@ func show_actions(card:Card, actions: Array):
 	z_index = card.z_index +1
 	self.get_parent().remove_child(self)
 	card.add_child(self)
+	await get_tree().process_frame
 	#global_position = card.global_position + Vector2( (self.size.x / len(actions)) * (len(actions) / 2 ),-100)
-	var offset = (64 * len(actions)) + ( 30 * len(actions) -30 )
-	global_position = card.global_position + Vector2( -offset,-100)
+	var offset = (200 - size.x) / 2.0
+	global_position = card.global_position + Vector2( offset,-100)
 	activate.card = current_card
 	attack.card = current_card
 	move.card = current_card

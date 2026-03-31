@@ -24,15 +24,17 @@ func begin_attack(attacking_card: Card, valid_target_states: Array) -> void:
 			_highlight_target(cs.card_node, true)
 
 	# Show the targeting arrow on the attacker
-	if not attacking_card.is_ancestor_of(attacking_card.movement.targeting_arrow):
-		attacking_card.add_child(attacking_card.movement.targeting_arrow)
-	attacking_card.movement.targeting_arrow.initiate_targeting()
+	if not attacking_card.is_ancestor_of(UI_Manager.targeting_arrow):
+		attacking_card.add_child(UI_Manager.targeting_arrow)
+	UI_Manager.targeting_arrow.initiate_targeting()
 
 # --- Called from Movement.on_click when a valid target is clicked ---
 func on_target_clicked(target_card: Card) -> void:
 	if attacker == null:
+		print("no attacker")
 		return
 	if target_card not in highlighted_targets:
+		print("not target")
 		return
 
 	# Ask for confirmation before committing
@@ -47,7 +49,7 @@ func _confirm_attack(target_card: Card) -> void:
 		return
 	var attacking := attacker
 	_cleanup_highlights()
-	attacking.movement.targeting_arrow.complete_targeting()
+	UI_Manager.targeting_arrow.complete_targeting()
 	# Play the slam animation; damage is applied inside Attack.gd on completion
 	attacking.visual.attack.start_slam_attack(attacking, target_card)
 	TurnManager.targeting = null
@@ -57,7 +59,7 @@ func _confirm_attack(target_card: Card) -> void:
 func cancel_attack() -> void:
 	if attacker == null:
 		return
-	attacker.movement.targeting_arrow.complete_targeting()
+	UI_Manager.targeting_arrow.complete_targeting()
 	_cleanup_highlights()
 	TurnManager.targeting = null
 	TurnManager.current_phase = GameEnums.TurnEnum.MAIN
@@ -69,12 +71,14 @@ func _highlight_target(target: Card, enable: bool) -> void:
 	target.visual.tar.visible = enable
 	target.visual.valid_target = enable
 	if enable:
+		target.pressed.connect(on_target_clicked)
 		target.visual.target_overlay.show()
 		target.visual.target_overlay.material.set_shader_parameter("Enable_Effects", true)
 		target.visual.target_overlay.material.set_shader_parameter(
 			"Border_Color", Vector4(0.1, 1, 0.1, 1)
 		)
 	else:
+		target.pressed.disconnect(on_target_clicked)
 		target.visual.tar.visible = false
 		target.visual.valid_target = false
 

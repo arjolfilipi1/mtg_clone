@@ -4,6 +4,7 @@ extends Node
 @onready var shadow: ColorRect = $"../shadow"
 @onready var card_back: Sprite2D = $"../Back/Sprite2D"
 @onready var ss: ColorRect = $"../Summoning_sickness"
+@onready var card: Card = $".."
 
 var hide_node: Node
 var show_node: Node
@@ -23,6 +24,8 @@ func _exit_tree():
 	"""Clean up all tweens"""
 	_kill_tweens()
 func _kill_tweens():
+	if card.state.controller.is_human == false:
+		print("kill")
 	if tween1 and tween1.is_valid():
 		tween1.kill()
 		tween1 = null
@@ -31,7 +34,9 @@ func _kill_tweens():
 		tween_shadow.kill()
 		tween_shadow = null
 func flip_to_back():
-	if current_state != CardSide.FRONT_VISIBLE:
+	if card.state.controller.is_human == false:
+		print("fb")
+	if current_state != CardSide.FRONT_VISIBLE or current_state == CardSide.FLIPPING:
 		return
 	
 	_kill_tweens()
@@ -44,10 +49,12 @@ func flip_to_back():
 	current_state = CardSide.BACK_VISIBLE
 
 func flip_to_front():
-	if current_state != CardSide.BACK_VISIBLE or card_back == null:
+	if card.state.controller.is_human == false:
+		print("ff")
+	if current_state != CardSide.BACK_VISIBLE or card_back == null or current_state == CardSide.FLIPPING:
 		return
 	
-	_kill_tweens()  # Kill existing tweens before starting new
+	#_kill_tweens()  # Kill existing tweens before starting new
 	
 	current_state = CardSide.FLIPPING
 	hide_node = card_back
@@ -64,10 +71,20 @@ func animate_flip(_hide_node, _show_node):
 	tween1.tween_property(hide_node, "scale:x", 0.0, flip_duration/2).set_ease(Tween.EASE_IN)
 	tween_shadow.tween_property(shadow, "scale:x", 0.0, flip_duration/2).set_ease(Tween.EASE_IN)
 	tween1.tween_callback(hide_and_show_nodes)
-	tween1.tween_property(_show_node, "scale:x", 1, flip_duration/2).set_ease(Tween.EASE_IN)
-	tween_shadow.tween_property(shadow, "scale:x", 1, flip_duration/2).set_ease(Tween.EASE_IN)
-	tween_shadow.tween_property(ss, "scale:x", 1, flip_duration/2).set_ease(Tween.EASE_IN)
+	await tween1.finished
+	var tween2 = create_tween()
+	var tween_shadow2 = create_tween()
+	tween2.tween_property(_show_node, "scale:x", 1, flip_duration/2).set_ease(Tween.EASE_IN)
+	tween_shadow2.tween_property(shadow, "scale:x", 1, flip_duration/2).set_ease(Tween.EASE_IN)
+	tween_shadow2.tween_property(ss, "scale:x", 1, flip_duration/2).set_ease(Tween.EASE_IN)
+	tween2.tween_callback(func():
+		if card.state.controller.is_human == false:
+			print(show_node.scale.x,"x")
+		hide_node.scale.x = 1.0
+		show_node.scale.x = 1.0)
 func hide_and_show_nodes():
+	if card.state.controller.is_human == false:
+		print("flip center")
 	hide_node.hide()
 	show_node.show()
 	if show_node == card_front:

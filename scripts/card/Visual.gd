@@ -61,7 +61,8 @@ func _ready() -> void:
 	subvp.material.set_shader_parameter("destroy", false)
 	card.state.pt_changed.connect(update_pt)
 	effect.visible = false
-
+	if card.state.face_up:
+		Flip_animator.flip_to_front()
 #show effect overlay
 func show_effect(_effect:Effect_class):
 	print("showing effect of " +card.state.card_name)
@@ -218,7 +219,13 @@ func burnCard(_state:CardState):
 func burn_update(value: float):
 	if subvp.material:
 		subvp.material.set_shader_parameter("progress", value)
-
+func flip(up:bool):
+	if Flip_animator.current_state == Flip_animator.CardSide.FLIPPING:
+		pass
+	elif up:
+		Flip_animator.flip_to_front()
+	else:
+		Flip_animator.flip_to_back()
 
 
 
@@ -235,9 +242,9 @@ func _process(_delta: float) -> void:
 			effect_progress = 0.0
 			effect_activation_finished.emit()
 	# Card face animation
-	if card.state.face_up:
-		if Flip_animator.current_state == GameEnums.CardSide.BACK:
-			Flip_animator.flip_to_front()
+	#if card.state.face_up:
+		#if Flip_animator.current_state == GameEnums.CardSide.BACK:
+			#Flip_animator.flip_to_front()
 	
 	# Playable glow effect (hand cards only)
 	if card.state.player_controled and TurnManager.current_phase == GameEnums.TurnEnum.MAIN:

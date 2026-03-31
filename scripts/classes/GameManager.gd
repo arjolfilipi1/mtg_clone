@@ -207,7 +207,7 @@ func _process(_delta: float) -> void:
 
 		sp.text = "vt" + str(gamestate.player_mana )
 		sl.text = str(gamestate.enemy_deck )
-		sl.text = UI_Manager.highlighted.state.pos + "-" + str(UI_Manager.highlighted.board_pos)
+		sl.text = UI_Manager.highlighted.state.pos + "-" + str(UI_Manager.highlighted.visual.subvp.scale.x)
 	if TurnManager.priority:
 		current_player = player1
 		p_overlay.visible = true

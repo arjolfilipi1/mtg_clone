@@ -1,6 +1,4 @@
 extends Node
-var targeting_arrow
-const _TARGETING_SCENE = preload("res://scenes/TargetingArrow.tscn")
 var mana_tween: Tween
 # Movement types
 enum MoveType {
@@ -34,7 +32,13 @@ func move_card_to_board(card: Card, target_slot: Area2D, rotation: float = 0.0,
 	"""Move a card from hand to board slot"""
 	if not _validate_movement(card):
 		return null
-	
+	card.moving = true
+	UI_Manager.cancel_hover()
+	var start_pos = card.global_position
+	card.get_parent().remove_child(card)
+	target_slot.add_child(card)
+	card.global_position = start_pos
+
 	var move_data = {
 		"type": MoveType.PLAY_TO_BOARD,
 		"card": card,
@@ -52,12 +56,18 @@ func move_card_to_mana(card: Card, is_player: bool, mana_zone_index: int,
 	"""Move a card from hand to mana zone"""
 	if not _validate_movement(card):
 		return null
-	
+	card.moving = true
+	UI_Manager.cancel_hover()
 	# Calculate target position in mana zone
 	var mana_zone = card.state.controller.player_mana_zone
 	var target_pos = Vector2(-40.0, -50.0)  # Relative position
+	var start_pos = card.global_position
+	
 	card.state.controller.mana_selected = true
 	card.state.to_mana(Game_Manager.gamestate)
+	card.get_parent().remove_child(card)
+	card.state.controller.player_mana_zone.add_child(card)
+	card.global_position = start_pos
 	var move_data = {
 		"type": MoveType.MOVE_TO_MANA,
 		"card": card,
@@ -218,12 +228,7 @@ func _execute_movement(move_data: Dictionary) -> Tween:
 	
 	# Connect completion signal
 	tween.finished.connect(_on_movement_finished.bind(card, move_data))
-	
-	# Handle reparenting if needed
-	if move_type == MoveType.PLAY_TO_BOARD:
-		_handle_board_reparenting(card, move_data.extra.slot)
-	elif move_type == MoveType.MOVE_TO_MANA:
-		_handle_mana_reparenting(card, move_data.extra.mana_zone)
+
 	
 	return tween
 
@@ -253,44 +258,25 @@ func _on_movement_finished(card: Card, move_data: Dictionary) -> void:
 	active_movements.erase(card)
 	movement_completed.emit(card, move_type)
 
-func _handle_board_reparenting(card: Card, target_slot: Area2D) -> void:
-	"""Reparent card to board during movement"""
-	# Don't reparent immediately, wait for movement to finish
-	# Store that we need to reparent after movement
-	#card._pending_reparent = {"target": target_slot.get_parent(), "slot": target_slot}
-	card.set_meta("pending_reparent", {"target": target_slot.get_parent(), "slot": target_slot})
-func _handle_mana_reparenting(card: Card, mana_zone: Node) -> void:
-	"""Reparent card to mana zone during movement"""
-	#card._pending_reparent = {"target": mana_zone}
-	card.set_meta("pending_reparent", {"target": mana_zone})
+
 func _post_play_to_board(card: Card, move_data: Dictionary) -> void:
 	"""Handle post-movement logic for playing to board"""
-	if card.has_meta("pending_reparent"):
-		var reparent_data = card.get_meta("pending_reparent")
-		card.get_parent().remove_child(card)
-		reparent_data.target.add_child(card)
-		card.remove_meta("pending_reparent")
-		
-		# Update slot reference
-		if reparent_data.has("slot"):
-			card.board_pos = reparent_data.slot
 	
 	card.state.card_location = GameEnums.CardZone.FIELD
 	card.mouse_filter = Control.MOUSE_FILTER_PASS
-
+	card.normal_scale = Vector2(0.5,0.5)
+	card.hover_scale = Vector2(0.65,0.65)
+	TurnManager._pass_priority()
 func _post_move_to_mana(card: Card, move_data: Dictionary) -> void:
 	"""Handle post-movement logic for moving to mana"""
 	var extra = move_data.extra
-	
-	if card.has_meta("pending_reparent"):
-		var reparent_data = card.get_meta("pending_reparent")
-		card.get_parent().remove_child(card)
-		reparent_data.target.add_child(card)
-		card.remove_meta("pending_reparent")
-		TurnManager.finish_mana_selection()
+	TurnManager.finish_mana_selection()
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.z_index = extra.index
-	
+	card.normal_scale = card_scale_mana
+	card.hover_scale = card_scale_mana
+	card.scale = card_scale_mana
+	card.moving = false
 	## Spawn mana orbs based on card's mana creation
 	#for mana_type in card.state.mana_creation:
 		#var orb = extra.mana_zone.spawn_mana_orb(mana_type, Vector2(100, 125), extra.mana_zone)

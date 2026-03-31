@@ -18,14 +18,24 @@ var enemy_mana_card_nr = 0
 var selecting_slot: bool = false
 var _effect_queue:Array = []
 var _effect_playing := false
-var _hover_timer: SceneTreeTimer = null
-var _hovered_card: Card = null
+var hover_timer: SceneTreeTimer = null
+var hovered_card: Card = null
+
+func cancel_hover():
+	if hover_timer:
+		hover_timer.stop()
+	if hovered_card:
+		var unhighlight_tween = _clear_card_highlight(hovered_card)
+		await unhighlight_tween.finished
+		hovered_card = null
 
 #hover logic
 func on_card_hovered(card: Card):
-	if _hover_timer:
-		_hover_timer.timeout.disconnect(_on_hover_timeout)
-		_hover_timer = null
+	if card.moving:
+		return
+	if hover_timer:
+		hover_timer.timeout.disconnect(_on_hover_timeout)
+		hover_timer = null
 
 	if highlighted == card:
 		return  # already highlighted, nothing to do
@@ -34,18 +44,20 @@ func on_card_hovered(card: Card):
 		_clear_card_highlight(highlighted)
 
 	highlighted = card
-	_hovered_card = card
+	hovered_card = card
 	_apply_card_highlight(card)
 
 func on_card_unhovered(card: Card):
-	_hovered_card = null
+	hovered_card = null
 	var delay = 1.0 if card.state.card_location == GameEnums.CardZone.FIELD else 0.3
-	_hover_timer = get_tree().create_timer(delay)
-	_hover_timer.timeout.connect(_on_hover_timeout.bind(card))
+	hover_timer = get_tree().create_timer(delay)
+	hover_timer.timeout.connect(_on_hover_timeout.bind(card))
 
 func _on_hover_timeout(card: Card):
-	_hover_timer = null
-	if highlighted == card and _hovered_card != card:
+	hover_timer = null
+	if card.state.card_location == GameEnums.CardZone.MANA:
+		return 
+	if highlighted == card and hovered_card != card:
 		_clear_card_highlight(card)
 		highlighted = null
 
@@ -62,7 +74,7 @@ func _clear_card_highlight(card: Card):
 	var tween = card.create_tween()
 	tween.tween_property(card, "scale", card.normal_scale, 0.2)\
 		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
-
+	return tween
 #effect
 func queue_effect(card:Card)-> void:
 	_effect_queue.append(card)
