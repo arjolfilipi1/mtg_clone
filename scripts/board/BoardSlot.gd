@@ -127,6 +127,7 @@ func set_color(color:Vector4):
 	overlay.material.set_shader_parameter("Border_Color",  color)
 	
 func _on_input_event(_viewport: Node, _event: InputEvent, _shape_idx: int) -> void:
+	#print(name,pos,position)
 	pass # Replace with function body.
 
 

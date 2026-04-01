@@ -38,11 +38,12 @@ func move_card_to_board(card: Card, target_slot: Area2D, rotation: float = 0.0,
 	card.get_parent().remove_child(card)
 	target_slot.add_child(card)
 	card.global_position = start_pos
-
+	var card_center_offset = card.size * 0.5  # Center point of card
+	var target_local_pos = -card_center_offset 
 	var move_data = {
 		"type": MoveType.PLAY_TO_BOARD,
 		"card": card,
-		"target_pos": target_slot.position,
+		"target_pos": target_local_pos,
 		"target_scale": card_scale_field,
 		"target_rotation": rotation,
 		"callback": callback,
@@ -204,9 +205,11 @@ func _execute_movement(move_data: Dictionary) -> Tween:
 	tween.set_parallel(true)
 	tween.set_ease(Tween.EASE_OUT)
 	tween.set_trans(Tween.TRANS_SINE)
-	
+	if move_type == MoveType.PLAY_TO_BOARD:
+			tween.tween_property(card, "position", move_data.target_pos, movement_duration)
 	# Position animation
-	tween.tween_property(card, "position", move_data.target_pos, movement_duration)
+	else :
+		tween.tween_property(card, "position", move_data.target_pos, movement_duration)
 	tween.tween_property(card, "scale", move_data.target_scale, movement_duration)
 	
 	if move_data.has("target_rotation"):
@@ -216,7 +219,6 @@ func _execute_movement(move_data: Dictionary) -> Tween:
 	active_movements[card] = {
 		"tween": tween,
 		"type": move_type,
-		"original_parent": original_parent,
 		"original_pos": original_pos,
 		"original_scale": original_scale,
 		"original_rotation": original_rotation,
@@ -270,7 +272,8 @@ func _post_play_to_board(card: Card, move_data: Dictionary) -> void:
 	card.hover_scale = Vector2(0.65,0.65)
 	card.scale = card_scale_field
 	extra.slot.card_list.append(card)
-	print('cl',extra.slot.card_list)
+	print('cl',card.position,extra.slot.position)
+	#card.global_position = extra.slot.global_position
 	TurnManager._pass_priority()
 func _post_move_to_mana(card: Card, move_data: Dictionary) -> void:
 	"""Handle post-movement logic for moving to mana"""

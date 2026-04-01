@@ -213,8 +213,8 @@ func _process(_delta: float) -> void:
 	if UI_Manager.highlighted:
 
 		sp.text = "vt" + str(gamestate.player_mana )
-		sl.text = str(UI_Manager.highlighted.board_pos.card_list) if UI_Manager.highlighted and UI_Manager.highlighted.board_pos != null else "-"
-		sl.text = str(UI_Manager.highlighted.position) + "-" + str(UI_Manager.highlighted.visual.subvp.scale.x)
+		#sl.text = str(UI_Manager.highlighted.board_pos.card_list) if UI_Manager.highlighted and UI_Manager.highlighted.board_pos != null else "-"
+		sl.text = str(UI_Manager.highlighted.position) + "-" + str(UI_Manager.highlighted.board_pos)
 	if TurnManager.priority:
 		current_player = player1
 		p_overlay.visible = true

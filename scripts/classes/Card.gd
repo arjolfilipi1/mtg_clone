@@ -55,7 +55,7 @@ func _on_grave_movement_complete(card: Card):
 
 func _ready():
 
-	
+	pivot_offset = size * 0.5
 	await get_tree().process_frame
 	visual.add_mana_symbols()
 	visual.set_range()
