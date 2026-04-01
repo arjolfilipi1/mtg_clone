@@ -37,7 +37,14 @@ var enemy_deck_init:Array[int] = [0,1,2,3,4,5,6,3]
 var setup_finished:=false
 
 func store_gamestate():
-	print(confirm_overlay)
+	for c in player_board.get_children():
+		if c.is_in_group("slots"):
+			if c.card_list != []:
+				print(c.name,c.position)
+	for c in enemy_board.get_children():
+		if c.is_in_group("slots"):
+			if c.card_list != []:
+				print(c.name,c.position)
 	#print(gamestate.enemy_hand+gamestate.enemy_mana+gamestate.enemy_grave)
 
 
@@ -206,8 +213,8 @@ func _process(_delta: float) -> void:
 	if UI_Manager.highlighted:
 
 		sp.text = "vt" + str(gamestate.player_mana )
-		sl.text = str(gamestate.enemy_deck )
-		sl.text = UI_Manager.highlighted.state.pos + "-" + str(UI_Manager.highlighted.visual.subvp.scale.x)
+		sl.text = str(UI_Manager.highlighted.board_pos.card_list) if UI_Manager.highlighted and UI_Manager.highlighted.board_pos != null else "-"
+		sl.text = str(UI_Manager.highlighted.position) + "-" + str(UI_Manager.highlighted.visual.subvp.scale.x)
 	if TurnManager.priority:
 		current_player = player1
 		p_overlay.visible = true

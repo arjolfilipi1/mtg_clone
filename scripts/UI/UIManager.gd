@@ -23,7 +23,7 @@ var hovered_card: Card = null
 
 func cancel_hover():
 	if hover_timer:
-		hover_timer.stop()
+		hover_timer.timeout.disconnect(_on_hover_timeout)
 	if hovered_card:
 		var unhighlight_tween = _clear_card_highlight(hovered_card)
 		await unhighlight_tween.finished
@@ -34,7 +34,8 @@ func on_card_hovered(card: Card):
 	if card.moving:
 		return
 	if hover_timer:
-		hover_timer.timeout.disconnect(_on_hover_timeout)
+		if hover_timer.is_connected("timeout",_on_hover_timeout):
+			hover_timer.timeout.disconnect(_on_hover_timeout)
 		hover_timer = null
 
 	if highlighted == card:
@@ -71,8 +72,11 @@ func _apply_card_highlight(card: Card):
 func _clear_card_highlight(card: Card):
 	card.parts_highlighted = false
 	card.z_index = card.card_index
+	var normal_scale = card.normal_scale
+	if card.state.card_location == GameEnums.CardZone.FIELD:
+		normal_scale = MovementManager.card_scale_field
 	var tween = card.create_tween()
-	tween.tween_property(card, "scale", card.normal_scale, 0.2)\
+	tween.tween_property(card, "scale", normal_scale, 0.2)\
 		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
 	return tween
 #effect

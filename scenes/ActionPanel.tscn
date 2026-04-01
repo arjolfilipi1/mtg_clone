@@ -36,8 +36,11 @@ shader_parameter/white_threshold = 0.9
 shader_parameter/hover_ratio = 0.0
 
 [node name="ActionPanel" type="HBoxContainer"]
-offset_right = 259.0
-offset_bottom = 64.0
+anchors_preset = -1
+anchor_right = 0.225
+anchor_bottom = 0.099
+offset_right = -0.200012
+offset_bottom = -0.152008
 size_flags_horizontal = 4
 theme_override_constants/separation = 30
 alignment = 1

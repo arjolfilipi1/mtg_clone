@@ -42,11 +42,11 @@ func move_card_to_board(card: Card, target_slot: Area2D, rotation: float = 0.0,
 	var move_data = {
 		"type": MoveType.PLAY_TO_BOARD,
 		"card": card,
-		"target_pos": target_slot.pos,
+		"target_pos": target_slot.position,
 		"target_scale": card_scale_field,
 		"target_rotation": rotation,
 		"callback": callback,
-		"extra": {"slot": target_slot}
+		"extra": {"slot": target_slot, "index": target_slot.z_index +10}
 	}
 	
 	return _execute_movement(move_data)
@@ -152,7 +152,7 @@ func end_card_drag(card: Card, drop_position: Vector2) -> void:
 		# Successfully played
 		move_card_to_board(card, target_slot, target_slot.scew_dict.get(target_slot.name, 0))
 		card.state.play_to_board(target_slot.name, Game_Manager.gamestate)
-		target_slot.card_list.append(card)
+		card.state.controller.player_hand.reset()
 	else:
 		# Return to hand
 		_return_to_hand(card)
@@ -261,11 +261,16 @@ func _on_movement_finished(card: Card, move_data: Dictionary) -> void:
 
 func _post_play_to_board(card: Card, move_data: Dictionary) -> void:
 	"""Handle post-movement logic for playing to board"""
-	
+	var extra = move_data.extra
 	card.state.card_location = GameEnums.CardZone.FIELD
-	card.mouse_filter = Control.MOUSE_FILTER_PASS
-	card.normal_scale = Vector2(0.5,0.5)
+	card.z_index = extra.index
+	card.board_pos = extra.slot
+	card.moving = false
+	card.normal_scale = card_scale_field
 	card.hover_scale = Vector2(0.65,0.65)
+	card.scale = card_scale_field
+	extra.slot.card_list.append(card)
+	print('cl',extra.slot.card_list)
 	TurnManager._pass_priority()
 func _post_move_to_mana(card: Card, move_data: Dictionary) -> void:
 	"""Handle post-movement logic for moving to mana"""

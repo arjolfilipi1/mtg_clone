@@ -62,7 +62,7 @@ func complete_targeting() -> void:
 			tc.emit_signal("card_targeted", tc, "card_targeted",
 					{"targeting_source": owner_object})
 		target_object = tc
-	if TurnManager.targeting:
+	if TurnManager.targeting and TurnManager.targeting != null:
 		TurnManager.targeting.board_pos.reset_higlight()
 	TurnManager.targeting = null
 	is_targeting = false
