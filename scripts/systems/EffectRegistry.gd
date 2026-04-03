@@ -10,7 +10,7 @@ func register(keyword, func_ref):
 	executors[keyword] = func_ref
 func _draw(ctx):
 	for i in range(ctx.params.get("n",1)):
-		await ctx.controller.draw()
+		await ctx.controller.draw(ctx.game)
 func _damage(ctx):
 	var target = ctx.targets
 	for t in target:
