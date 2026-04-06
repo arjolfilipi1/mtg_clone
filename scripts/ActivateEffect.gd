@@ -39,7 +39,6 @@ func pressed_action() -> void:
 	if card.state.effects:
 		var activatable = card.state.can_activate_effect(Game_Manager.gamestate)
 		if len(activatable) == 1:
-			print("Activating effect: ", activatable[0].spec)
 			card.state.apply_effect(activatable[0])
 		elif len(activatable) > 1:
 			print("Multiple effects available, need selection UI")

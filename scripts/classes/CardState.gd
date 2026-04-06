@@ -65,21 +65,7 @@ func setup(data: Dictionary):
 	
 	var effects_spec = card_data['effects']
 	if effects_spec:
-		for effect_spec in effects_spec:
-			var e = Effect_class.new()
-			e.spec = effect_spec.spec
-			e.target_count = effect_spec.target_count
-			e.target_spec = effect_spec.target_spec
-			e.speed = effect_spec.speed
-			e.description = effect_spec.description
-			e.trigger_spec = effect_spec.trigger_spec
-			e.mandatory = effect_spec.mandatory
-			e.targets = effect_spec.targets
-			if effect_spec.mana_cost:
-				e.mana_cost = effect_spec.mana_cost
-			else:
-				e.mana_cost = {}
-			effects.append(e)
+		_load_effects_from_data(effects_spec)
 
 func destroy_card(game:MTGGameState):
 	if card_location == GameEnums.CardZone.HAND:
@@ -130,38 +116,33 @@ func effect_targets(gs:MTGGameState, eff:Effect_class):
 func apply_effect(effect:Effect_class,game:MTGGameState = Game_Manager.gamestate):
 	if real:
 		TurnManager.waiting_for_input = true
-	if effect:
-		var targets = effect_targets(game,effect)
-		var ctx = {
-		"game": game,
+
+	var ctx := {
+		"game":       Game_Manager.gamestate,
 		"controller": controller,
-		"source": self,
-		"targets": targets
+		"source":     self,
 	}
-		
-		print("pushed effect to stack:"+effect.spec)
-		
-		if effect.targets and effect.target_spec not in ["self","none"] and len(ctx.targets) > effect.target_count:
-		# Pause and ask the player to choose
-			var possible_targets = ctx.targets
-			var chosen_targets = await controller.request_target_selection(possible_targets, effect.target_count)
-			if not chosen_targets or chosen_targets.is_empty():
-				print("Effect canceled - no targets chosen")
-				return
-			ctx.targets = chosen_targets
-		activated_effect.emit(effect)
-		game.push_to_stack({
-		"effect":effect,
-		"source":self,
-		"controller":self.controller,
-		"context":ctx
+
+	# For targeted effects, resolve candidates and ask player if needed
+	# (EffectRunner handles per-action targeting, so here we just push to stack)
+	activated_effect.emit(effect)
+
+	Game_Manager.gamestate.push_to_stack({
+		"effect":     effect,
+		"source":     self,
+		"controller": controller,
+		"context":    ctx,
 	})
-		await game.on_card_event( Card_event.e.ON_EFFECT_ACTIVATED,self, ctx.targets)
-		
-		#await EffectRunner.apply_effect(effect,ctx)
-		TurnManager.waiting_for_input = false
-		if card_type == GameEnums.CardType.SPELL and effect.trigger_spec == "on_play":
-			destroy_card(game)
+
+	await Game_Manager.gamestate.on_card_event(
+		Card_event.e.ON_EFFECT_ACTIVATED, self, []
+	)
+
+	TurnManager.waiting_for_input = false
+
+	if card_type == GameEnums.CardType.SPELL:
+		destroy_card(Game_Manager.gamestate)
+
 
 func can_respond(game:MTGGameState,index:int)-> bool:
 	var eff = effects[index]
@@ -171,6 +152,20 @@ func can_respond(game:MTGGameState,index:int)-> bool:
 			return true
 	
 	return false
+func _load_effects_from_data(effects_spec: Array) -> void:
+	for effect_spec in effects_spec:
+		var e := Effect_class.new()
+		e.actions       = effect_spec.get("actions", [])
+		e.trigger_spec  = effect_spec.get("trigger", "")
+		e.target_count  = effect_spec.get("target_count", 1)
+		e.speed         = effect_spec.get("speed", 1)
+		e.mandatory     = effect_spec.get("mandatory", false)
+		e.once_per_turn = effect_spec.get("once_per_turn", "soft")
+		e.description   = effect_spec.get("description", "")
+		if effect_spec.has("mana_cost") and effect_spec.mana_cost is Dictionary:
+			e.mana_cost = effect_spec.mana_cost
+		effects.append(e)
+
 func can_move(game:MTGGameState) -> Array:
 	if card_location != GameEnums.CardZone.FIELD or not pos:
 		return []
@@ -186,24 +181,25 @@ func can_move(game:MTGGameState) -> Array:
 	return res
 #check if effect can be activated, will be added to later
 func can_activate_effect(game:MTGGameState,effect:Effect_class = null) ->Array[Effect_class]:
-	var res :Array[Effect_class] = []
-	if effects:
-		
-		for eff in effects:
-			if effect != null:
-				eff = effect
-			if can_be_payed(game,eff.mana_cost):
-				if eff.trigger_spec == "true":
+	var res: Array[Effect_class] = []
+	for eff in effects:
+		if effect != null and eff != effect:
+			continue
+		if eff.used_this_turn and eff.once_per_turn != "":
+			continue
+		if not can_be_payed(game, eff.mana_cost):
+			continue
+		match eff.trigger_spec:
+			"true":
+				res.append(eff)
+			"selected_on_hand":
+				if card_location == GameEnums.CardZone.HAND:
 					res.append(eff)
-				elif eff.trigger_spec == "selected_on_hand" :
-					if card_location == GameEnums.CardZone.HAND :
-						res.append(eff)
-				elif eff.trigger_spec == "on_stack_buff" and len(game.stack) > 0:
-					if "buff" in game.stack[-1].effect.spec:
-						res.append(eff)
-			if effect != null:
-				break
+			"on_stack_buff":
+				if game.stack.size() > 0 and "buff" in game.stack[-1].effect.description:
+					res.append(eff)
 	return res
+
 # --- Gameplay logic ---
 func can_attack(game:MTGGameState) -> Array:
 	

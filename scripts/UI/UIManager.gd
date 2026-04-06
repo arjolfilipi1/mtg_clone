@@ -100,6 +100,9 @@ func _on_effect_finished() -> void:
 func setup() -> void:
 	targeting_arrow = _TARGETING_SCENE.instantiate()
 	all_board_nodes = Game_Manager.tree.get_nodes_in_group("slots")
+	#PriorityManager.entry_pushed.connect(_on_stack_entry_pushed)
+	#PriorityManager.entry_resolved.connect(_on_stack_entry_resolved)
+	#PriorityManager.priority_changed.connect(_on_priority_changed)
 #attack
 func request_attack():
 	#card = action_panel.current_card
@@ -198,7 +201,7 @@ func select_slot(valid_slots: Array[String]) -> String:
 func select_effect(effects: Array[Effect_class],card_name:String):
 	var options = []
 	for eff in effects:
-		options.append(eff.spec)
+		options.append(eff.description)
 	var choice = await ask_choice(options,"select effect for "+card_name)
 	if choice == "":
 		return null

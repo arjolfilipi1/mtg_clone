@@ -61,6 +61,7 @@ func setup():
 	spawn_players()
 	load_cards()
 	start_game()
+	
 	TurnManager.end_phase.connect(gamestate.end_phase_triggers)
 	TurnManager.end_of_turn.connect(gamestate.on_turn_end_triggers)
 	cm = CombatManager.new()
@@ -96,7 +97,7 @@ func _on_overlay_cancelled() -> void:
 func spawn_players():
 	player1 = Player.new("You",player_mana_zone,player_hand,player_board,player_deck)
 	player2 = Player.new("Enemy",enemy_mana_zone,enemy_hand,enemy_board,enemy_deck)
-	
+	PriorityManager.setup(player1, player2)
 	#player1.is_active = true
 	player1.is_human = true  # You can define this in Player.gd
 
