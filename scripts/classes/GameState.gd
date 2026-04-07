@@ -49,6 +49,7 @@ func get_available_actions(card:Card) -> Array:
 
 
 func push_to_stack(effect_data: Dictionary):
+	print(effect_data)
 	if effect_data != {}:
 		stack.append(effect_data)
 		emit_signal("stack_changed")

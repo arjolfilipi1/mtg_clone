@@ -64,7 +64,7 @@ func _ready():
 	state.flip.connect(visual.flip)
 	state.attack_signal.connect(visual.attack.start_slam_attack)
 	state.activated_effect.connect(func(_eff):UI_Manager.queue_effect(self))
-	
+	state.moved_to_mana.connect(func(_eff):UI_Manager._clear_card_highlight(self))
 	visual.set_background_color()
 	# Setup proper mouse filtering
 	mouse_filter = Control.MOUSE_FILTER_PASS

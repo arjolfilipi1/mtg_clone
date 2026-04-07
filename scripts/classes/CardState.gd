@@ -2,6 +2,7 @@ extends Resource
 class_name CardState
 signal pt_changed(CardState)
 signal deleted(CardState)
+signal moved_to_mana(CardState)
 signal activated_effect(Effect_class)
 signal flip(bool)
 signal attack_signal(attacker:CardState, defender:CardState)
@@ -118,7 +119,7 @@ func apply_effect(effect:Effect_class,game:MTGGameState = Game_Manager.gamestate
 		TurnManager.waiting_for_input = true
 
 	var ctx := {
-		"game":       Game_Manager.gamestate,
+		"game":       game,
 		"controller": controller,
 		"source":     self,
 	}
@@ -127,21 +128,21 @@ func apply_effect(effect:Effect_class,game:MTGGameState = Game_Manager.gamestate
 	# (EffectRunner handles per-action targeting, so here we just push to stack)
 	activated_effect.emit(effect)
 
-	Game_Manager.gamestate.push_to_stack({
+	game.push_to_stack({
 		"effect":     effect,
 		"source":     self,
 		"controller": controller,
 		"context":    ctx,
 	})
 
-	await Game_Manager.gamestate.on_card_event(
+	await game.on_card_event(
 		Card_event.e.ON_EFFECT_ACTIVATED, self, []
 	)
 
 	TurnManager.waiting_for_input = false
 
 	if card_type == GameEnums.CardType.SPELL:
-		destroy_card(Game_Manager.gamestate)
+		destroy_card(game)
 
 
 func can_respond(game:MTGGameState,index:int)-> bool:
@@ -196,6 +197,7 @@ func can_activate_effect(game:MTGGameState,effect:Effect_class = null) ->Array[E
 				if card_location == GameEnums.CardZone.HAND:
 					res.append(eff)
 			"on_stack_buff":
+				print(game.stack.size(),game.stack[-1].effect.description)
 				if game.stack.size() > 0 and "buff" in game.stack[-1].effect.description:
 					res.append(eff)
 	return res
@@ -334,7 +336,7 @@ func to_mana(game:MTGGameState):
 		game.enemy_hand.erase(self)
 		game.enemy_mana.append(self)
 	card_location = GameEnums.CardZone.MANA
-
+	moved_to_mana.emit(self)
 #checks if player can play the card
 func can_be_payed(_game:MTGGameState,cost) -> bool:
 	var mana_pool = controller.mana_pool

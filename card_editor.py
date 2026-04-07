@@ -22,7 +22,7 @@ from PyQt5.QtGui import QFont, QColor
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
 SCRIPT_DIR   = os.path.dirname(os.path.abspath(__file__))
-CARD_JSON    = os.path.join(SCRIPT_DIR, "card.json")
+CARD_JSON    = os.path.join(SCRIPT_DIR, "data/card.json")
 OPTIONS_JSON = os.path.join(SCRIPT_DIR, "card_options.json")
 
 COLORS = ["red","blue","green","earth","white","black"]
@@ -511,14 +511,14 @@ class CardEditorPanel(QWidget):
 
         info_lay.addWidget(QLabel("Type:"), 1, 0)
         self.type_cb = QComboBox()
-        for t in options["card_types"]:
+        for t in self.options["card_types"]:
             self.type_cb.addItem(t)
         self.type_cb.currentTextChanged.connect(self._on_type_changed)
         info_lay.addWidget(self.type_cb, 1, 1)
 
         info_lay.addWidget(QLabel("Background:"), 2, 0)
         self.bg_cb = QComboBox()
-        for b in options["backgrounds"]:
+        for b in self.options["backgrounds"]:
             self.bg_cb.addItem(b.capitalize(), b)
         info_lay.addWidget(self.bg_cb, 2, 1)
 
