@@ -65,12 +65,12 @@ func handle_stack_phase():
 
 		while waiting_for_input:
 			await handle_priority(game)
-		print("stack", game.stack.size())
+		print("stack ", game.stack.size())
 		# both passed, resolve top effect
 		var top = game.pop_from_stack()
 		
 		if top:
-			print("top",top.source.card_name)
+			print("top ",top.source.card_name)
 			await EffectRunner.apply_effect(top.effect, top.context)
 	print("=== STACK END ===")
 	

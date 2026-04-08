@@ -8,7 +8,7 @@ var effect: Effect_class
 var source: CardState
  
 # The player who controls this entry
-var controller  # Player
+var controller:Player  # Player
  
 # Pre-resolved targets (Array of CardState or Player)
 # These are locked in when the entry is pushed, not at resolution time.

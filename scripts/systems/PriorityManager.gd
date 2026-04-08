@@ -7,7 +7,7 @@ signal priority_changed(player_index: int)   # UI: show whose priority it is
 signal stack_empty                           # TurnManager: may advance phase
  
 # ── State ──────────────────────────────────────────────────────────────────────
-var stack: Array[StackEntry] = []
+
  
 # 0 = active player (human), 1 = opponent (AI)
 var priority_holder: int = 0
@@ -31,7 +31,7 @@ func setup(active: Player, opponent:Player) -> void:
  
 # Push a new entry onto the stack from anywhere in the codebase.
 func push(entry: StackEntry) -> void:
-	stack.append(entry)
+	Game_Manager.gamestate.stack.append(entry)
 	_passed = [false, false]          # reset pass state — both get to respond
 	entry_pushed.emit(entry)
 	_give_priority(priority_holder)   # active player gets priority again
@@ -42,7 +42,7 @@ func pass_priority() -> void:
 
 	# Both passed consecutively → resolve or clear
 	if _passed[0] and _passed[1]:
-		if stack.is_empty():
+		if Game_Manager.gamestate.stackstack.is_empty():
 			stack_empty.emit()
 		else:
 			await _resolve_top()
@@ -52,13 +52,13 @@ func pass_priority() -> void:
 
 # Counter the top-most counterable entry (used by counterspell actions).
 func counter_top() -> void:
-	if stack.is_empty():
+	if Game_Manager.gamestate.stackstack.is_empty():
 		return
-	var top: StackEntry = stack.back()
+	var top: StackEntry = Game_Manager.gamestate.stackstack.back()
 	if not top.is_counterable:
 		push_warning("PriorityManager: tried to counter an uncounterable effect")
 		return
-	stack.pop_back()
+	Game_Manager.gamestate.stackstack.pop_back()
 	entry_resolved.emit(top)          # UI removes it
 	_passed = [false, false]
 	_give_priority(priority_holder)
@@ -95,16 +95,16 @@ func _give_priority(player_index: int) -> void:
 		await _ai_priority_decision()
  
 func _resolve_top() -> void:
-	if _resolving or stack.is_empty():
+	if _resolving or Game_Manager.gamestate.stackstack.is_empty():
 		return
 	_resolving = true
 
-	var entry: StackEntry = stack.pop_back()
+	var entry: StackEntry = Game_Manager.gamestate.stackstack.pop_back()
 	entry_resolved.emit(entry)
 
 	# Build the base context your existing EffectRunner expects
 	var ctx := {
-		"game":       Game_Manager.gamestate,
+		"game":       Game_Manager.gamestate.stack,
 		"source":     entry.source,
 		"controller": entry.controller,
 	}
@@ -145,7 +145,7 @@ func _find_ai_response() -> StackEntry:
 	#
 	# Example skeleton — replace with real AI logic:
 	#
-	# for card_state in Game_Manager.gamestate.enemy_hand:
+	# for card_state in Game_Manager.gamestate.stack.enemy_hand:
 	#     for eff in card_state.effects:
 	#         if eff.trigger_spec.get("speed", 0) >= 2:   # speed 2 = instant
 	#             if _ai_should_respond(eff, stack):

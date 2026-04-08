@@ -127,7 +127,8 @@ func apply_effect(effect:Effect_class,game:MTGGameState = Game_Manager.gamestate
 	# For targeted effects, resolve candidates and ask player if needed
 	# (EffectRunner handles per-action targeting, so here we just push to stack)
 	activated_effect.emit(effect)
-
+	var se = StackEntry.new( effect,self,controller)
+	#game.push(se)
 	game.push_to_stack({
 		"effect":     effect,
 		"source":     self,
@@ -138,8 +139,8 @@ func apply_effect(effect:Effect_class,game:MTGGameState = Game_Manager.gamestate
 	await game.on_card_event(
 		Card_event.e.ON_EFFECT_ACTIVATED, self, []
 	)
-
-	TurnManager.waiting_for_input = false
+	if real:
+		TurnManager.waiting_for_input = false
 
 	if card_type == GameEnums.CardType.SPELL:
 		destroy_card(game)
@@ -197,7 +198,7 @@ func can_activate_effect(game:MTGGameState,effect:Effect_class = null) ->Array[E
 				if card_location == GameEnums.CardZone.HAND:
 					res.append(eff)
 			"on_stack_buff":
-				print(game.stack.size(),game.stack[-1].effect.description)
+				print(game.stack.size(),game.stack[-1].effect.description if len(game.stack)> 0 else "-" )
 				if game.stack.size() > 0 and "buff" in game.stack[-1].effect.description:
 					res.append(eff)
 	return res
