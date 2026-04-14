@@ -114,46 +114,58 @@ func effect_targets(gs:MTGGameState, eff:Effect_class):
 	return res
 
 #runs the effect
-func apply_effect(effect:Effect_class,game:MTGGameState = Game_Manager.gamestate):
-	if real:
-		TurnManager.waiting_for_input = true
+func apply_effect(effect: Effect_class, game: MTGGameState = Game_Manager.gamestate):
+	# ── Simulated path (AI lookahead) ──────────────────────────────────────────
+	# real = false means this is a cloned card in a simulated game state.
+	# Resolve immediately with no stack, no signals, no visuals.
+	if not real:
+		var ctx := {
+			"game":       game,
+			"controller": controller,
+			"source":     self,
+		}
+		print("apply_effect",game)
+		await EffectRunner.apply_effect(effect, ctx)
+		return
 
-	var ctx := {
-		"game":       game,
-		"controller": controller,
-		"source":     self,
-	}
-
-	# For targeted effects, resolve candidates and ask player if needed
-	# (EffectRunner handles per-action targeting, so here we just push to stack)
+	# ── Real game path ─────────────────────────────────────────────────────────
+	# Emit so UIManager can show the activation animation
 	activated_effect.emit(effect)
-	var se = StackEntry.new( effect,self,controller)
-	#game.push(se)
-	game.push_to_stack({
-		"effect":     effect,
-		"source":     self,
-		"controller": controller,
-		"context":    ctx,
-	})
 
-	await game.on_card_event(
-		Card_event.e.ON_EFFECT_ACTIVATED, self, []
+	# Decide entry type and counterability based on trigger and speed
+	var is_activated := effect.trigger_spec in ["true", "selected_on_hand", "selected_on_mana"]
+	var entry_type   := "activated" if is_activated else "triggered"
+	var counterable  := effect.speed >= 2  # instant speed = counterable
+
+	var entry := StackEntry.new(
+		effect,
+		self,
+		controller,
+		[],          # targets resolved at resolution time by EffectRunner
+		entry_type,
+		counterable
 	)
-	if real:
-		TurnManager.waiting_for_input = false
+	PriorityManager.push(entry)
 
+	# Spells destroy themselves after being cast (same as before)
 	if card_type == GameEnums.CardType.SPELL:
 		destroy_card(game)
 
 
-func can_respond(game:MTGGameState,index:int)-> bool:
+func can_respond(game: MTGGameState, index: int) -> bool:
+	if game.stack.is_empty():
+		return false
 	var eff = effects[index]
-	var last_stack = game.stack[-1]
-	if eff.speed > 1 and eff != last_stack.effect and eff.speed >= last_stack.effect.speed :
-		if can_activate_effect(game,eff) and effect_targets(game,eff):
+	var last_entry = game.stack[-1]
+	# last_entry is now a StackEntry, so access .effect on it
+	var last_effect: Effect_class = last_entry.effect if last_entry is StackEntry else last_entry.get("effect")
+	if last_effect == null:
+		return false
+	if eff.speed > 1 and eff != last_effect and eff.speed >= last_effect.speed:
+		if can_activate_effect(game, eff) and effect_targets(game, eff):
 			return true
-	
 	return false
+
 func _load_effects_from_data(effects_spec: Array) -> void:
 	for effect_spec in effects_spec:
 		var e := Effect_class.new()

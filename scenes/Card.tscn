@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3 uid="uid://da8lyh50nri6m"]
+[gd_scene load_steps=46 format=3 uid="uid://da8lyh50nri6m"]
 
 [ext_resource type="Script" path="res://scripts/classes/Card.gd" id="1_1cqby"]
 [ext_resource type="Shader" path="res://assets/shaders/card/playable.gdshader" id="1_6a0q4"]
@@ -9,6 +9,8 @@
 [ext_resource type="Shader" path="res://assets/shaders/card/gray.gdshader" id="5_7keh7"]
 [ext_resource type="Texture2D" uid="uid://c7h6u0fwqhhwl" path="res://assets/back.png" id="5_tdvel"]
 [ext_resource type="Shader" path="res://assets/shaders/card/cardBackbround.gdshader" id="6_3qgkq"]
+[ext_resource type="Texture2D" uid="uid://bt1w7xujskkea" path="res://activatable.png" id="6_5qgpk"]
+[ext_resource type="Shader" path="res://assets/shaders/card/act.gdshader" id="6_7nrx4"]
 [ext_resource type="Shader" path="res://assets/shaders/rounded.gdshader" id="6_r5pbg"]
 [ext_resource type="Texture2D" uid="uid://cv6u4ndetmqm7" path="res://assets/MultiNoiseTexture2D.svg" id="7_qve8i"]
 [ext_resource type="Texture2D" uid="uid://disyt6iugrent" path="res://assets/art/Earthgolem.png" id="9_xnj1b"]
@@ -39,6 +41,13 @@ shader_parameter/screen_center = Vector2(960, 540)
 shader_parameter/corner_scale = 0.2
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_t4wfc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nfmlb"]
+shader = ExtResource("6_7nrx4")
+shader_parameter/pulse_speed = 2.0
+shader_parameter/glow_radius = 6.0
+shader_parameter/glow_intensity = 2.5
+shader_parameter/glow_color = Color(1, 0.85, 0, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ae88b"]
 shader = ExtResource("5_7keh7")
@@ -200,6 +209,12 @@ position = Vector2(100, 127)
 [node name="Sprite2D" type="Sprite2D" parent="Back"]
 material = SubResource("ShaderMaterial_t4wfc")
 texture = ExtResource("5_tdvel")
+
+[node name="activetable" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_nfmlb")
+position = Vector2(100.5, 129.5)
+scale = Vector2(0.447541, 0.460076)
+texture = ExtResource("6_5qgpk")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="."]
 material = SubResource("ShaderMaterial_ae88b")

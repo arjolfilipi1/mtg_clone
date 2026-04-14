@@ -854,6 +854,11 @@ layout_mode = 2
 theme = ExtResource("18_iqc7k")
 text = "test"
 
+[node name="Pass" type="Button" parent="ButtonContainer"]
+layout_mode = 2
+theme = ExtResource("18_iqc7k")
+text = "Pass Priority"
+
 [node name="debug2" type="VBoxContainer" parent="."]
 offset_left = 79.0
 offset_top = 240.0
@@ -1007,4 +1012,5 @@ scale = Vector2(0.75, 0.75)
 [connection signal="pressed" from="ButtonContainer/EndTurnButton" to="." method="_on_end_turn_button_pressed"]
 [connection signal="pressed" from="ButtonContainer/Cancel attack" to="." method="_on_cancel_attack_pressed"]
 [connection signal="pressed" from="ButtonContainer/test" to="." method="store_gamestate"]
+[connection signal="pressed" from="ButtonContainer/Pass" to="." method="_on_pass_pressed"]
 [connection signal="button_down" from="ConfirmOverlay/VBoxContainer/ButtonContainer/CancelButton" to="." method="_on_overlay_cancelled"]

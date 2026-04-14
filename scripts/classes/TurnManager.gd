@@ -54,45 +54,8 @@ func finish_draw():
 		current_phase = GameEnums.TurnEnum.MANA_SELECT
 	_pass_priority()
 	
-func handle_stack_phase():
-	var game = Game_Manager.gamestate
-	if len(game.stack) == 0:
-		return
+	
 
-	print("=== STACK START ===")
-	while not game.stack.is_empty():
-		waiting_for_input = true
-
-		while waiting_for_input:
-			await handle_priority(game)
-		print("stack ", game.stack.size())
-		# both passed, resolve top effect
-		var top = game.pop_from_stack()
-		
-		if top:
-			print("top ",top.source.card_name)
-			await EffectRunner.apply_effect(top.effect, top.context)
-	print("=== STACK END ===")
-	
-func handle_priority(game: MTGGameState):
-	
-	print("Player " if priority else "enemy ", "has priority:"+ str(players_passed))
-	var player = players[0] if priority else players[1]
-	
-	# Ask player to respond (UI prompt or AI logic)
-	var response = await player.request_response(game)
-	
-	if response in [null,"{  }",{}]:
-		# Pass priority
-		priority = not priority
-		players_passed += 1
-		if players_passed == 2:
-			players_passed = 0
-			waiting_for_input = false
-	else:
-		# Player responded with a new effect → push it
-		response.source.apply_effect(response.effect,Game_Manager.gamestate)
-		priority = not priority # other player gets chance next
 func finish_mana_selection():
 	var i = 0
 	for pl in players:

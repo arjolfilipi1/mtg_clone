@@ -7,6 +7,7 @@ class_name Effect_Registry
 # Some targets also require ctx.filter (Dictionary) for filtered queries.
 
 func resolve_targets(target: String, ctx: Dictionary) -> Array:
+	print(ctx.game)
 	var game: MTGGameState = ctx.game
 	var source: CardState  = ctx.source
 	var filter: Dictionary = ctx.get("filter", {})

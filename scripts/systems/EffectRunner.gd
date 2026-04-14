@@ -46,6 +46,7 @@ func activate_effect(effect: Effect_class, base_ctx: Dictionary) -> void:
 # ── Resolution (called by PriorityManager._resolve_top only) ───────────────────
 # This is the same execution logic you already have — unchanged.
 func apply_effect(effect: Effect_class, base_ctx: Dictionary) -> void:
+	print(base_ctx)
 	if effect.actions.is_empty():
 		push_error("EffectRunner: effect '%s' has no actions" % effect.description)
 		return

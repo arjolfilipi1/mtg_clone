@@ -139,7 +139,7 @@ func _process(_delta):
 			attacker.attack(attacker,defender)
 			attacker = null
 			defender = null
-
+			TurnManager.current_phase=GameEnums.TurnEnum.MAIN
 	elif TurnManager.priority == true:
 		thinking = false
 		card_played = false

@@ -42,7 +42,7 @@ func pass_priority() -> void:
 
 	# Both passed consecutively → resolve or clear
 	if _passed[0] and _passed[1]:
-		if Game_Manager.gamestate.stackstack.is_empty():
+		if Game_Manager.gamestate.stack.is_empty():
 			stack_empty.emit()
 		else:
 			await _resolve_top()
@@ -95,16 +95,17 @@ func _give_priority(player_index: int) -> void:
 		await _ai_priority_decision()
  
 func _resolve_top() -> void:
-	if _resolving or Game_Manager.gamestate.stackstack.is_empty():
+	var s = Game_Manager.gamestate.stack
+	if _resolving or s.is_empty():
 		return
 	_resolving = true
 
-	var entry: StackEntry = Game_Manager.gamestate.stackstack.pop_back()
+	var entry: StackEntry = s.pop_back()
 	entry_resolved.emit(entry)
 
 	# Build the base context your existing EffectRunner expects
 	var ctx := {
-		"game":       Game_Manager.gamestate.stack,
+		"game":       Game_Manager.gamestate,
 		"source":     entry.source,
 		"controller": entry.controller,
 	}

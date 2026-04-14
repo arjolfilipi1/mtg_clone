@@ -57,7 +57,7 @@ func select_card(card):
 
 func setup():
 	gamestate = MTGGameState.new()
-	gamestate.stack_changed.connect(TurnManager.handle_stack_phase)
+	#gamestate.stack_changed.connect(PriorityManager.handle_stack_phase)
 	spawn_players()
 	load_cards()
 	start_game()
