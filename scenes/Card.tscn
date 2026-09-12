@@ -9,7 +9,7 @@
 [ext_resource type="Shader" path="res://assets/shaders/card/gray.gdshader" id="5_7keh7"]
 [ext_resource type="Texture2D" uid="uid://c7h6u0fwqhhwl" path="res://assets/back.png" id="5_tdvel"]
 [ext_resource type="Shader" path="res://assets/shaders/card/cardBackbround.gdshader" id="6_3qgkq"]
-[ext_resource type="Texture2D" uid="uid://bt1w7xujskkea" path="res://activatable.png" id="6_5qgpk"]
+[ext_resource type="Texture2D" uid="uid://c6v0frjji07ud" path="res://activatable.png" id="6_5qgpk"]
 [ext_resource type="Shader" path="res://assets/shaders/card/act.gdshader" id="6_7nrx4"]
 [ext_resource type="Shader" path="res://assets/shaders/rounded.gdshader" id="6_r5pbg"]
 [ext_resource type="Texture2D" uid="uid://cv6u4ndetmqm7" path="res://assets/MultiNoiseTexture2D.svg" id="7_qve8i"]
@@ -48,6 +48,9 @@ shader_parameter/pulse_speed = 2.0
 shader_parameter/glow_radius = 6.0
 shader_parameter/glow_intensity = 2.5
 shader_parameter/glow_color = Color(1, 0.85, 0, 1)
+shader_parameter/ring_speed = 1.2
+shader_parameter/ring_thickness = 0.08
+shader_parameter/ring_intensity = 1.8
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ae88b"]
 shader = ExtResource("5_7keh7")

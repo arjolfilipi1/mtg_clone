@@ -1,389 +1,389 @@
 [
   {
-    "id": 1,
-    "name": "Fire Elemental",
-    "mana_cost": {
-      "generic": 1,
-      "red": 1,
-      "blue": 0,
-      "green": 0,
-      "earth": 0,
-      "white": 0,
-      "black": 0
-    },
-    "type": "Creature",
-    "effects": [],
-    "background": "red",
-    "power": 40,
-    "image": "fireElemental.jpg",
-    "toughness": 30,
-    "Mana_creation": [
-      "red",
-      "red"
-    ],
-    "range": [
-      [
-        1,
-        0
-      ],
-      [
-        2,
-        0
-      ],
-      [
-        2,
-        1
-      ],
-      [
-        2,
-        -1
-      ]
-    ]
+	"id": 1,
+	"name": "Fire Elemental",
+	"mana_cost": {
+	  "generic": 1,
+	  "red": 1,
+	  "blue": 0,
+	  "green": 0,
+	  "earth": 0,
+	  "white": 0,
+	  "black": 0
+	},
+	"type": "Creature",
+	"effects": [],
+	"background": "red",
+	"power": 40,
+	"image": "fireElemental.jpg",
+	"toughness": 30,
+	"Mana_creation": [
+	  "red",
+	  "red"
+	],
+	"range": [
+	  [
+		1,
+		0
+	  ],
+	  [
+		2,
+		0
+	  ],
+	  [
+		2,
+		1
+	  ],
+	  [
+		2,
+		-1
+	  ]
+	]
   },
   {
-    "id": 2,
-    "name": "Water Sprite",
-    "mana_cost": {
-      "generic": 0,
-      "red": 0,
-      "blue": 1,
-      "green": 0,
-      "earth": 0,
-      "white": 0,
-      "black": 0
-    },
-    "type": "Creature",
-    "effects": [],
-    "background": "blue",
-    "power": 20,
-    "image": "waterSprite.jpg",
-    "toughness": 40,
-    "Mana_creation": [
-      "blue",
-      "white"
-    ],
-    "range": [
-      [
-        1,
-        0
-      ],
-      [
-        2,
-        0
-      ],
-      [
-        1,
-        1
-      ],
-      [
-        1,
-        -1
-      ]
-    ]
+	"id": 2,
+	"name": "Water Sprite",
+	"mana_cost": {
+	  "generic": 0,
+	  "red": 0,
+	  "blue": 1,
+	  "green": 0,
+	  "earth": 0,
+	  "white": 0,
+	  "black": 0
+	},
+	"type": "Creature",
+	"effects": [],
+	"background": "blue",
+	"power": 20,
+	"image": "waterSprite.jpg",
+	"toughness": 40,
+	"Mana_creation": [
+	  "blue",
+	  "white"
+	],
+	"range": [
+	  [
+		1,
+		0
+	  ],
+	  [
+		2,
+		0
+	  ],
+	  [
+		1,
+		1
+	  ],
+	  [
+		1,
+		-1
+	  ]
+	]
   },
   {
-    "id": 3,
-    "name": "Earth Golem",
-    "mana_cost": {
-      "generic": 0,
-      "red": 0,
-      "blue": 0,
-      "green": 0,
-      "earth": 1,
-      "white": 0,
-      "black": 0
-    },
-    "type": "Creature",
-    "effects": [],
-    "background": "earth",
-    "power": 10,
-    "image": "Earthgolem.png",
-    "toughness": 50,
-    "Mana_creation": [
-      "earth",
-      "earth"
-    ],
-    "range": [
-      [
-        1,
-        0
-      ],
-      [
-        2,
-        0
-      ],
-      [
-        2,
-        1
-      ],
-      [
-        2,
-        -1
-      ]
-    ]
+	"id": 3,
+	"name": "Earth Golem",
+	"mana_cost": {
+	  "generic": 0,
+	  "red": 0,
+	  "blue": 0,
+	  "green": 0,
+	  "earth": 1,
+	  "white": 0,
+	  "black": 0
+	},
+	"type": "Creature",
+	"effects": [],
+	"background": "earth",
+	"power": 10,
+	"image": "Earthgolem.png",
+	"toughness": 50,
+	"Mana_creation": [
+	  "earth",
+	  "earth"
+	],
+	"range": [
+	  [
+		1,
+		0
+	  ],
+	  [
+		2,
+		0
+	  ],
+	  [
+		2,
+		1
+	  ],
+	  [
+		2,
+		-1
+	  ]
+	]
   },
   {
-    "id": 4,
-    "name": "Wind Crow",
-    "mana_cost": {
-      "generic": 0,
-      "red": 0,
-      "blue": 0,
-      "green": 1,
-      "earth": 0,
-      "white": 0,
-      "black": 0
-    },
-    "type": "Creature",
-    "effects": [],
-    "background": "green",
-    "power": 10,
-    "image": "windCrow.jpg",
-    "toughness": 200,
-    "Mana_creation": [
-      "green",
-      "green"
-    ],
-    "range": [
-      [
-        1,
-        0
-      ],
-      [
-        2,
-        0
-      ],
-      [
-        2,
-        1
-      ],
-      [
-        2,
-        -1
-      ],
-      [
-        1,
-        -1
-      ],
-      [
-        1,
-        1
-      ],
-      [
-        1,
-        2
-      ],
-      [
-        1,
-        -2
-      ],
-      [
-        2,
-        2
-      ],
-      [
-        2,
-        -2
-      ],
-      [
-        3,
-        2
-      ],
-      [
-        3,
-        1
-      ],
-      [
-        3,
-        0
-      ],
-      [
-        3,
-        -1
-      ],
-      [
-        3,
-        -2
-      ]
-    ]
+	"id": 4,
+	"name": "Wind Crow",
+	"mana_cost": {
+	  "generic": 0,
+	  "red": 0,
+	  "blue": 0,
+	  "green": 1,
+	  "earth": 0,
+	  "white": 0,
+	  "black": 0
+	},
+	"type": "Creature",
+	"effects": [],
+	"background": "green",
+	"power": 10,
+	"image": "windCrow.jpg",
+	"toughness": 200,
+	"Mana_creation": [
+	  "green",
+	  "green"
+	],
+	"range": [
+	  [
+		1,
+		0
+	  ],
+	  [
+		2,
+		0
+	  ],
+	  [
+		2,
+		1
+	  ],
+	  [
+		2,
+		-1
+	  ],
+	  [
+		1,
+		-1
+	  ],
+	  [
+		1,
+		1
+	  ],
+	  [
+		1,
+		2
+	  ],
+	  [
+		1,
+		-2
+	  ],
+	  [
+		2,
+		2
+	  ],
+	  [
+		2,
+		-2
+	  ],
+	  [
+		3,
+		2
+	  ],
+	  [
+		3,
+		1
+	  ],
+	  [
+		3,
+		0
+	  ],
+	  [
+		3,
+		-1
+	  ],
+	  [
+		3,
+		-2
+	  ]
+	]
   },
   {
-    "id": 5,
-    "name": "Skeleton",
-    "mana_cost": {
-      "generic": 0,
-      "red": 0,
-      "blue": 0,
-      "green": 0,
-      "earth": 0,
-      "white": 0,
-      "black": 1
-    },
-    "type": "Creature",
-    "effects": [
-      {
-        "trigger": "on_stack_buff",
-        "speed": 2,
-        "mandatory": false,
-        "once_per_turn": "soft",
-        "mana_cost": {},
-        "description": "Lose 1 power",
-        "actions": [
-          {
-            "type": "buff",
-            "target": "self",
-            "power": -1,
-            "toughness": 0,
-            "duration": "instant"
-          }
-        ]
-      }
-    ],
-    "background": "black",
-    "power": 30,
-    "image": "skeleton.jpg",
-    "toughness": 10,
-    "Mana_creation": [
-      "black",
-      "green"
-    ],
-    "range": [
-      [
-        1,
-        0
-      ],
-      [
-        1,
-        1
-      ],
-      [
-        2,
-        0
-      ],
-      [
-        1,
-        -1
-      ]
-    ]
+	"id": 5,
+	"name": "Skeleton",
+	"mana_cost": {
+	  "generic": 0,
+	  "red": 0,
+	  "blue": 0,
+	  "green": 0,
+	  "earth": 0,
+	  "white": 0,
+	  "black": 1
+	},
+	"type": "Creature",
+	"effects": [
+	  {
+		"trigger": "on_stack_buff",
+		"speed": 2,
+		"mandatory": false,
+		"once_per_turn": "soft",
+		"mana_cost": {},
+		"description": "Lose 1 power",
+		"actions": [
+		  {
+			"type": "buff",
+			"target": "self",
+			"power": -1,
+			"toughness": 0,
+			"duration": "instant"
+		  }
+		]
+	  }
+	],
+	"background": "black",
+	"power": 30,
+	"image": "skeleton.jpg",
+	"toughness": 10,
+	"Mana_creation": [
+	  "black",
+	  "green"
+	],
+	"range": [
+	  [
+		1,
+		0
+	  ],
+	  [
+		1,
+		1
+	  ],
+	  [
+		2,
+		0
+	  ],
+	  [
+		1,
+		-1
+	  ]
+	]
   },
   {
-    "id": 6,
-    "name": "Cat Wizard",
-    "mana_cost": {
-      "generic": 0,
-      "red": 0,
-      "blue": 0,
-      "green": 0,
-      "earth": 0,
-      "white": 0,
-      "black": 1
-    },
-    "type": "Creature",
-    "effects": [
-      {
-        "trigger": "selected_on_hand",
-        "speed": 1,
-        "mandatory": false,
-        "once_per_turn": "soft",
-        "mana_cost": {},
-        "description": "Gain 100 power",
-        "actions": [
-          {
-            "type": "buff",
-            "target": "self",
-            "power": 100,
-            "toughness": 0,
-            "duration": "permanent"
-          }
-        ]
-      },
-      {
-        "trigger": "on_death",
-        "speed": 1,
-        "mandatory": false,
-        "once_per_turn": "soft",
-        "mana_cost": {},
-        "description": "Deal 3 damage to target creature",
-        "actions": [
-          {
-            "type": "damage",
-            "target": "target_creature",
-            "amount": 3
-          }
-        ]
-      }
-    ],
-    "background": "white",
-    "power": 10,
-    "image": "catwizard.jpg",
-    "toughness": 30,
-    "Mana_creation": [
-      "white",
-      "green"
-    ],
-    "range": [
-      [
-        1,
-        0
-      ],
-      [
-        2,
-        0
-      ],
-      [
-        3,
-        0
-      ],
-      [
-        3,
-        -1
-      ],
-      [
-        3,
-        1
-      ]
-    ]
+	"id": 6,
+	"name": "Cat Wizard",
+	"mana_cost": {
+	  "generic": 0,
+	  "red": 0,
+	  "blue": 0,
+	  "green": 0,
+	  "earth": 0,
+	  "white": 0,
+	  "black": 1
+	},
+	"type": "Creature",
+	"effects": [
+	  {
+		"trigger": "selected_on_hand",
+		"speed": 1,
+		"mandatory": false,
+		"once_per_turn": "soft",
+		"mana_cost": {},
+		"description": "Gain 100 power",
+		"actions": [
+		  {
+			"type": "buff",
+			"target": "self",
+			"power": 100,
+			"toughness": 0,
+			"duration": "permanent"
+		  }
+		]
+	  },
+	  {
+		"trigger": "on_death",
+		"speed": 1,
+		"mandatory": false,
+		"once_per_turn": "soft",
+		"mana_cost": {},
+		"description": "Deal 3 damage to target creature",
+		"actions": [
+		  {
+			"type": "damage",
+			"target": "target_creature",
+			"amount": 3
+		  }
+		]
+	  }
+	],
+	"background": "white",
+	"power": 10,
+	"image": "catwizard.jpg",
+	"toughness": 30,
+	"Mana_creation": [
+	  "white",
+	  "green"
+	],
+	"range": [
+	  [
+		1,
+		0
+	  ],
+	  [
+		2,
+		0
+	  ],
+	  [
+		3,
+		0
+	  ],
+	  [
+		3,
+		-1
+	  ],
+	  [
+		3,
+		1
+	  ]
+	]
   },
   {
-    "id": 7,
-    "name": "Healing potion",
-    "type": "Spell",
-    "background": "white",
-    "image": "healingPotion.jpg",
-    "power": 0,
-    "toughness": 0,
-    "mana_cost": {
-      "generic": 0,
-      "red": 0,
-      "blue": 0,
-      "green": 0,
-      "earth": 0,
-      "white": 1,
-      "black": 0
-    },
-    "Mana_creation": [
-      "white",
-      "green"
-    ],
-    "range": [],
-    "effects": [
-      {
-        "trigger": "selected_on_mana",
-        "speed": 1,
-        "mandatory": false,
-        "once_per_turn": "soft",
-        "mana_cost": {},
-        "description": "All creatures gain +3/+3 until end of turn",
-        "actions": [
-          {
-            "type": "buff",
-            "target": "target_all_creature",
-            "power": 3,
-            "toughness": 3,
-            "duration": "until_end_of_turn"
-          }
-        ]
-      }
-    ]
+	"id": 7,
+	"name": "Healing potion",
+	"type": "Spell",
+	"background": "white",
+	"image": "healingPotion.jpg",
+	"power": 0,
+	"toughness": 0,
+	"mana_cost": {
+	  "generic": 0,
+	  "red": 0,
+	  "blue": 0,
+	  "green": 0,
+	  "earth": 0,
+	  "white": 1,
+	  "black": 0
+	},
+	"Mana_creation": [
+	  "white",
+	  "green"
+	],
+	"range": [],
+	"effects": [
+	  {
+		"trigger": "selected_on_mana",
+		"speed": 1,
+		"mandatory": false,
+		"once_per_turn": "soft",
+		"mana_cost": {},
+		"description": "All creatures gain +3/+3 until end of turn",
+		"actions": [
+		  {
+			"type": "buff",
+			"target": "target_all_creature",
+			"power": 3,
+			"toughness": 3,
+			"duration": "until_end_of_turn"
+		  }
+		]
+	  }
+	]
   }
 ]
